@@ -59,8 +59,8 @@ export const getRoles = async () => {
 
 export const deleteRol = async (rolId: number | null) => {
   try {
-    const res = await fetch(api_url + `/api/delete_rol/${rolId}`, {
-      method: "DELETE",
+    const res = await fetch(api_url + `/api/delete_rol`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       }
