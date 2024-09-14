@@ -23,6 +23,7 @@ export const getScreensModules = async () => {
 export const addRol = async (data: Array<object>) => {
   try {
     const res = await fetch(api_url + "/api/add_rol", {
+      mode: 'no-cors',
       method: "POST",
       headers: {
         "Content-Type": "application/json",
