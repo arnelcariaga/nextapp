@@ -37,7 +37,7 @@ export default function RolesElement() {
             if (error) {
                 toast({
                     variant: "destructive",
-                    title: "Agregar Rol || " + appName,
+                    title: "Roles || " + appName,
                     description: message,
                     duration: 3000
                 })
