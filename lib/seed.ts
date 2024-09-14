@@ -105,7 +105,7 @@ export const getRolById = async (rolId: number | null) => {
 export const updateRol = async (rolId: number | null, data: Array<object>) => {
   try {
     const res = await fetch(api_url + `/api/update_rol`, {
-      method: "PATCH",
+      method: "post",
       headers: {
         "Content-Type": "application/json",
       },
