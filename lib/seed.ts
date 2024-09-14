@@ -25,8 +25,7 @@ export const addRol = async (data: Array<object>) => {
     const res = await fetch(api_url + "/api/add_rol", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({ ...data[0] }),
     });
