@@ -63,7 +63,10 @@ export const deleteRol = async (rolId: number | null) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-      }
+      },
+      body: JSON.stringify({
+        rol_id: rolId
+      })
     });
     const resJson = await res.json()
 
