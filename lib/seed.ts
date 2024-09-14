@@ -104,12 +104,12 @@ export const getRolById = async (rolId: number | null) => {
 
 export const updateRol = async (rolId: number | null, data: Array<object>) => {
   try {
-    const res = await fetch(api_url + `/api/update_rol/${rolId}`, {
+    const res = await fetch(api_url + `/api/update_rol`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...data[0] }),
+      body: JSON.stringify({ ...data[0], rol_id: rolId }),
     });
     const resJson = await res.json()
 
