@@ -84,7 +84,7 @@ export const deleteRol = async (rolId: number | null) => {
 export const getRolById = async (rolId: number | null) => {
   try {
     const res = await fetch(api_url + `/api/get_rol_by_id`, {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -99,7 +99,7 @@ export const getRolById = async (rolId: number | null) => {
   } catch (error) {
     return jsonResponse(
       true,
-      "Hubo un error al eliminar el rol, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      "Hubo un error al cargar los módulos, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
       []
     );
   }
