@@ -127,7 +127,7 @@ const AddRolForm = () => {
         } else {
             const updated_at = new Date().toString();
 
-            dispatch(setAddedRoles([{...resData, updated_at}]))
+            dispatch(setAddedRoles([{ ...resData, updated_at }]))
             dispatch(setCloseModalAddRol(false))
         }
         setSendingForm(false)
@@ -135,54 +135,58 @@ const AddRolForm = () => {
 
     return (
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate>
-            <div className="space-y-2">
-                <Label>Nombre del rol</Label>
-                <div className="flex items-start space-x-6">
-                    <Input
-                        type="text"
-                        placeholder="Digitador, Promotor, Coordinador, etc."
-                        className={`${errors.name ? "border-red-500" : ""} dark:focus:ring:border-blue-500 w-[50%]`}
-                        {...register("name", {
-                            required: true
-                        })}
-                        autoFocus
-                    />
-                    <div className="flex flex-col space-y-1">
-                        <div className="flex items-center space-x-2">
-                            <Checkbox
-                                id="isAdmin"
-                                checked={isAdmin}
-                                onCheckedChange={handleAdminChange}
-                                {...register("isAdmin")}
-                            />
-                            <Label
-                                htmlFor="isAdmin"
-                                className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                                Administrador
-                            </Label>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                            Los administradores por defecto pueden cambiar pacientes a otro SAI y tener control total del sistema
-                        </p>
-                    </div>
-                </div>
-            </div>
-
             {
-                dataTableLoading && modules.length === 0 ? <TableSkeleton /> : <DataTable
-                    columns={columns}
-                    data={modules}
-                    addBtn={null}
-                    columnBtnFilter={false}
-                    columnHidden={{
-                        id: false
-                    }}
-                    orderByObj={{
-                        id: 'name',
-                        desc: false
-                    }}
-                />
+                dataTableLoading && modules.length === 0 ? <TableSkeleton />
+                    :
+                    <>
+                        <div className="space-y-2">
+                            <Label>Nombre del rol</Label>
+                            <div className="flex items-start space-x-6">
+                                <Input
+                                    type="text"
+                                    placeholder="Digitador, Promotor, Coordinador, etc."
+                                    className={`${errors.name ? "border-red-500" : ""} dark:focus:ring:border-blue-500 w-[50%]`}
+                                    {...register("name", {
+                                        required: true
+                                    })}
+                                    autoFocus
+                                />
+                                <div className="flex flex-col space-y-1">
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox
+                                            id="isAdmin"
+                                            checked={isAdmin}
+                                            onCheckedChange={handleAdminChange}
+                                            {...register("isAdmin")}
+                                        />
+                                        <Label
+                                            htmlFor="isAdmin"
+                                            className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        >
+                                            Administrador
+                                        </Label>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">
+                                        Los administradores por defecto pueden cambiar pacientes a otro SAI y tener control total del sistema
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <DataTable
+                            columns={columns}
+                            data={modules}
+                            addBtn={null}
+                            columnBtnFilter={false}
+                            columnHidden={{
+                                id: false
+                            }}
+                            orderByObj={{
+                                id: 'name',
+                                desc: false
+                            }}
+                        />
+                    </>
             }
 
             <Button type="submit" className="w-full group bg-green-600 dark:bg-green-900" disabled={sendingForm}>
