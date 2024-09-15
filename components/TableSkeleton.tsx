@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 export default function TableSkeleton() {
   return (
     <div className="rounded-md border">
-      <div className='px-4 flex justify-between'>
+      <div className='px-4 flex justify-between p-4'>
         <div className='flex space-x-2 w-full'>
           <Skeleton className="h-9 w-[40%]" />
           <Skeleton className="h-9 w-[15%]" />
