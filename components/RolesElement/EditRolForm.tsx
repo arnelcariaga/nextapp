@@ -177,7 +177,7 @@ const EditRolForm = ({ selectedEditRolId }: TEditForm) => {
                                         required: true
                                     })}
                                     autoFocus={false}
-                                    value={rolData?.name}
+                                    defaultValue={rolData?.name}
                                 />
                                 <div className="flex flex-col space-y-1">
                                     <div className="flex items-center space-x-2">
