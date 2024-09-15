@@ -7,7 +7,7 @@ function jsonResponse(error: boolean, message: string, data: Array<object>) {
 // API call for roles and screens CRUD
 export const getScreensModules = async () => {
   try {
-    const res = await fetch(api_url + "/api/screens_modules", {});
+    const res = await fetch(api_url + "/api/screens_modules");
     const resJson = await res.json()
     // I don't call jsonResponse here becouse the structure of res it's the same
     return resJson;
@@ -44,7 +44,7 @@ export const addRol = async (data: Array<object>) => {
 
 export const getRoles = async () => {
   try {
-    const res = await fetch(api_url + "/api/roles", {});
+    const res = await fetch(api_url + "/api/roles");
     const resJson = await res.json()
     // I don't call jsonResponse here becouse the structure of res it's the same
     return resJson;
@@ -83,11 +83,14 @@ export const deleteRol = async (rolId: number | null) => {
 
 export const getRolById = async (rolId: number | null) => {
   try {
-    const res = await fetch(api_url + `/api/get_rol_by_id/${rolId}`, {
+    const res = await fetch(api_url + `/api/get_rol_by_id`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-      }
+      },
+      body: JSON.stringify({
+        rol_id: rolId
+      })
     });
     const resJson = await res.json()
 
@@ -105,7 +108,7 @@ export const getRolById = async (rolId: number | null) => {
 export const updateRol = async (rolId: number | null, data: Array<object>) => {
   try {
     const res = await fetch(api_url + `/api/update_rol`, {
-      method: "post",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
