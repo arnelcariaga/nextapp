@@ -1,6 +1,6 @@
 "use client"
 import { columns } from "./columns"
-import DataTable from "../data-table"
+import DataTable from "../MyDataTable/data-table"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import MyDialog from "../MyDialog"

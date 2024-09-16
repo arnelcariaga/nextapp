@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import { rolesColumns } from "./rolesColumns"
-import DataTable from "../data-table"
+import DataTable from "../MyDataTable/data-table"
 import MyDialog from "../MyDialog"
 import AddRolForm from "./AddRolForm"
 import { getRoles, deleteRol } from "@/lib/seed"

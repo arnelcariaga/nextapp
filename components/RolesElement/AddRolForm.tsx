@@ -7,7 +7,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { IAddRol } from '@/lib/interfaces'
 import { useToast } from "@/hooks/use-toast"
 import { Checkbox } from "@/components/ui/checkbox"
-import DataTable from '../data-table'
+import DataTable from '../MyDataTable/data-table'
 import { screensModulesColumns } from './screensModulesColumns'
 import { IModules } from "@/lib/interfaces"
 import { getScreensModules, addRol } from '@/lib/seed'
