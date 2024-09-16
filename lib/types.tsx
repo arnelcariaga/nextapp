@@ -66,3 +66,13 @@ export type TTableProps<T extends object> = {
         id: string
     }
 };
+
+// Type when editing rol
+export type TSelectedRolObj = {
+    id: number
+    name: string
+}
+
+export type TEditRolForm = {
+    selectedRol: TSelectedRolObj
+}
