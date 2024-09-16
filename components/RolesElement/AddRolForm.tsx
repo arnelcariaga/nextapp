@@ -14,7 +14,7 @@ import { getScreensModules, addRol } from '@/lib/seed'
 import { appName } from '@/lib/appInfo'
 import { setCloseModalAddRol, setAddedRoles } from '@/redux/slices/rolesSlice'
 import { useDispatch } from 'react-redux'
-import TableSkeleton from '../TableSkeleton'
+import TableSkeleton from '../MyDataTable/TableSkeleton'
 
 const AddRolForm = () => {
     const {

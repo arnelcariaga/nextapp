@@ -14,7 +14,7 @@ import { Plus, Loader2 } from "lucide-react"
 import { setCloseModalAddRol, setCloseModalEditRol } from "@/redux/slices/rolesSlice"
 import { IRolesScreens } from "@/lib/interfaces"
 import EditRolForm from "./EditRolForm"
-import TableSkeleton from "../TableSkeleton"
+import TableSkeleton from "../MyDataTable/TableSkeleton"
 import { TSelectedRolObj } from "@/lib/types"
 
 export default function RolesElement() {

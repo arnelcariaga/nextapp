@@ -13,7 +13,7 @@ import { getRolById, updateRol } from '@/lib/seed'
 import { appName } from '@/lib/appInfo'
 import { setCloseModalEditRol, setAddedRoles } from '@/redux/slices/rolesSlice'
 import { useDispatch } from 'react-redux'
-import TableSkeleton from '../TableSkeleton'
+import TableSkeleton from '../MyDataTable/TableSkeleton'
 import { TEditRolForm } from '@/lib/types'
 
 interface IDataResponse {
