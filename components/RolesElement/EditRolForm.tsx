@@ -1,24 +1,20 @@
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2, Save } from "lucide-react"
 import { useForm, SubmitHandler } from "react-hook-form"
-import { IAddRol } from '@/lib/interfaces'
+import { IAddRol, IModules } from '@/lib/interfaces'
 import { useToast } from "@/hooks/use-toast"
 import { Checkbox } from "@/components/ui/checkbox"
 import DataTable from '../data-table'
 import { screensModulesColumns } from './screensModulesColumns'
-import { IModules, IRolesScreensObj } from "@/lib/interfaces"
 import { getRolById, updateRol } from '@/lib/seed'
 import { appName } from '@/lib/appInfo'
 import { setCloseModalEditRol, setAddedRoles } from '@/redux/slices/rolesSlice'
 import { useDispatch } from 'react-redux'
 import TableSkeleton from '../TableSkeleton'
-
-type TEditForm = {
-    selectedEditRolId: number | null
-}
+import { TEditRolForm } from '@/lib/types'
 
 interface IDataResponse {
     id: number,
@@ -32,7 +28,7 @@ interface IDataResponse {
     }
 }
 
-const EditRolForm = ({ selectedEditRolId }: TEditForm) => {
+const EditRolForm = ({ selectedRol }: TEditRolForm) => {
     const {
         register,
         handleSubmit,
@@ -42,7 +38,7 @@ const EditRolForm = ({ selectedEditRolId }: TEditForm) => {
     const { toast } = useToast()
     const [sendingForm, setSendingForm] = useState(false)
     const [modules, setModules] = useState<IModules[]>([])
-    const [rolData, setRolData] = useState<IRolesScreensObj>()
+    const [rolName, setRolName] = useState<string>(selectedRol.name)
     const [isAdmin, setIsAdmin] = useState(false)
     const [dataTableLoading, setDataTableLoading] = useState<boolean>(false)
     const dispatch = useDispatch()
@@ -50,7 +46,7 @@ const EditRolForm = ({ selectedEditRolId }: TEditForm) => {
     useEffect(() => {
         async function getScreensModulesFn() {
             setDataTableLoading(true)
-            const { error, data, message } = await getRolById(selectedEditRolId)
+            const { error, data, message } = await getRolById(selectedRol.id)
 
             if (error) {
                 toast({
@@ -60,10 +56,7 @@ const EditRolForm = ({ selectedEditRolId }: TEditForm) => {
                     duration: 3000
                 })
             } else {
-                const rolId = data.id;
-                const rolName = data.name
                 const screens = data.screens
-
 
                 const screens_peremissions = screens.map((item: IDataResponse) => (
                     {
@@ -78,19 +71,13 @@ const EditRolForm = ({ selectedEditRolId }: TEditForm) => {
                         }
                     }
                 ))
-
-                let rolDataStructure = {
-                    id: rolId,
-                    name: rolName
-                }
-                setRolData(rolDataStructure)
                 setModules(screens_peremissions)
             }
             setDataTableLoading(false)
 
         }
         getScreensModulesFn()
-    }, [toast, selectedEditRolId])
+    }, [toast, selectedRol])
 
     useEffect(() => {
         const allChecked = modules.every(
@@ -141,7 +128,7 @@ const EditRolForm = ({ selectedEditRolId }: TEditForm) => {
             is_admin: isAdmin
         }
 
-        const { error, data: resData, message } = await updateRol(selectedEditRolId, Array(newData))
+        const { error, data: resData, message } = await updateRol(selectedRol.id, Array(newData))
 
         if (error) {
             setFocus("name")
@@ -152,18 +139,20 @@ const EditRolForm = ({ selectedEditRolId }: TEditForm) => {
                 duration: 3000
             })
         } else {
-            const updated_at = new Date().toString();
-
-            dispatch(setAddedRoles([{ ...resData, updated_at }]))
+            dispatch(setAddedRoles([{ ...resData }]))
             dispatch(setCloseModalEditRol(false))
         }
         setSendingForm(false)
     }
 
+    const handleRolNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setRolName(event.target.value);
+    };
+
     return (
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate>
             {
-                dataTableLoading && modules.length === 0 ? <TableSkeleton />
+                dataTableLoading ? <TableSkeleton />
                     :
                     <>
                         <div className="space-y-2">
@@ -174,10 +163,11 @@ const EditRolForm = ({ selectedEditRolId }: TEditForm) => {
                                     placeholder="Digitador, Promotor, Coordinador, etc."
                                     className={`${errors.name ? "border-red-500" : ""} dark:focus:ring:border-blue-500 w-[50%]`}
                                     {...register("name", {
-                                        required: true
+                                        required: true,
+                                        onChange: handleRolNameChange
                                     })}
                                     autoFocus={false}
-                                    defaultValue={rolData?.name}
+                                    value={rolName}
                                 />
                                 <div className="flex flex-col space-y-1">
                                     <div className="flex items-center space-x-2">
