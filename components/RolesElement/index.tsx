@@ -15,6 +15,7 @@ import { setCloseModalAddRol, setCloseModalEditRol } from "@/redux/slices/rolesS
 import { IRolesScreens } from "@/lib/interfaces"
 import EditRolForm from "./EditRolForm"
 import TableSkeleton from "../TableSkeleton"
+import { TSelectedRolObj } from "@/lib/types"
 
 export default function RolesElement() {
     const [rolesData, setRolesData] = useState<IRolesScreens[]>([])
@@ -24,9 +25,11 @@ export default function RolesElement() {
     const closeModalEditRol = useSelector((state: RootState) => state.roles.closeModalEditRol)
     const addedRoles = useSelector((state: RootState) => state.roles.addedRoles as IRolesScreens[])
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
-    const [selectedDelRolId, setSelectedDelRolId] = useState<number | null>(null)
     const [sendingDelete, setSendingDelete] = useState(false);
-    const [selectedEditRolId, setSelectedEditRolId] = useState<number | null>(null)
+    const [selectedRolData, setSelectedRolData] = useState<TSelectedRolObj>({
+        id: 0,
+        name: ""
+    })
     const [dataTableLoading, setDataTableLoading] = useState<boolean>(false)
 
     useEffect(() => {
@@ -42,7 +45,7 @@ export default function RolesElement() {
                     duration: 3000
                 })
             } else {
-                setRolesData(data)
+                setRolesData([...data])
             }
             setDataTableLoading(false)
         }
@@ -51,11 +54,20 @@ export default function RolesElement() {
 
     useEffect(() => {
         function getAddedRol() {
+            // If a new rol added, update array for UI
             if (addedRoles.length > 0) {
-                setRolesData((prevS) => [
-                    ...prevS,
-                    ...addedRoles
-                ])
+                setRolesData((prevS) => {
+                    const index = prevS.findIndex(item => item.id === addedRoles[0].id)
+
+                    if (index !== -1) {
+                        const updatedItems = [...prevS]
+                        
+                        updatedItems[index] = addedRoles[0]
+                        return updatedItems
+                    }else{
+                        return [addedRoles[0], ...prevS] as IRolesScreens[]
+                    }
+                })
             }
         }
         getAddedRol()
@@ -64,12 +76,15 @@ export default function RolesElement() {
     // For deleting role
     const openModalDeleteRol = (rolId: number) => {
         setOpenDeleteModal(true)
-        setSelectedDelRolId(rolId)
+        setSelectedRolData({
+            id: rolId,
+            name: ""
+        })
     }
 
     const deleteRolFn = async () => {
         setSendingDelete(true)
-        const { error, data: resData, message } = await deleteRol(selectedDelRolId)
+        const { error, data: resData, message } = await deleteRol(selectedRolData.id)
         if (error) {
             toast({
                 variant: "destructive",
@@ -78,7 +93,7 @@ export default function RolesElement() {
                 duration: 3000
             })
         } else {
-            const newData = rolesData.filter((rol) => rol.id != selectedDelRolId)
+            const newData = rolesData.filter((rol) => rol.id != selectedRolData.id)
             setRolesData(newData)
             setOpenDeleteModal(false)
             toast({
@@ -91,15 +106,15 @@ export default function RolesElement() {
     }
 
     // For editing rol
-    const openModalEditRol = async (rolId: number) => {
+    const openModalEditRol = async (selectedRol: TSelectedRolObj) => {
         dispatch(setCloseModalEditRol(true))
-        setSelectedEditRolId(rolId)
+        setSelectedRolData(selectedRol)
     }
 
     return (
         <div className="w-full p-2">
             {
-                dataTableLoading && rolesData.length === 0 ? <TableSkeleton /> :
+                dataTableLoading ? <TableSkeleton /> :
                     <DataTable
                         data={rolesData}
                         columns={rolesColumns(openModalEditRol, openModalDeleteRol)}
@@ -112,9 +127,7 @@ export default function RolesElement() {
                             </Button>
                         }
                         columnBtnFilter
-                        columnHidden={{
-                            id: false
-                        }}
+                        columnHidden={{}}
                         orderByObj={{
                             id: 'updated_at',
                             desc: true
@@ -166,7 +179,7 @@ export default function RolesElement() {
                 title="Editar Rol"
                 description=""
                 content={
-                    <EditRolForm selectedEditRolId={selectedEditRolId} />
+                    <EditRolForm selectedRol={selectedRolData} />
                 }
                 btnTrigger={<></>}
                 myClassName="max-w-[100vw] h-full max-h-[100vh]"
@@ -175,6 +188,7 @@ export default function RolesElement() {
                 closeBtnProps={{
                     variant: "outline",
                     type: "button",
+                    className: "w-full mt-4"
                 }}
             />
         </div>
