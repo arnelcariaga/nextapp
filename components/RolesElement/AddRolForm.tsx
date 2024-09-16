@@ -125,9 +125,7 @@ const AddRolForm = () => {
                 duration: 3000
             })
         } else {
-            const updated_at = new Date().toString();
-
-            dispatch(setAddedRoles([{ ...resData, updated_at }]))
+            dispatch(setAddedRoles([{ ...resData }]))
             dispatch(setCloseModalAddRol(false))
         }
         setSendingForm(false)
