@@ -34,6 +34,7 @@ import {
     ChevronsRight
 } from "lucide-react"
 import { TTableProps } from '@/lib/types'
+import DropdownFilter from './DropDownFilter'
 
 export default function DataTable<T extends object>({
     data,
@@ -43,7 +44,7 @@ export default function DataTable<T extends object>({
     columnHidden,
     orderByObj
 }: TTableProps<T>) {
-    const [sorting, setSorting] = useState<SortingState>([{...orderByObj}])
+    const [sorting, setSorting] = useState<SortingState>([{ ...orderByObj }])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(columnHidden)
     const [rowSelection, setRowSelection] = useState({})
@@ -74,7 +75,7 @@ export default function DataTable<T extends object>({
         },
         autoResetPageIndex: false
     })
-
+    
     return (
         <div className='border px-3'>
             <div className="flex justify-between items-center my-4">
@@ -102,7 +103,7 @@ export default function DataTable<T extends object>({
                             {table
                                 .getAllColumns()
                                 .filter((column) => column.getCanHide())
-                                .map((column) => {                                    
+                                .map((column) => {
                                     return (
                                         <DropdownMenuCheckboxItem
                                             key={column.id}
@@ -133,6 +134,10 @@ export default function DataTable<T extends object>({
                                                 header.column.columnDef.header,
                                                 header.getContext()
                                             )}
+                                        {
+                                            header.column.columnDef.enableColumnFilter &&
+                                            <DropdownFilter column={header.column} table={table} />
+                                        }
                                     </TableHead>
                                 )
                             })}
