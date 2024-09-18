@@ -1,198 +1,191 @@
 "use client"
-import { columns } from "./columns"
+import { useEffect, useState } from "react"
+import { usersColumns } from "./usersColumns"
 import DataTable from "../MyDataTable/data-table"
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
 import MyDialog from "../MyDialog"
-interface Patient {
-    id: string
-    sai: string
-    nombre: string
-    apellidos: string
-    usuario: string
-    correo: string
-    rol: string
-    estado: string
-}
+import AddUserForm from "./AddUserForm"
+import { getUsers, deleteUser } from "@/lib/seed"
+import { useToast } from "@/hooks/use-toast"
+import { appName } from "@/lib/appInfo"
+import { useSelector, useDispatch } from "react-redux"
+import { RootState } from "@/redux/store"
+import { Button } from "@/components/ui/button"
+import { Plus, Loader2 } from "lucide-react"
+import { setCloseModalAddUser, setCloseModalEditUser } from "@/redux/slices/usersRoles"
+import { IUserData } from "@/lib/interfaces"
+import EditUserForm from "./EditUserForm"
+import TableSkeleton from "../MyDataTable/TableSkeleton"
 
-const data: Patient[] = [
-    {
-        id: "1",
-        sai: "SAI001",
-        nombre: "Juan",
-        apellidos: "Pérez García",
-        usuario: "juanpg",
-        correo: "juan.perez@example.com",
-        rol: "Paciente",
-        estado: "Activo",
-    },
-    {
-        id: "2",
-        sai: "SAI002",
-        nombre: "María",
-        apellidos: "López Rodríguez",
-        usuario: "marialr",
-        correo: "maria.lopez@example.com",
-        rol: "Paciente",
-        estado: "Inactivo",
-    },
-    {
-        id: "3",
-        sai: "SAI003",
-        nombre: "Carlos",
-        apellidos: "Gómez Fernández",
-        usuario: "carlosgf",
-        correo: "carlos.gomez@example.com",
-        rol: "Paciente",
-        estado: "Activo",
-    },
-    {
-        id: "4",
-        sai: "SAI004",
-        nombre: "Ana",
-        apellidos: "Martínez Sánchez",
-        usuario: "anams",
-        correo: "ana.martinez@example.com",
-        rol: "Paciente",
-        estado: "Activo",
-    },
-    {
-        id: "5",
-        sai: "SAI005",
-        nombre: "Pedro",
-        apellidos: "Ramírez Torres",
-        usuario: "pedroram",
-        correo: "pedro.ramirez@example.com",
-        rol: "Paciente",
-        estado: "Inactivo",
-    },
-    {
-        id: "6",
-        sai: "SAI006",
-        nombre: "Laura",
-        apellidos: "Fernández Ruiz",
-        usuario: "laurafr",
-        correo: "laura.fernandez@example.com",
-        rol: "Paciente",
-        estado: "Activo",
-    },
-    {
-        id: "7",
-        sai: "SAI007",
-        nombre: "Miguel",
-        apellidos: "Sánchez López",
-        usuario: "miguelsl",
-        correo: "miguel.sanchez@example.com",
-        rol: "Paciente",
-        estado: "Activo",
-    },
-    {
-        id: "8",
-        sai: "SAI008",
-        nombre: "Carmen",
-        apellidos: "García Martín",
-        usuario: "carmengm",
-        correo: "carmen.garcia@example.com",
-        rol: "Paciente",
-        estado: "Inactivo",
-    },
-    {
-        id: "9",
-        sai: "SAI009",
-        nombre: "Javier",
-        apellidos: "Rodríguez Pérez",
-        usuario: "javierrp",
-        correo: "javier.rodriguez@example.com",
-        rol: "Paciente",
-        estado: "Activo",
-    },
-    {
-        id: "10",
-        sai: "SAI010",
-        nombre: "Isabel",
-        apellidos: "Torres Gómez",
-        usuario: "isabeltg",
-        correo: "isabel.torres@example.com",
-        rol: "Paciente",
-        estado: "Activo",
-    },
-    {
-        id: "11",
-        sai: "SAI011",
-        nombre: "Francisco",
-        apellidos: "Moreno Ruiz",
-        usuario: "franmr",
-        correo: "francisco.moreno@example.com",
-        rol: "Paciente",
-        estado: "Inactivo",
-    },
-    {
-        id: "12",
-        sai: "SAI012",
-        nombre: "Elena",
-        apellidos: "Jiménez Santos",
-        usuario: "elenajs",
-        correo: "elena.jimenez@example.com",
-        rol: "Paciente",
-        estado: "Activo",
-    },
-    {
-        id: "13",
-        sai: "SAI013",
-        nombre: "Antonio",
-        apellidos: "Díaz Fernández",
-        usuario: "antoniodf",
-        correo: "antonio.diaz@example.com",
-        rol: "Paciente",
-        estado: "Activo",
-    },
-    {
-        id: "14",
-        sai: "SAI014",
-        nombre: "Lucía",
-        apellidos: "Hernández Martínez",
-        usuario: "luciahm",
-        correo: "lucia.hernandez@example.com",
-        rol: "Paciente",
-        estado: "Inactivo",
-    },
-    {
-        id: "15",
-        sai: "SAI015",
-        nombre: "Manuel",
-        apellidos: "Ortega Sanz",
-        usuario: "manuelos",
-        correo: "manuel.ortega@example.com",
-        rol: "Paciente",
-        estado: "Activo",
-    },
-]
+export default function UsersElement() {
+    const [usersData, setUsersData] = useState<IUserData[]>([])
+    const { toast } = useToast()
+    const dispatch = useDispatch()
+    const addedUsers = useSelector((state: RootState) => state.users.addedUsers as IUserData[])
+    const [openDeleteModal, setOpenDeleteModal] = useState(false)
+    const [sendingDelete, setSendingDelete] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState<number>(0)
+    const [dataTableLoading, setDataTableLoading] = useState<boolean>(false)
+    const closeModalAddUser = useSelector((state: RootState) => state.users.closeModalAddUser)
+    const closeModalEditUser = useSelector((state: RootState) => state.users.closeModalEditUser)
 
-export default function UserElement() {
+    useEffect(() => {
+        async function getUsersFn() {
+            setDataTableLoading(true)
+            const { error, data, message } = await getUsers()
+
+            if (error) {
+                toast({
+                    variant: "destructive",
+                    title: "Roles || " + appName,
+                    description: message,
+                    duration: 3000
+                })
+            } else {
+                setUsersData([...data])
+            }
+            setDataTableLoading(false)
+        }
+        getUsersFn()
+    }, [toast])
+
+    useEffect(() => {
+        function getAddedRol() {
+            // If a new rol added, update array for UI
+            if (addedUsers.length > 0) {
+                setUsersData((prevS) => {
+                    const index = prevS.findIndex(item => item.id === addedUsers[0].id)
+
+                    if (index !== -1) {
+                        const updatedItems = [...prevS]
+
+                        updatedItems[index] = addedUsers[0]
+                        return updatedItems
+                    } else {
+                        return [addedUsers[0], ...prevS] as IUserData[]
+                    }
+                })
+            }
+        }
+        getAddedRol()
+    }, [addedUsers])
+
+    // For deleting user
+    const openModalDeleteUser = (uId: number) => {
+        setOpenDeleteModal(true)
+        setSelectedUserId(uId)
+    }
+
+    const deleteUserFn = async () => {
+        setSendingDelete(true)
+        const { error, data, message } = await deleteUser(selectedUserId)
+        if (error) {
+            toast({
+                variant: "destructive",
+                title: "Eliminar Usuario || " + appName,
+                description: message,
+                duration: 3000
+            })
+        } else {
+            setUsersData((prevS) => {
+                return prevS.map((user) => {
+                    return user.id === data.id ? { ...data, ...prevS } : user
+                }
+                )
+            })
+            setOpenDeleteModal(false)
+            toast({
+                title: "Eliminar Rol || " + appName,
+                description: message,
+                duration: 3000
+            })
+        }
+        setSendingDelete(false)
+    }
+
+    // For editing user
+    const openModalEditUser = async (uId: number) => {
+        dispatch(setCloseModalEditUser(true))
+        setSelectedUserId(uId)
+    }
+
     return (
         <div className="w-full p-2">
-            <DataTable
-                data={data}
-                columns={columns}
-                addBtn={
-                    <MyDialog
-                        title="Agregar Rol"
-                        description=""
-                        content={<h1>Hi</h1>}
-                        btnTrigger={<></>}
-                        myClassName=""
-                        closeModal
-                        onOpenChange={() => {}}
-                        closeBtnProps={{}}
+            {
+                dataTableLoading ? <TableSkeleton /> :
+                    <DataTable
+                        data={usersData}
+                        columns={usersColumns(openModalEditUser, openModalDeleteUser)}
+                        addBtn={
+                            <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddUser(true))}>
+                                <Plus className="mr-2 h-4 w-4 text-white" />
+                                <span className='text-white'>
+                                    Agregar Usuario
+                                </span>
+                            </Button>
+                        }
+                        columnBtnFilter
+                        columnHidden={{}}
+                        orderByObj={{
+                            id: 'updated_at',
+                            desc: true
+                        }}
                     />
-                }
-                columnBtnFilter
-                columnHidden={{
-                    id: true
+            }
+
+            <MyDialog
+                title="Agregar Usuario"
+                description=""
+                content={<AddUserForm />}
+                btnTrigger={<></>}
+                myClassName="max-w-[85vw] h-full max-h-[85vh]"
+                closeModal={closeModalAddUser}
+                onOpenChange={() => dispatch(setCloseModalAddUser(!closeModalAddUser))}
+                closeBtnProps={{
+                    variant: "outline",
+                    type: "button",
+                    className: "w-full mt-4"
                 }}
-                orderByObj={{
-                    id: "",
-                    desc: true
+            />
+
+            <MyDialog
+                title="Eliminar Usuario"
+                description="¿Estas seguro que quieres eliminar este usuario?"
+                content={
+                    <Button
+                        variant="destructive"
+                        className="border-red-500 float-end self-end"
+                        disabled={sendingDelete}
+                        onClick={deleteUserFn}>
+                        {
+                            sendingDelete && <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        }
+                        Eliminar
+                    </Button>
+                }
+                btnTrigger={<></>}
+                myClassName=""
+                closeModal={openDeleteModal}
+                onOpenChange={() => setOpenDeleteModal(!openDeleteModal)}
+                closeBtnProps={{
+                    variant: "outline",
+                    type: "button",
+                }}
+            />
+
+            <MyDialog
+                title="Editar Usuario"
+                description=""
+                content={
+                    <EditUserForm selectedUserId={selectedUserId} />
+                }
+                btnTrigger={<></>}
+                myClassName="max-w-[85vw] h-full max-h-[85vh]"
+                closeModal={closeModalEditUser}
+                onOpenChange={() => dispatch(setCloseModalEditUser(!closeModalEditUser))}
+                closeBtnProps={{
+                    variant: "outline",
+                    type: "button",
+                    className: "w-full mt-4"
                 }}
             />
         </div>
