@@ -51,7 +51,7 @@ const EditRolForm = ({ selectedRol }: TEditRolForm) => {
             if (error) {
                 toast({
                     variant: "destructive",
-                    title: "Agregar Rol || " + appName,
+                    title: "Editar Rol || " + appName,
                     description: message,
                     duration: 3000
                 })
@@ -134,7 +134,7 @@ const EditRolForm = ({ selectedRol }: TEditRolForm) => {
             setFocus("name")
             toast({
                 variant: "destructive",
-                title: "Agregar Rol || " + appName,
+                title: "Editar Rol || " + appName,
                 description: message,
                 duration: 3000
             })
