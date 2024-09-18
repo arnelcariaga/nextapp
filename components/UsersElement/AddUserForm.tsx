@@ -9,7 +9,7 @@ import { appName } from '@/lib/appInfo'
 import Icon from '../Icon'
 import { getSAIs, getRoles, getStatus, addUser } from '@/lib/seed'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { setAddedUsers, setCloseModalAddUser } from '@/redux/slices/usersRoles'
+import { setAddedUsers, setCloseModalAddUser } from '@/redux/slices/usersSlice'
 import { useDispatch } from 'react-redux'
 
 const AddUserForm = () => {

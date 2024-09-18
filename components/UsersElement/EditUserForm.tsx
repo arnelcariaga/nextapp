@@ -11,7 +11,7 @@ import { getSAIs, getRoles, getUserById, addUser, getStatus, updateUser } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useDispatch } from 'react-redux'
 import FormSkeleton from '../FormSkeleton'
-import { setAddedUsers, setCloseModalEditUser } from '@/redux/slices/usersRoles'
+import { setAddedUsers, setCloseModalEditUser } from '@/redux/slices/usersSlice'
 
 interface ISelectedUserId {
     selectedUserId: number
