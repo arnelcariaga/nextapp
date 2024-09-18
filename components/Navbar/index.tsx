@@ -107,10 +107,10 @@ const Navbar = ({ session }: ISession) => {
                                 </Avatar>
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56" align="end" forceMount>
+                        <DropdownMenuContent className="w-72" align="end" forceMount>
                             <DropdownMenuLabel className="font-normal">
                                 <div className="flex flex-col space-y-1">
-                                    <p className="text-sm font-medium leading-none">{session?.user?.name + " " + session?.user.last_name + "(" + session?.user.id_role + ")"}</p>
+                                    <p className="text-sm font-medium leading-none">{session?.user?.name + " " + session?.user.last_name + "(" + session?.user.role_name + ")"}</p>
                                     <p className="text-xs leading-none text-muted-foreground">{session?.user.email}</p>
                                 </div>
                             </DropdownMenuLabel>
@@ -133,7 +133,7 @@ const Navbar = ({ session }: ISession) => {
                                 className="cursor-pointer"
                             >
                                 <LogOut className="mr-2 h-4 w-4" />
-                                <span>Log out</span>
+                                <span>Cerrar sesi&oacute;n</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
