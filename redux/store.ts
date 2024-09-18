@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import rolesSlice from "./slices/rolesSlice";
+import usersSlice from "./slices/usersSlice";
 
 export const store = configureStore({
   reducer: {
     roles: rolesSlice,
+    users: usersSlice
   },
 });
 
