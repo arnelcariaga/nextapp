@@ -51,3 +51,53 @@ export interface IRolesScreens {
   updated_at: string
   screens: Array<IRolesScreensObj>
 }
+
+// Interface for users list with roles
+export interface ISai {
+  id: number,
+  created_at: string,
+  updated_at: string,
+  type: string,
+  component: string,
+  name: string,
+  region: string,
+  province_id: number,
+  municipe_id: number
+}
+
+export interface IRoles {
+  id: number,
+  name: string,
+  created_at: string,
+  updated_at: string,
+  is_admin: boolean
+}
+
+export interface IStatus {
+  id: number,
+  name: string,
+  value: number,
+}
+
+export interface IUserData {
+  id: number,
+  profile_img: string,
+  name: string,
+  last_name: string,
+  doc_id: string,
+  email: string,
+  status: number,
+  statusList: IStatus
+  created_at: string,
+  updated_at: string,
+  username: string,
+  id_sai: number,
+  id_role: number,
+  role: IRoles
+  sai: ISai
+}
+
+export interface IAddUserForm extends IUserData {
+  password: string
+  repeatPassword: string
+}
