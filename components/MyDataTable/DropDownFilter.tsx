@@ -25,10 +25,8 @@ const DropdownFilter = <TData,>({ column, table }: DropdownFilterProps<TData>) =
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" className='ml-3' size="icon">
-          <Icon name="Filter" className=''/>
-        </Button>
+      <DropdownMenuTrigger>
+        <Icon name="Filter" className='ml-2' size={18}/>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuItem onClick={() => setFilterValue(undefined)}>
