@@ -75,7 +75,7 @@ export default function DataTable<T extends object>({
         },
         autoResetPageIndex: false
     })
-    
+
     return (
         <div className='border px-3'>
             <div className="flex justify-between items-center my-4">
@@ -128,16 +128,19 @@ export default function DataTable<T extends object>({
                             {headerGroup.headers.map((header) => {
                                 return (
                                     <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                        {
-                                            header.column.columnDef.enableColumnFilter &&
-                                            <DropdownFilter column={header.column} table={table} />
-                                        }
+                                        <div className='flex'>
+                                            {header.isPlaceholder
+                                                ? null
+                                                : flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext()
+                                                )}
+                                            {
+                                                header.column.columnDef.enableColumnFilter &&
+                                                <DropdownFilter column={header.column} table={table} />
+                                            }
+                                        </div>
+
                                     </TableHead>
                                 )
                             })}
