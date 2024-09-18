@@ -11,6 +11,10 @@ export interface IUser extends IUserCredentials {
   name: string,
   last_name: string,
   email: string,
+  role_name: string
+  role: {
+    name: string
+  }
 }
 
 // Intereface for session on sign in
