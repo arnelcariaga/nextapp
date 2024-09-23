@@ -15,6 +15,7 @@ import { appName } from '@/lib/appInfo'
 import { setCloseModalAddRol, setAddedRoles } from '@/redux/slices/rolesSlice'
 import { useDispatch } from 'react-redux'
 import TableSkeleton from '../MyDataTable/TableSkeleton'
+import { useSession } from 'next-auth/react'
 
 const AddRolForm = () => {
     const {
@@ -27,13 +28,12 @@ const AddRolForm = () => {
     const [sendingForm, setSendingForm] = useState(false)
     const [modules, setModules] = useState<IModules[]>([])
     const [isAdmin, setIsAdmin] = useState(false)
-    const [dataTableLoading, setDataTableLoading] = useState<boolean>(false)
-
+    const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
     const dispatch = useDispatch()
+    const { data: session } = useSession()
 
     useEffect(() => {
         async function getScreensModulesFn() {
-            setDataTableLoading(true)
             const { error, data, message } = await getScreensModules()
 
             if (error) {
@@ -41,7 +41,7 @@ const AddRolForm = () => {
                     variant: "destructive",
                     title: "Agregar Rol || " + appName,
                     description: message,
-                    duration: 3000
+                    duration: 5000
                 })
             } else {
                 const newData = data.map((item: IModules) => (
@@ -112,8 +112,11 @@ const AddRolForm = () => {
         const newData = {
             ...data,
             screens: modules,
-            is_admin: isAdmin
+            is_admin: isAdmin,
+            from_user_id: Number(session?.user.id),
+            from_username: session?.user.username,
         }
+
         const { error, data: resData, message } = await addRol(Array(newData))
 
         if (error) {
@@ -122,7 +125,7 @@ const AddRolForm = () => {
                 variant: "destructive",
                 title: "Agregar Rol || " + appName,
                 description: message,
-                duration: 3000
+                duration: 5000
             })
         } else {
             dispatch(setAddedRoles([{ ...resData }]))
