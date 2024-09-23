@@ -8,7 +8,8 @@ export default auth((req) => {
   // If user is not authenticated and he go to this protected routes then redirect to signIn page
   if (
     !auth && pathname === "/dashboard" ||
-    !auth && pathname === "/roles"
+    !auth && pathname === "/roles" ||
+    !auth && pathname === "/users"
   ) {
     const newUrl = new URL("/", origin);
     return Response.redirect(newUrl);
