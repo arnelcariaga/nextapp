@@ -22,6 +22,9 @@ import Icon from "../Icon"
 import { signOut } from "next-auth/react"
 import { ISession } from "@/lib/interfaces"
 import { usePathname } from "next/navigation"
+import { signOutUser } from "@/lib/seed"
+import { useToast } from "@/hooks/use-toast"
+import { appName } from "@/lib/appInfo"
 
 const dropdownItems: TNavbarUserDropdown[] = [{
     name: "Mi Perfil",
@@ -40,6 +43,7 @@ const dropdownItems: TNavbarUserDropdown[] = [{
 const Navbar = ({ session }: ISession) => {
     const [isScrolled, setIsScrolled] = useState(false)
     const pathname = usePathname()
+    const { toast } = useToast()
 
     const renderNavbarTitle = () => {
         switch (pathname) {
@@ -52,13 +56,15 @@ const Navbar = ({ session }: ISession) => {
             case "/roles":
                 return "Roles"
                 break;
+            case "/sais":
+                return "SAIs"
+                break;
             default:
                 break;
         }
     }
 
     const navbarTitle = renderNavbarTitle()
-
 
     useEffect(() => {
         const handleScroll = () => {
@@ -68,6 +74,22 @@ const Navbar = ({ session }: ISession) => {
 
         return () => window.removeEventListener("scroll", handleScroll)
     }, [])
+
+    const logoutFn = async () => {
+        const { error, message } = await signOutUser(session?.user.username as string)
+        if (error) {
+            toast({
+                variant: "destructive",
+                title: "Cerrar sesión || " + appName,
+                description: message,
+                duration: 5000
+            })
+        } else {
+            signOut({
+                callbackUrl: "/"
+            })
+        }
+    }
 
     return (
         <header className={`${isScrolled ? "bg-white dark:bg-gray-900 shadow-md" : "bg-white dark:bg-slate-900"} sticky top-0 z-50 w-full transition-all duration-300`}>
@@ -127,9 +149,7 @@ const Navbar = ({ session }: ISession) => {
                             }
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
-                                onClick={() => signOut({
-                                    callbackUrl: "/"
-                                })}
+                                onClick={logoutFn}
                                 className="cursor-pointer"
                             >
                                 <LogOut className="mr-2 h-4 w-4" />
