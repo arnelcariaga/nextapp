@@ -11,11 +11,12 @@ import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "@/redux/store"
 import { Button } from "@/components/ui/button"
 import { Plus, Loader2 } from "lucide-react"
-import { setCloseModalAddRol, setCloseModalEditRol } from "@/redux/slices/rolesSlice"
+import { setCloseModalAddRol, setCloseModalEditRol, setAddedRoles } from "@/redux/slices/rolesSlice"
 import { IRolesScreens } from "@/lib/interfaces"
 import EditRolForm from "./EditRolForm"
 import TableSkeleton from "../MyDataTable/TableSkeleton"
 import { TSelectedRolObj } from "@/lib/types"
+import { useSession } from "next-auth/react"
 
 export default function RolesElement() {
     const [rolesData, setRolesData] = useState<IRolesScreens[]>([])
@@ -30,11 +31,11 @@ export default function RolesElement() {
         id: 0,
         name: ""
     })
-    const [dataTableLoading, setDataTableLoading] = useState<boolean>(false)
+    const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
+    const { data: session } = useSession()
 
     useEffect(() => {
         async function getRolesFn() {
-            setDataTableLoading(true)
             const { error, data, message } = await getRoles()
 
             if (error) {
@@ -42,7 +43,7 @@ export default function RolesElement() {
                     variant: "destructive",
                     title: "Roles || " + appName,
                     description: message,
-                    duration: 3000
+                    duration: 5000
                 })
             } else {
                 setRolesData([...data])
@@ -61,10 +62,10 @@ export default function RolesElement() {
 
                     if (index !== -1) {
                         const updatedItems = [...prevS]
-                        
+
                         updatedItems[index] = addedRoles[0]
                         return updatedItems
-                    }else{
+                    } else {
                         return [addedRoles[0], ...prevS] as IRolesScreens[]
                     }
                 })
@@ -84,22 +85,27 @@ export default function RolesElement() {
 
     const deleteRolFn = async () => {
         setSendingDelete(true)
-        const { error, data: resData, message } = await deleteRol(selectedRolData.id)
+
+        const userData = {
+            from_user_id: Number(session?.user.id),
+            from_username: session?.user.username,
+        }
+
+        const { error, data, message } = await deleteRol(selectedRolData.id, Array(userData))
         if (error) {
             toast({
                 variant: "destructive",
                 title: "Eliminar Rol || " + appName,
                 description: message,
-                duration: 3000
+                duration: 5000
             })
         } else {
-            const newData = rolesData.filter((rol) => rol.id != selectedRolData.id)
-            setRolesData(newData)
+            dispatch(setAddedRoles([{ ...data }]))
             setOpenDeleteModal(false)
             toast({
                 title: "Eliminar Rol || " + appName,
                 description: message,
-                duration: 3000
+                duration: 5000
             })
         }
         setSendingDelete(false)
