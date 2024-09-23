@@ -6,6 +6,7 @@ export interface IUserCredentials {
 
 // Intereface for user session object details
 export interface IUser extends IUserCredentials {
+  id: string
   id_role: number,
   profile_img: string,
   name: string,
@@ -15,6 +16,7 @@ export interface IUser extends IUserCredentials {
   role: {
     name: string
   }
+  token: string
 }
 
 // Intereface for session on sign in
@@ -27,7 +29,8 @@ export interface ISession {
 // Interface add rol fields
 export interface IAddRol {
   name: string,
-  isAdmin: boolean
+  isAdmin: boolean,
+  status: number
 }
 
 // Interface for list of screens modules when adding a new rol in modal
@@ -53,6 +56,7 @@ export interface IRolesScreens {
   name: string
   is_admin: boolean
   updated_at: string
+  status: number
   screens: Array<IRolesScreensObj>
 }
 
@@ -66,7 +70,21 @@ export interface ISai {
   name: string,
   region: string,
   province_id: number,
-  municipe_id: number
+  municipe_id: number,
+  status: number
+  province: {
+    id: number,
+    name: string,
+    created_at: string,
+    updated_at: string
+  },
+  municipe: {
+    id: number,
+    name: string
+    created_at: string,
+    updated_at: string,
+    province_id: number
+  }
 }
 
 export interface IRoles {
