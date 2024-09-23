@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "",
 };
 
-export default function DashboardLayout({
+export default function RolesLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
