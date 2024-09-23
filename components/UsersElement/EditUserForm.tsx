@@ -7,11 +7,12 @@ import { IAddUserForm, ISai, IRoles, IStatus, IUserData } from '@/lib/interfaces
 import { useToast } from "@/hooks/use-toast"
 import { appName } from '@/lib/appInfo'
 import Icon from '../Icon'
-import { getSAIs, getRoles, getUserById, addUser, getStatus, updateUser } from '@/lib/seed'
+import { getSAIs, getRoles, getUserById, getStatus, updateUser } from '@/lib/seed'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useDispatch } from 'react-redux'
 import FormSkeleton from '../FormSkeleton'
 import { setAddedUsers, setCloseModalEditUser } from '@/redux/slices/usersSlice'
+import { useSession } from 'next-auth/react'
 
 interface ISelectedUserId {
     selectedUserId: number
@@ -65,35 +66,25 @@ const EditUserForm = ({ selectedUserId }: ISelectedUserId) => {
             name: "",
             region: "",
             province_id: 0,
-            municipe_id: 0
+            municipe_id: 0,
+            status: 0,
+            municipe: {
+                id: 0,
+                name: "",
+                created_at: "",
+                updated_at: "",
+                province_id: 0
+            },
+            province: {
+                id: 0,
+                name: "",
+                created_at: "",
+                updated_at: ""
+            }
         }
     })
     const dispatch = useDispatch()
-
-    // Load user
-    useEffect(() => {
-        async function getUserFn() {
-            setLoadingData(true)
-            const { error, data, message } = await getUserById(selectedUserId)
-
-            if (error) {
-                toast({
-                    variant: "destructive",
-                    title: "Editar Usuario || " + appName,
-                    description: message,
-                    duration: 3000
-                })
-            } else {
-                setUserData(data)
-
-                setValue("sai", data.sai);
-                setValue("role", data.role);
-                setValue("status", data.status);
-            }
-            setLoadingData(false)
-        }
-        getUserFn()
-    }, [toast, selectedUserId, setValue])
+    const { data: session } = useSession()
 
     // Load SAIs
     useEffect(() => {
@@ -105,7 +96,7 @@ const EditUserForm = ({ selectedUserId }: ISelectedUserId) => {
                     variant: "destructive",
                     title: "Editar Usuario || " + appName,
                     description: message,
-                    duration: 3000
+                    duration: 5000
                 })
             } else {
                 setSais(data)
@@ -125,7 +116,7 @@ const EditUserForm = ({ selectedUserId }: ISelectedUserId) => {
                     variant: "destructive",
                     title: "Editar Usuario || " + appName,
                     description: message,
-                    duration: 3000
+                    duration: 5000
                 })
             } else {
                 setRoles(data)
@@ -145,7 +136,7 @@ const EditUserForm = ({ selectedUserId }: ISelectedUserId) => {
                     variant: "destructive",
                     title: "Editar Usuario || " + appName,
                     description: message,
-                    duration: 3000
+                    duration: 5000
                 })
             } else {
                 setStatus(data)
@@ -155,23 +146,49 @@ const EditUserForm = ({ selectedUserId }: ISelectedUserId) => {
         getStatusFn()
     }, [toast])
 
+    // Load user
+    useEffect(() => {
+        async function getUserFn() {
+            const { error, data, message } = await getUserById(selectedUserId)
+
+            if (error) {
+                toast({
+                    variant: "destructive",
+                    title: "Editar Usuario || " + appName,
+                    description: message,
+                    duration: 5000
+                })
+            } else {
+                setUserData(data)
+
+                setValue("sai", data.sai);
+                setValue("role", data.role);
+                setValue("status", data.status);
+            }
+            setLoadingData(false)
+        }
+        getUserFn()
+    }, [toast, selectedUserId, setValue])
+
     const onSubmit: SubmitHandler<IAddUserForm> = async (data) => {
         setSendingForm(true)
 
         const newData = {
             ...data,
-            id_sai: data.sai.id,
-            id_role: data.role.id,
+            id_sai: Number(data.sai.id),
+            id_role: Number(data.role.id),
+            from_user_id: Number(session?.user.id),
+            from_username: session?.user.username
         }
 
-       const { error, data: resData, message } = await updateUser(selectedUserId, Array(newData))
+        const { error, data: resData, message } = await updateUser(selectedUserId, Array(newData))
 
         if (error) {
             toast({
                 variant: "destructive",
                 title: "Agregar Uusario || " + appName,
                 description: message,
-                duration: 3000
+                duration: 5000
             })
         } else {
             dispatch(setAddedUsers([{ ...resData }]))
@@ -179,7 +196,7 @@ const EditUserForm = ({ selectedUserId }: ISelectedUserId) => {
             toast({
                 title: "Editar Usuario || " + appName,
                 description: message,
-                duration: 3000
+                duration: 5000
             })
         }
         setSendingForm(false)
@@ -244,7 +261,7 @@ const EditUserForm = ({ selectedUserId }: ISelectedUserId) => {
                             {...register("email", {
                                 required: "Campo requerido",
                                 pattern: {
-                                    value: /\S+@\S+\.\S+/,
+                                    value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
                                     message: "Formato de correo no válido",
                                 },
                             })}
@@ -292,13 +309,13 @@ const EditUserForm = ({ selectedUserId }: ISelectedUserId) => {
                 <div className="space-y-2">
                     <Label htmlFor="sai">SAI</Label>
                     <Controller
-                        name="sai"
+                        name="sai.id"
                         control={control}
                         rules={{ required: 'Seleccionar SAI' }}
                         render={({ field }) => (
                             <Select
                                 onValueChange={field.onChange}
-                                value={String(field.value.id)}
+                                value={String(field.value)}
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Seleccionar" />
@@ -320,13 +337,13 @@ const EditUserForm = ({ selectedUserId }: ISelectedUserId) => {
                 <div className="space-y-2">
                     <Label htmlFor="email">Rol</Label>
                     <Controller
-                        name="role"
+                        name="role.id"
                         control={control}
                         rules={{ required: 'Seleccione el rol' }}
                         render={({ field }) => (
                             <Select
                                 onValueChange={field.onChange}
-                                value={String(field.value.id)}
+                                value={String(field.value)}
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Seleccionar" />
