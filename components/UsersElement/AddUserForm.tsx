@@ -11,6 +11,8 @@ import { getSAIs, getRoles, getStatus, addUser } from '@/lib/seed'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { setAddedUsers, setCloseModalAddUser } from '@/redux/slices/usersSlice'
 import { useDispatch } from 'react-redux'
+import FormSkeleton from '../FormSkeleton'
+import { useSession } from 'next-auth/react'
 
 const AddUserForm = () => {
     const {
@@ -26,6 +28,8 @@ const AddUserForm = () => {
     const [roles, setRoles] = useState<IRoles[]>([])
     const [status, setStatus] = useState<IStatus[]>([])
     const dispatch = useDispatch()
+    const [loadingInputsData, setLoadingInputsData] = useState(true)
+    const { data: session } = useSession()
 
     // Load SAIs
     useEffect(() => {
@@ -37,7 +41,7 @@ const AddUserForm = () => {
                     variant: "destructive",
                     title: "Agregar Usuario || " + appName,
                     description: message,
-                    duration: 3000
+                    duration: 5000
                 })
             } else {
                 setSais(data)
@@ -57,7 +61,7 @@ const AddUserForm = () => {
                     variant: "destructive",
                     title: "Agregar Usuario || " + appName,
                     description: message,
-                    duration: 3000
+                    duration: 5000
                 })
             } else {
                 setRoles(data)
@@ -67,7 +71,7 @@ const AddUserForm = () => {
         getRolesFn()
     }, [toast])
 
-    // Load status
+    // Load status, i put the setLoadingInputsData(false) here couz it's the last query, so i query above first
     useEffect(() => {
         async function getStatusFn() {
             const { error, data, message } = await getStatus()
@@ -77,11 +81,12 @@ const AddUserForm = () => {
                     variant: "destructive",
                     title: "Agregar Usuario || " + appName,
                     description: message,
-                    duration: 3000
+                    duration: 5000
                 })
             } else {
                 setStatus(data)
             }
+            setLoadingInputsData(false)
 
         }
         getStatusFn()
@@ -100,6 +105,8 @@ const AddUserForm = () => {
             password: data.password,
             status: data.statusList.name,
             username: data.username,
+            from_user_id: Number(session?.user.id),
+            from_username: session?.user.username
         }
 
         const { error, data: resData, message } = await addUser(Array(newData))
@@ -109,15 +116,23 @@ const AddUserForm = () => {
                 variant: "destructive",
                 title: "Agregar Usuario || " + appName,
                 description: message,
-                duration: 3000
+                duration: 5000
             })
         } else {
             dispatch(setAddedUsers([{ ...resData }]))
             dispatch(setCloseModalAddUser(false))
+            toast({
+                title: "Agregar Usuario || " + appName,
+                description: message,
+                duration: 5000
+            })
         }
         setSendingForm(false)
     };
 
+    if (loadingInputsData) {
+        return <FormSkeleton />
+    }
     return (
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className='grid grid-cols-3 grid-rows-3 gap-4'>
@@ -162,7 +177,7 @@ const AddUserForm = () => {
                             {...register("email", {
                                 required: "Campo requerido",
                                 pattern: {
-                                    value: /\S+@\S+\.\S+/,
+                                    value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
                                     message: "Formato de correo no válido",
                                 },
                             })}
