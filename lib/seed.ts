@@ -1,13 +1,25 @@
 import { api_url } from "./urls";
+import { getSession } from "next-auth/react";
 
 function jsonResponse(error: boolean, message: string, data: Array<object>) {
   return { error, message, data };
 }
 
-// API call for roles and screens CRUD
+async function getUserToken() {
+  const session = await getSession();
+  const token = session?.user.token;
+  return token;
+}
+
+// --------------------------------- API call for roles CRUD ---------------------------------
 export const getScreensModules = async () => {
   try {
-    const res = await fetch(api_url + "/api/screens_modules");
+    const token = await getUserToken();
+    const res = await fetch(api_url + "/api/screens_modules", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const resJson = await res.json();
     // I don't call jsonResponse here becouse the structure of res it's the same
     return resJson;
@@ -22,10 +34,12 @@ export const getScreensModules = async () => {
 
 export const addRol = async (data: Array<object>) => {
   try {
+    const token = await getUserToken();
     const res = await fetch(api_url + "/api/add_rol", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ ...data[0] }),
     });
@@ -44,7 +58,12 @@ export const addRol = async (data: Array<object>) => {
 
 export const getRoles = async () => {
   try {
-    const res = await fetch(api_url + "/api/roles");
+    const token = await getUserToken();
+    const res = await fetch(api_url + "/api/roles", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const resJson = await res.json();
     // I don't call jsonResponse here becouse the structure of res it's the same
     return resJson;
@@ -57,15 +76,18 @@ export const getRoles = async () => {
   }
 };
 
-export const deleteRol = async (rolId: number | null) => {
+export const deleteRol = async (rolId: number | null, data: Array<object>) => {
   try {
+    const token = await getUserToken();
     const res = await fetch(api_url + `/api/delete_rol`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         rol_id: rolId,
+        ...data[0],
       }),
     });
     const resJson = await res.json();
@@ -83,10 +105,12 @@ export const deleteRol = async (rolId: number | null) => {
 
 export const getRolById = async (rolId: number | null) => {
   try {
+    const token = await getUserToken();
     const res = await fetch(api_url + `/api/get_rol_by_id`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         rol_id: rolId,
@@ -107,10 +131,12 @@ export const getRolById = async (rolId: number | null) => {
 
 export const updateRol = async (rolId: number | null, data: Array<object>) => {
   try {
+    const token = await getUserToken();
     const res = await fetch(api_url + `/api/update_rol`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ ...data[0], rol_id: rolId }),
     });
@@ -127,10 +153,16 @@ export const updateRol = async (rolId: number | null, data: Array<object>) => {
   }
 };
 
-// API call for users and roles CRUD
+// --------------------------------- API call for users CRUD ---------------------------------
 export const getUsers = async () => {
   try {
-    const res = await fetch(api_url + "/api/users");
+    const token = await getUserToken();
+
+    const res = await fetch(api_url + "/api/users", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const resJson = await res.json();
     // I don't call jsonResponse here becouse the structure of res it's the same
     return resJson;
@@ -145,7 +177,13 @@ export const getUsers = async () => {
 
 export const getSAIs = async () => {
   try {
-    const res = await fetch(api_url + "/api/sais");
+    const token = await getUserToken();
+
+    const res = await fetch(api_url + "/api/sais", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const resJson = await res.json();
     // I don't call jsonResponse here becouse the structure of res it's the same
     return resJson;
@@ -160,7 +198,12 @@ export const getSAIs = async () => {
 
 export const getStatus = async () => {
   try {
-    const res = await fetch(api_url + "/api/status");
+    const token = await getUserToken();
+    const res = await fetch(api_url + "/api/status", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const resJson = await res.json();
     // I don't call jsonResponse here becouse the structure of res it's the same
     return resJson;
@@ -175,10 +218,12 @@ export const getStatus = async () => {
 
 export const addUser = async (data: Array<object>) => {
   try {
+    const token = await getUserToken();
     const res = await fetch(api_url + "/api/signUp", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ ...data[0] }),
     });
@@ -195,15 +240,18 @@ export const addUser = async (data: Array<object>) => {
   }
 };
 
-export const deleteUser = async (uId: number | null) => {
+export const deleteUser = async (uId: number | null, data: Array<object>) => {
   try {
+    const token = await getUserToken();
     const res = await fetch(api_url + `/api/delete_user`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         user_id: uId,
+        ...data[0],
       }),
     });
     const resJson = await res.json();
@@ -221,10 +269,12 @@ export const deleteUser = async (uId: number | null) => {
 
 export const getUserById = async (uId: number | null) => {
   try {
+    const token = await getUserToken();
     const res = await fetch(api_url + `/api/get_user_by_id`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         user_id: uId,
@@ -245,10 +295,12 @@ export const getUserById = async (uId: number | null) => {
 
 export const updateUser = async (uId: number | null, data: Array<object>) => {
   try {
+    const token = await getUserToken();
     const res = await fetch(api_url + `/api/update_user`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ ...data[0], user_id: uId }),
     });
@@ -260,6 +312,167 @@ export const updateUser = async (uId: number | null, data: Array<object>) => {
     return jsonResponse(
       true,
       "Hubo un error al actualizar el usuario, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+export const signOutUser = async (username: string) => {
+  try {
+    const token = await getUserToken();
+    const res = await fetch(api_url + `/api/signOut`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username }),
+    });
+    const resJson = await res.json();
+
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al cerrar sesión, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+// --------------------------------- API call for SAI ---------------------------------
+export const getProvinces = async () => {
+  try {
+    const token = await getUserToken();
+
+    const res = await fetch(api_url + "/api/provinces", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const resJson = await res.json();
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al cargar las provincias, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+export const getMunicipalities = async (provinceId: number) => {
+  try {
+    const token = await getUserToken();
+
+    const res = await fetch(api_url + `/api/municipalities/${provinceId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const resJson = await res.json();
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al cargar los municipios, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+export const addSAI = async (data: Array<object>) => {
+  try {
+    const token = await getUserToken();
+    const res = await fetch(api_url + "/api/add_sai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ...data[0] }),
+    });
+
+    const resJson = await res.json();
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al agregar el SAI, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+export const deleteSai = async (data: Array<object>) => {
+  try {
+    const token = await getUserToken();
+    const res = await fetch(api_url + `/api/delete_sai`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        ...data[0],
+      }),
+    });
+    const resJson = await res.json();
+
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al eliminar el SAI, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+export const getSaiById = async (saiId: number) => {
+  try {
+    const token = await getUserToken();
+
+    const res = await fetch(api_url + `/api/get_sai_by_id/${saiId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const resJson = await res.json();
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al cargar el SAI, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+export const updateSai = async (saiId: number | null, data: Array<object>) => {
+  try {
+    const token = await getUserToken();
+    const res = await fetch(api_url + `/api/update_sai`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ...data[0], sai_id: saiId }),
+    });
+    const resJson = await res.json();
+
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al actualizar el SAI, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
       []
     );
   }
