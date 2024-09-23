@@ -15,6 +15,7 @@ import { setCloseModalAddUser, setCloseModalEditUser } from "@/redux/slices/user
 import { IUserData } from "@/lib/interfaces"
 import EditUserForm from "./EditUserForm"
 import TableSkeleton from "../MyDataTable/TableSkeleton"
+import { useSession } from "next-auth/react"
 
 export default function UsersElement() {
     const [usersData, setUsersData] = useState<IUserData[]>([])
@@ -24,13 +25,14 @@ export default function UsersElement() {
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
     const [sendingDelete, setSendingDelete] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<number>(0)
-    const [dataTableLoading, setDataTableLoading] = useState<boolean>(false)
+    const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
     const closeModalAddUser = useSelector((state: RootState) => state.users.closeModalAddUser)
     const closeModalEditUser = useSelector((state: RootState) => state.users.closeModalEditUser)
+    const [selectedUsername, setSelectedUsername] = useState<string>("")
+    const { data: session } = useSession()
 
     useEffect(() => {
         async function getUsersFn() {
-            setDataTableLoading(true)
             const { error, data, message } = await getUsers()
 
             if (error) {
@@ -38,7 +40,7 @@ export default function UsersElement() {
                     variant: "destructive",
                     title: "Roles || " + appName,
                     description: message,
-                    duration: 3000
+                    duration: 5000
                 })
             } else {
                 setUsersData([...data])
@@ -70,20 +72,28 @@ export default function UsersElement() {
     }, [addedUsers])
 
     // For deleting user
-    const openModalDeleteUser = (uId: number) => {
+    const openModalDeleteUser = (uId: number, username: string) => {
         setOpenDeleteModal(true)
         setSelectedUserId(uId)
+        setSelectedUsername(username)
     }
 
     const deleteUserFn = async () => {
         setSendingDelete(true)
-        const { error, data, message } = await deleteUser(selectedUserId)
+
+        const userData = [{
+            username: selectedUsername,
+            from_user_id: Number(session?.user.id),
+            from_username: session?.user.username,
+        }]
+
+        const { error, data, message } = await deleteUser(selectedUserId, userData)
         if (error) {
             toast({
                 variant: "destructive",
                 title: "Eliminar Usuario || " + appName,
                 description: message,
-                duration: 3000
+                duration: 5000
             })
         } else {
             setUsersData((prevS) => {
@@ -94,9 +104,9 @@ export default function UsersElement() {
             })
             setOpenDeleteModal(false)
             toast({
-                title: "Eliminar Rol || " + appName,
+                title: "Eliminar Usuario || " + appName,
                 description: message,
-                duration: 3000
+                duration: 5000
             })
         }
         setSendingDelete(false)
