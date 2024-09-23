@@ -3,23 +3,25 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2, Save } from "lucide-react"
-import { useForm, SubmitHandler } from "react-hook-form"
-import { IAddRol, IModules } from '@/lib/interfaces'
+import { useForm, SubmitHandler, Controller } from "react-hook-form"
+import { IAddRol, IModules, IStatus } from '@/lib/interfaces'
 import { useToast } from "@/hooks/use-toast"
 import { Checkbox } from "@/components/ui/checkbox"
 import DataTable from '../MyDataTable/data-table'
 import { screensModulesColumns } from './screensModulesColumns'
-import { getRolById, updateRol } from '@/lib/seed'
+import { getRolById, updateRol, getStatus } from '@/lib/seed'
 import { appName } from '@/lib/appInfo'
 import { setCloseModalEditRol, setAddedRoles } from '@/redux/slices/rolesSlice'
 import { useDispatch } from 'react-redux'
 import TableSkeleton from '../MyDataTable/TableSkeleton'
 import { TEditRolForm } from '@/lib/types'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useSession } from 'next-auth/react'
 
 interface IDataResponse {
     id: number,
     name: string,
-    privileges: {
+    permissions: {
         id_screen: number
         view: boolean,
         create: boolean,
@@ -33,19 +35,43 @@ const EditRolForm = ({ selectedRol }: TEditRolForm) => {
         register,
         handleSubmit,
         formState: { errors },
-        setFocus
+        setFocus,
+        control,
+        setValue
     } = useForm<IAddRol>()
     const { toast } = useToast()
     const [sendingForm, setSendingForm] = useState(false)
     const [modules, setModules] = useState<IModules[]>([])
     const [rolName, setRolName] = useState<string>(selectedRol.name)
     const [isAdmin, setIsAdmin] = useState(false)
-    const [dataTableLoading, setDataTableLoading] = useState<boolean>(false)
+    const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
+    const [status, setStatus] = useState<IStatus[]>([])
     const dispatch = useDispatch()
+    const { data: session } = useSession()
 
+    // Load status
+    useEffect(() => {
+        async function getStatusFn() {
+            const { error, data, message } = await getStatus()
+
+            if (error) {
+                toast({
+                    variant: "destructive",
+                    title: "Editar Rol || " + appName,
+                    description: message,
+                    duration: 5000
+                })
+            } else {
+                setStatus(data)
+            }
+
+        }
+        getStatusFn()
+    }, [toast])
+
+    // Get rol data
     useEffect(() => {
         async function getScreensModulesFn() {
-            setDataTableLoading(true)
             const { error, data, message } = await getRolById(selectedRol.id)
 
             if (error) {
@@ -53,7 +79,7 @@ const EditRolForm = ({ selectedRol }: TEditRolForm) => {
                     variant: "destructive",
                     title: "Editar Rol || " + appName,
                     description: message,
-                    duration: 3000
+                    duration: 5000
                 })
             } else {
                 const screens = data.screens
@@ -63,14 +89,15 @@ const EditRolForm = ({ selectedRol }: TEditRolForm) => {
                         id: item.id,
                         name: item.name,
                         permissions: {
-                            id_screen: item.privileges.id_screen,
-                            view: item.privileges.view,
-                            create: item.privileges.create,
-                            edit: item.privileges.edit,
-                            delete: item.privileges.delete
+                            id_screen: item.permissions.id_screen,
+                            view: item.permissions.view,
+                            create: item.permissions.create,
+                            edit: item.permissions.edit,
+                            delete: item.permissions.delete
                         }
                     }
                 ))
+                setValue("status", data.status);
                 setModules(screens_peremissions)
             }
             setDataTableLoading(false)
@@ -79,6 +106,7 @@ const EditRolForm = ({ selectedRol }: TEditRolForm) => {
         getScreensModulesFn()
     }, [toast, selectedRol])
 
+    // Check screens permission are checked
     useEffect(() => {
         const allChecked = modules.every(
             (row) =>
@@ -125,7 +153,9 @@ const EditRolForm = ({ selectedRol }: TEditRolForm) => {
         const newData = {
             ...data,
             screens: modules,
-            is_admin: isAdmin
+            is_admin: isAdmin,
+            from_user_id: Number(session?.user.id),
+            from_username: session?.user.username
         }
 
         const { error, data: resData, message } = await updateRol(selectedRol.id, Array(newData))
@@ -136,7 +166,7 @@ const EditRolForm = ({ selectedRol }: TEditRolForm) => {
                 variant: "destructive",
                 title: "Editar Rol || " + appName,
                 description: message,
-                duration: 3000
+                duration: 5000
             })
         } else {
             dispatch(setAddedRoles([{ ...resData }]))
@@ -187,6 +217,34 @@ const EditRolForm = ({ selectedRol }: TEditRolForm) => {
                                     <p className="text-sm text-muted-foreground">
                                         Los administradores por defecto pueden cambiar pacientes a otro SAI y tener control total del sistema
                                     </p>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="email">Status</Label>
+                                    <Controller
+                                        name="status"
+                                        control={control}
+                                        rules={{ required: 'Seleccione el status' }}
+                                        render={({ field }) => {
+                                            return (
+                                                <Select
+                                                    onValueChange={field.onChange}
+                                                    value={String(field.value)}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Seleccionar" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {
+                                                            status.map(({ id, value, name }) => {
+                                                                return <SelectItem key={id} value={value.toString()}>{name}</SelectItem>
+                                                            })
+                                                        }
+                                                    </SelectContent>
+                                                </Select>
+                                            )
+                                        }}
+                                    />
+                                    <span className='text-red-500 text-sm'>{errors.status && errors.status.message}</span>
                                 </div>
                             </div>
                         </div>
