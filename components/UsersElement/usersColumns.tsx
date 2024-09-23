@@ -7,8 +7,9 @@ import { IUserData } from "@/lib/interfaces"
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import Icon from "../Icon";
+import { Badge } from "@/components/ui/badge"
 
-export const usersColumns = (openModalEditUser: (id: number) => void, openModalDeleteUser: (uId: number) => void): ColumnDef<IUserData>[] => [
+export const usersColumns = (openModalEditUser: (id: number) => void, openModalDeleteUser: (uId: number, username: string) => void): ColumnDef<IUserData>[] => [
     {
         accessorKey: "name",
         header: "Nombre Comp.",
@@ -44,7 +45,10 @@ export const usersColumns = (openModalEditUser: (id: number) => void, openModalD
             if (filterValue === 'Inactivo') return String(statusValue) === "Inactivo";
             return true; // Show all if no filter
         },
-        cell: (info) => info.getValue()
+        cell: (info) => {
+            const val = info.getValue()
+            return val === "Inactivo" ? <Badge variant="destructive">Inactivo</Badge> : <Badge variant="secondary">Activo</Badge>
+        }
     },
     {
         accessorKey: "updated_at",
@@ -59,13 +63,14 @@ export const usersColumns = (openModalEditUser: (id: number) => void, openModalD
         header: "Acciones",
         cell: ({ row }) => {
             const uId = row.original.id
+            const username = row.original.username
             return (
                 <div className="space-x-2 flex aligns-center">
                     <Button variant="default" className="bg-amber-500" onClick={() => { }}>Iniciar sesi&oacute;n</Button>
                     <Button variant="secondary" size="icon" onClick={() => openModalEditUser(uId)}>
                         <Icon name='Edit' className="" />
                     </Button>
-                    <Button variant="destructive" size="icon" onClick={() => openModalDeleteUser(uId)}>
+                    <Button variant="destructive" size="icon" onClick={() => openModalDeleteUser(uId, username)}>
                         <Icon name="Trash2" className="" />
                     </Button>
                 </div>
