@@ -149,12 +149,12 @@ const Sidebar = () => {
     const filterMenuByPermissions = (menu: LeftSidebarMenuItem[]): LeftSidebarMenuItem[] => {
         return menu.filter((menuItem) => {
             // Encontrar la pantalla correspondiente en los permisos del usuario
-            const screenPermission = session?.user.screens.find(screen => screen.name === menuItem.title);
+            const screenPermission = status === "authenticated" && session?.user.screens.find(screen => screen.name === menuItem.title);
 
             // Si no se encuentran permisos para la pantalla, devolver null
-            // if (!screenPermission) {
-            //     return null;
-            // }
+            if (!screenPermission) {
+                return null;
+            }
 
             // Si el item tiene subitems, filtrarlos según los permisos del usuario
             if (menuItem.subItems) {
@@ -164,7 +164,7 @@ const Sidebar = () => {
                         // Filtrar subitems basado en el tipo de acción
 
                         // Verificar si el permiso correspondiente es '1'
-                        return String(screenPermission?.permissions[subItem.action as keyof typeof screenPermission.permissions]) === '1';
+                        return String(screenPermission.permissions[subItem.action as keyof typeof screenPermission.permissions]) === '1';
                     }
                 });
 
