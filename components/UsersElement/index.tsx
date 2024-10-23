@@ -177,11 +177,6 @@ export default function UsersElement() {
                 myClassName="max-w-[85vw] h-full max-h-[85vh]"
                 closeModal={closeModalAddUser}
                 onOpenChange={() => dispatch(setCloseModalAddUser(!closeModalAddUser))}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                    className: "w-full mt-4"
-                }}
             />
 
             <MyDialog
@@ -203,10 +198,6 @@ export default function UsersElement() {
                 myClassName=""
                 closeModal={openDeleteModal}
                 onOpenChange={() => setOpenDeleteModal(!openDeleteModal)}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                }}
             />
 
             <MyDialog
@@ -219,11 +210,6 @@ export default function UsersElement() {
                 myClassName="max-w-[85vw] h-full max-h-[85vh]"
                 closeModal={closeModalEditUser}
                 onOpenChange={() => dispatch(setCloseModalEditUser(!closeModalEditUser))}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                    className: "w-full mt-4"
-                }}
             />
         </div>
     )

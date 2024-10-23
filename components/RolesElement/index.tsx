@@ -171,11 +171,6 @@ export default function RolesElement() {
                 myClassName="max-w-[100vw] h-full max-h-[100vh]"
                 closeModal={closeModalAddRol}
                 onOpenChange={() => dispatch(setCloseModalAddRol(!closeModalAddRol))}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                    className: "w-full mt-4"
-                }}
             />
 
             <MyDialog
@@ -197,10 +192,6 @@ export default function RolesElement() {
                 myClassName=""
                 closeModal={openDeleteModal}
                 onOpenChange={() => setOpenDeleteModal(!openDeleteModal)}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                }}
             />
 
             <MyDialog
@@ -213,11 +204,6 @@ export default function RolesElement() {
                 myClassName="max-w-[100vw] h-full max-h-[100vh]"
                 closeModal={closeModalEditRol}
                 onOpenChange={() => dispatch(setCloseModalEditRol(!closeModalEditRol))}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                    className: "w-full mt-4"
-                }}
             />
         </div>
     )

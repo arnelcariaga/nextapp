@@ -314,11 +314,6 @@ export default function UserProfile({ params }: TCommunityOperativeUserParams) {
                 myClassName="md:w-[50vw] w-[100vw] h-full max-h-[75vh]"
                 closeModal={openAddTrackingForm}
                 onOpenChange={() => setOpenAddTrackingForm(!openAddTrackingForm)}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                    className: "w-full mt-4"
-                }}
             />
 
             <MyDialog
@@ -334,11 +329,6 @@ export default function UserProfile({ params }: TCommunityOperativeUserParams) {
                 myClassName="md:w-[40vw] w-[100vw] max-w-[95vw] h-full max-h-[75vh]"
                 closeModal={openAddEnrollingForm}
                 onOpenChange={() => setOpenAddEnrollingForm(!openAddEnrollingForm)}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                    className: "w-full mt-4"
-                }}
             />
 
             <MyDialog
@@ -355,11 +345,6 @@ export default function UserProfile({ params }: TCommunityOperativeUserParams) {
                 myClassName="md:w-[100vw] w-[100vw] max-w-[100vw] h-full max-h-[100vh]"
                 closeModal={openAddIndexForm}
                 onOpenChange={() => setOpenAddIndexForm(!openAddIndexForm)}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                    className: "w-full mt-4"
-                }}
             />
 
             <MyDialog
@@ -372,11 +357,6 @@ export default function UserProfile({ params }: TCommunityOperativeUserParams) {
                 myClassName="max-w-[100vw] h-full max-h-[100vh]"
                 closeModal={closeModalEditCommunityOperationUser}
                 onOpenChange={() => dispatch(setCloseModalEditCommunityOperationUser(!closeModalEditCommunityOperationUser))}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                    className: "w-full mt-4"
-                }}
             />
         </div>
     )

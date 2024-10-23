@@ -136,10 +136,6 @@ export default function UserList() {
                 myClassName=""
                 closeModal={openDeleteModal}
                 onOpenChange={() => setOpenDeleteModal(!openDeleteModal)}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                }}
             />
         </div>
     )

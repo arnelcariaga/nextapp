@@ -163,11 +163,6 @@ export default function SaisElement() {
                 myClassName="max-w-[85vw] h-full max-h-[85vh]"
                 closeModal={closeModalAddSai}
                 onOpenChange={() => dispatch(setCloseModalAddSai(!closeModalAddSai))}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                    className: "w-full mt-4"
-                }}
             />
 
             <MyDialog
@@ -189,10 +184,6 @@ export default function SaisElement() {
                 myClassName=""
                 closeModal={openDeleteModal}
                 onOpenChange={() => setOpenDeleteModal(!openDeleteModal)}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                }}
             />
 
             <MyDialog
@@ -205,11 +196,6 @@ export default function SaisElement() {
                 myClassName="max-w-[85vw] h-full max-h-[85vh]"
                 closeModal={closeModalEditSai}
                 onOpenChange={() => dispatch(setCloseModalEditSai(!closeModalEditSai))}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                    className: "w-full mt-4"
-                }}
             />
         </div>
     )

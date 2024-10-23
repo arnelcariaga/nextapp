@@ -81,11 +81,6 @@ export default function AuditLogsElement() {
                 myClassName="max-w-[85vw] h-full max-h-[85vh]"
                 closeModal={openMoreInfoModal}
                 onOpenChange={() => setOpenMoreInfoModal(!openMoreInfoModal)}
-                closeBtnProps={{
-                    variant: "outline",
-                    type: "button",
-                    className: "w-full mt-4"
-                }}
             />
 
         </div>
