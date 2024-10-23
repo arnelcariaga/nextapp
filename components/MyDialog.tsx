@@ -1,7 +1,5 @@
-import { Button } from "@/components/ui/button"
 import {
     Dialog,
-    DialogClose,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -19,10 +17,9 @@ type TMyDialog = {
     myClassName: string
     closeModal: boolean
     onOpenChange: () => void
-    closeBtnProps: object
 }
 
-const MyDialog = ({ title, description, content, btnTrigger, myClassName, closeModal, onOpenChange, closeBtnProps }: TMyDialog) => {
+const MyDialog = ({ title, description, content, btnTrigger, myClassName, closeModal, onOpenChange }: TMyDialog) => {
     return (
         <Dialog open={closeModal} onOpenChange={onOpenChange}>
             <DialogTrigger asChild>
@@ -40,13 +37,6 @@ const MyDialog = ({ title, description, content, btnTrigger, myClassName, closeM
                     <div className="mx-1 mt-[2%]">
                         {content}
                     </div>
-                    <DialogFooter className="sm:justify-start">
-                        <DialogClose asChild>
-                            <Button {...closeBtnProps}>
-                                Cerrar
-                            </Button>
-                        </DialogClose>
-                    </DialogFooter>
                 </ScrollArea>
             </DialogContent>
         </Dialog>

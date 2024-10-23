@@ -9,11 +9,35 @@ import { es } from "date-fns/locale";
 import Icon from "../Icon";
 import { Badge } from "@/components/ui/badge"
 
-export const usersColumns = (openModalEditUser: (id: number) => void, openModalDeleteUser: (uId: number, username: string) => void): ColumnDef<IUserData>[] => [
+export const usersColumns = (openModalEditUser: (id: number) => void, openModalDeleteUser: (uId: number, username: string) => void, signInAs: (uId: number) => void, loadingSignAs: boolean): ColumnDef<IUserData>[] => [
+    {
+        id: "actions",
+        header: "Acciones",
+        cell: ({ row }) => {
+            const uId = row.original.id
+            const username = row.original.username
+            return (
+                <div className="space-x-2 flex aligns-center">
+                    <Button variant="default" className="bg-amber-500" onClick={() => signInAs(uId)} disabled={loadingSignAs}>
+                        {
+                            loadingSignAs && <Icon name="Loader2" className="mr-2 h-4 w-4 animate-spin" />
+                        }
+                        Iniciar sesi&oacute;n
+                    </Button>
+                    <Button variant="secondary" onClick={() => openModalEditUser(uId)}>
+                        <Icon name='Edit' />
+                    </Button>
+                    <Button variant="destructive" onClick={() => openModalDeleteUser(uId, username)}>
+                        <Icon name="Trash2" />
+                    </Button>
+                </div>
+            )
+        },
+    },
     {
         accessorKey: "name",
         header: "Nombre Comp.",
-        cell: ({ row }) => row.original.name + " " + row.original.last_name
+        cell: ({ row }) => row.original.name + " " + row.original.last_name,
     },
     {
         accessorKey: "sai.name",
@@ -31,7 +55,8 @@ export const usersColumns = (openModalEditUser: (id: number) => void, openModalD
     },
     {
         accessorKey: "username",
-        header: "Usuario"
+        header: "Usuario",
+        cell: ({ row }) => row.original.username
     },
     {
         accessorKey: "status",
@@ -57,24 +82,5 @@ export const usersColumns = (openModalEditUser: (id: number) => void, openModalD
             const datetime = formatDistanceToNow(new Date(row.original.updated_at), { addSuffix: true, locale: es });
             return datetime
         }
-    },
-    {
-        id: "actions",
-        header: "Acciones",
-        cell: ({ row }) => {
-            const uId = row.original.id
-            const username = row.original.username
-            return (
-                <div className="space-x-2 flex aligns-center">
-                    <Button variant="default" className="bg-amber-500" onClick={() => { }}>Iniciar sesi&oacute;n</Button>
-                    <Button variant="secondary" size="icon" onClick={() => openModalEditUser(uId)}>
-                        <Icon name='Edit' className="" />
-                    </Button>
-                    <Button variant="destructive" size="icon" onClick={() => openModalDeleteUser(uId, username)}>
-                        <Icon name="Trash2" className="" />
-                    </Button>
-                </div>
-            )
-        },
-    },
+    }
 ]

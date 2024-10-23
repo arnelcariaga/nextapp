@@ -1,366 +1,271 @@
 "use client"
-import { useState } from 'react'
+import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { LeftSidebarMenuItem } from '@/lib/types'
+import { Separator } from '../ui/separator';
+import Link from 'next/link';
+import { Button } from '../ui/button';
+import Icon from '../Icon';
 import {
     Collapsible,
     CollapsibleContent,
     CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-import { Button } from "@/components/ui/button"
-import { TLeftSidebar, TLeftSidebarMenuItem } from '@/lib/types'
-import { Separator } from "@/components/ui/separator"
-import Link from 'next/link'
-import Icon from '../Icon'
-import { usePathname } from 'next/navigation'
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { useSession } from 'next-auth/react';
+import SidebarSkeleton from "@/components/SidebarSkeleton"
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
-const menuItems: TLeftSidebarMenuItem[] = [
+const menuItems: LeftSidebarMenuItem[] = [
     {
-        "name": "Inicio",
-        "url": "/dashboard",
-        "active": true,
-        "subRoutes": [],
-        "isHeader": false,
-        "icon": "House",
-        "expandable": false
+        title: 'Inicio',
+        path: '/dashboard',
+        category: 'General',
+        icon: "House"
     },
     {
-        "name": "PowerBI",
-        "url": "/powerbi",
-        "active": false,
-        "subRoutes": [],
-        "isHeader": false,
-        "icon": "ChartPie",
-        "expandable": false
+        title: 'PowerBI',
+        path: '/powerbi',
+        category: 'General',
+        icon: "ChartPie"
     },
     {
-        "name": "PowerBI PrEP",
-        "url": "/powerbiPrep",
-        "active": true,
-        "subRoutes": [],
-        "isHeader": false,
-        "icon": "ChartPie",
-        "expandable": false
+        title: 'PowerBI PrEP',
+        path: '/powerbiprep',
+        category: 'General',
+        icon: "ChartPie"
     },
     {
-        "name": "Formularios Clínicos",
-        "url": "",
-        "active": false,
-        "subRoutes": [
-            {
-                "name": "Pacientes",
-                "url": "/",
-                "active": false,
-                "subRoutes": [
-                    {
-                        "name": "Agregar paciente",
-                        "url": "/patients",
-                        "active": false,
-                        "subRoutes": [],
-                        "isHeader": false,
-                        "icon": "User",
-                        "expandable": false
-                    },
-                    {
-                        "name": "Lista de pacientes",
-                        "url": "/patient/list",
-                        "active": false,
-                        "subRoutes": [],
-                        "isHeader": false,
-                        "icon": "User",
-                        "expandable": false
-                    },
-                    {
-                        "name": "Combinar pacientes",
-                        "url": "/merge_patients",
-                        "active": false,
-                        "subRoutes": [],
-                        "isHeader": false,
-                        "icon": "User",
-                        "expandable": false
-                    },
-                    {
-                        "name": "Transferidos",
-                        "url": "/transfer_patient",
-                        "active": false,
-                        "subRoutes": [],
-                        "isHeader": false,
-                        "icon": "User",
-                        "expandable": false
-                    }
-                ],
-                "isHeader": true,
-                "icon": "User",
-                "expandable": true
-            },
-            {
-                "name": "Usuarios PrEP",
-                "url": "/",
-                "active": false,
-                "subRoutes": [
-                    {
-                        "name": "Agregar Usuarios PrEP",
-                        "url": "/userPrep",
-                        "active": false,
-                        "subRoutes": [],
-                        "isHeader": false,
-                        "icon": "BookUser",
-                        "expandable": false
-                    },
-                    {
-                        "name": "Lista de usuarios PrEP",
-                        "url": "/patient/list",
-                        "active": false,
-                        "subRoutes": [],
-                        "isHeader": false,
-                        "icon": "BookUser",
-                        "expandable": false
-                    }
-                ],
-                "isHeader": true,
-                "icon": "BookUser",
-                "expandable": true
-            },
-            {
-                "name": "Consejería",
-                "url": "/",
-                "active": false,
-                "subRoutes": [
-                    {
-                        "name": "Registro diario",
-                        "url": "/counseling",
-                        "active": false,
-                        "subRoutes": [],
-                        "isHeader": false,
-                        "icon": "Contact",
-                        "expandable": false
-                    },
-                    {
-                        "name": "Pre-Consejería",
-                        "url": "/pre_counseling",
-                        "active": false,
-                        "subRoutes": [],
-                        "isHeader": false,
-                        "icon": "Contact",
-                        "expandable": false
-                    },
-                    {
-                        "name": "Post-Consejería",
-                        "url": "/post_counseling",
-                        "active": false,
-                        "subRoutes": [],
-                        "isHeader": false,
-                        "icon": "Contact",
-                        "expandable": false
-                    }
-                ],
-                "isHeader": true,
-                "icon": "Contact",
-                "expandable": true
-            }
+        title: 'Pacientes',
+        path: '/patients',
+        category: 'Formularios Clínicos',
+        icon: "User",
+        subItems: [
+            { title: 'Agregar', path: '/patients/add', category: 'Formularios Clínicos', icon: "Dot" },
+            { title: 'Lista de pacientes', path: '/patients', category: 'Formularios Clínicos', icon: "Dot" },
+            { title: 'Combinar pacientes', path: '/patients/merge', category: 'Formularios Clínicos', icon: "Dot" },
+            { title: 'Transferiridos', path: '/patients/transfered', category: 'Formularios Clínicos', icon: "Dot" },
         ],
-        "isHeader": true,
-        "icon": "BookOpenText",
-        "expandable": false
     },
     {
-        "name": "Comunidad",
-        "url": "",
-        "active": false,
-        "subRoutes": [
-            {
-                "name": "Operativo Comunidad",
-                "url": "/",
-                "active": false,
-                "subRoutes": [
-                    {
-                        "name": "Agregar Operativo Comunidad",
-                        "url": "/operational_community",
-                        "active": false,
-                        "subRoutes": [],
-                        "isHeader": false,
-                        "icon": "BookOpenText",
-                        "expandable": false
-                    },
-                    {
-                        "name": "Listado Operativo Comunidad",
-                        "url": "/operational_community/list",
-                        "active": false,
-                        "subRoutes": [],
-                        "isHeader": false,
-                        "icon": "BookOpenText",
-                        "expandable": false
-                    },
-                    {
-                        "name": "Listado Usuarios Comunidad",
-                        "url": "/users_community",
-                        "active": false,
-                        "subRoutes": [],
-                        "isHeader": false,
-                        "icon": "BookOpenText",
-                        "expandable": false
+        title: 'Usuarios PrEP',
+        path: '/prep_users',
+        category: 'Formularios Clínicos',
+        icon: "BookUser",
+        subItems: [
+            { title: 'Agregar', path: '/prep_users/add', category: 'Formularios Clínicos', icon: "Dot" },
+            { title: 'Lista de pacientes', path: '/prep_users', category: 'Formularios Clínicos', icon: "Dot" },
+        ],
+    },
+    {
+        title: 'Consejería',
+        path: '/counceling',
+        category: 'Formularios Clínicos',
+        icon: "Contact",
+        subItems: [
+            { title: 'Registro Diario', path: '/counceling/add', category: 'Formularios Clínicos', icon: "Dot", action: "view" },
+            { title: 'Pre-Consejería', path: '/counceling', category: 'Formularios Clínicos', icon: "Dot", action: "create" },
+            { title: 'Post-Consejería', path: '/counceling', category: 'Formularios Clínicos', icon: "Dot", action: "view" },
+        ],
+    },
+    {
+        title: 'Operativo Comunidad',
+        path: '/community_operations',
+        category: 'Comunidad',
+        icon: "UsersRound",
+        subItems: [
+            { title: 'Agregar', path: '/community_operations/add', category: 'Comunidad', icon: "Dot", action: "create" },
+            { title: 'Listado', path: '/community_operations', category: 'Comunidad', icon: "Dot", action: "view" },
+            { title: 'Usuarios Comunidad', path: '/community_operations/user_list', category: 'Comunidad', icon: "Dot", action: "view" },
+        ],
+    },
+    {
+        title: 'Detección de violencia',
+        path: '/violence_detection',
+        category: 'Docs',
+        icon: "ListChecks"
+    },
+    {
+        title: 'Usuarios',
+        path: '/users',
+        category: 'Administración',
+        icon: "Users"
+    },
+    {
+        title: 'Roles',
+        path: '/roles',
+        category: 'Administración',
+        icon: "FolderLock"
+    }, {
+        title: 'SAIs',
+        path: '/sais',
+        category: 'Administración',
+        icon: "Building2"
+    }, {
+        title: 'Configuración PowerBI',
+        path: '/powerbi_settings',
+        category: 'Administración',
+        icon: "Cog"
+    }, {
+        title: 'Audit Logs',
+        path: '/audit_log',
+        category: 'Administración',
+        icon: "ScrollText"
+    },
+];
+
+const Sidebar = () => {
+    const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
+    const { data: session, status } = useSession()
+    const isSidebarOpen = useSelector((state: RootState) => state.appSettings.isSidebarOpen)
+
+    // Can view ?
+    const userCommunityOpScreens = session?.user.screens.find((screen) => screen.path === "/community_operations")
+
+    const pathname = usePathname();
+
+    useEffect(() => {
+        menuItems.forEach((item) => {
+            if (item.subItems) {
+                const isActive = item.subItems.some((subItem) => pathname === subItem.path);
+                setOpenSections((prevState) => ({
+                    ...prevState,
+                    [item.title]: isActive,
+                }));
+            }
+        });
+    }, [pathname]);
+
+    const toggleSection = (section: string) => {
+        setOpenSections((prevState) => ({
+            ...prevState,
+            [section]: !prevState[section],
+        }));
+    };
+
+    const isActive = (path: string) => pathname === path;
+
+    const filterMenuByPermissions = (menu: LeftSidebarMenuItem[]): LeftSidebarMenuItem[] => {
+        return menu.filter((menuItem) => {
+            // Encontrar la pantalla correspondiente en los permisos del usuario
+            const screenPermission = session?.user.screens.find(screen => screen.name === menuItem.title);
+
+            // Si no se encuentran permisos para la pantalla, devolver null
+            if (!screenPermission) {
+                return null;
+            }
+
+            // Si el item tiene subitems, filtrarlos según los permisos del usuario
+            if (menuItem.subItems) {
+                const filteredSubItems = menuItem.subItems.filter(subItem => {
+                    //const screen = session?.user.screens.find(screen => screen.path === '/community_operations');
+                    if (subItem.action) {
+                        // Filtrar subitems basado en el tipo de acción
+
+                        // Verificar si el permiso correspondiente es '1'
+                        return String(screenPermission.permissions[subItem.action as keyof typeof screenPermission.permissions]) === '1';
                     }
-                ],
-                "isHeader": true,
-                "icon": "UsersRound",
-                "expandable": true
+                });
+
+                // Si hay subitems permitidos, devolver el menú con los subitems filtrados
+                if (filteredSubItems.length > 0) {
+                    return {
+                        ...menuItem,
+                        subItems: filteredSubItems
+                    };
+                }
             }
-        ],
-        "isHeader": true,
-        "icon": "UsersRound",
-        "expandable": false
-    },
-    {
-        "name": "Docs",
-        "url": "",
-        "active": false,
-        "subRoutes": [
-            {
-                "name": "Detección de Violencia",
-                "url": "/violence_detection",
-                "active": false,
-                "subRoutes": [],
-                "isHeader": false,
-                "icon": "ListChecks",
-                "expandable": false
-            }
-        ],
-        "isHeader": true,
-        "icon": "ListChecks",
-        "expandable": false
-    },
-    {
-        "name": "Administración",
-        "url": "",
-        "active": false,
-        "subRoutes": [
-            {
-                "name": "Usuarios",
-                "url": "/users",
-                "active": false,
-                "subRoutes": [],
-                "isHeader": false,
-                "icon": "Users",
-                "expandable": false
-            },
-            {
-                "name": "Roles",
-                "url": "/roles",
-                "active": false,
-                "subRoutes": [],
-                "isHeader": false,
-                "icon": "FolderLock",
-                "expandable": false
-            },
-            {
-                "name": "Socios / SAIs",
-                "url": "/sais",
-                "active": false,
-                "subRoutes": [],
-                "isHeader": false,
-                "icon": "Building2",
-                "expandable": false
-            },
-            {
-                "name": "Configuración PowerBI",
-                "url": "/powerbi_settings",
-                "active": false,
-                "subRoutes": [],
-                "isHeader": false,
-                "icon": "Cog",
-                "expandable": false
-            },
-            {
-                "name": "Audit Log",
-                "url": "/audit_log",
-                "active": false,
-                "subRoutes": [],
-                "isHeader": false,
-                "icon": "ScrollText",
-                "expandable": false
-            }
-        ],
-        "isHeader": true,
-        "icon": "ScrollText",
-        "expandable": false
+
+            // Si no hay subitems, devolver el item directamente
+            return {
+                ...menuItem,
+            };
+        })
+            .filter((menuItem): menuItem is LeftSidebarMenuItem => menuItem !== null); // Filtrar los elementos nulos
+    };
+
+    const filteredMenu = filterMenuByPermissions(menuItems);
+
+    const groupedMenuItems = filteredMenu.reduce((acc: { [key: string]: LeftSidebarMenuItem[] }, item) => {
+        acc[item.category] = acc[item.category] || [];
+        acc[item.category].push(item);
+        return acc;
+    }, {});
+
+
+    if (status === "loading") {
+        return <SidebarSkeleton />
     }
-]
-
-const LeftSidebar = ({ isSidebarOpen }: TLeftSidebar) => {
-    const [expandedItems, setExpandedItems] = useState<string[]>([])
-    const router = usePathname();
-
-    const toggleExpand = (item: string) => {
-        setExpandedItems(prev =>
-            prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]
-        )
-    }
-
     return (
-        <ScrollArea>
-            <aside className={`bg-green-600 dark:bg-green-900 text-white w-72 space-y-2 py-[2.5%] px-2 absolute inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out`}>
+        <ScrollArea className='h-screen'>
+            <aside className={`h-full sticky bg-green-600 dark:bg-green-900 text-white space-y-2 py-[2.5%] absolute inset-y-0 left-0 ${isSidebarOpen ? 'translate-x-full w-0' : 'translate-x-0 w-72 px-2'}`}>
                 <nav>
-                    {
-                        menuItems.map((item, i) => {
-                            if (item.isHeader) {
-                                return <div key={i}>
-                                    <div className="mt-4">
-                                        <h4 className="text-sm font-medium leading-none ms-2">{item.name}</h4>
-                                    </div>
-                                    <Separator className="mt-3 mb-2" />
-
-                                    {
-                                        item.subRoutes.map((subItem, subI) => {
-                                            return <div key={subI}>
-                                                {
-                                                    subItem.expandable ?
-                                                        <Collapsible open={expandedItems.includes(subItem.name)} onOpenChange={() => toggleExpand(subItem.name)} className={`${expandedItems.includes(subItem.name) && subItem.url === router && 'bg-green-700'}`}>
-                                                            <CollapsibleTrigger asChild>
-                                                                <Button variant="ghost" className="flex mt-2 items-center space-x-2 w-full justify-between hover:bg-green-700">
-                                                                    <div className="flex items-center space-x-2">
-                                                                        <Icon name={subItem.icon} className="h-5 w-5" />
-                                                                        <span>{subItem.name}</span>
-                                                                    </div>
-                                                                    <Icon name="ChevronRight" className={`h-4 w-4 transition-transform ${expandedItems.includes(subItem.name) ? 'rotate-90' : ''}`} />
+                    {Object.keys(groupedMenuItems).map((category) => (
+                        <div key={category}>
+                            <div className="mt-4">
+                                <h2 className="text-xs font-medium leading-none ms-2 uppercase tracking-wide text-gray-300">{category}</h2>
+                            </div>
+                            <Separator className="mt-3 mb-2" />
+                            {groupedMenuItems[category].map((item) => (
+                                <div key={item.title}>
+                                    {item.subItems ? (
+                                        <Collapsible open={openSections[item.title]} onOpenChange={() => toggleSection(item.title)}>
+                                            <CollapsibleTrigger asChild>
+                                                <Button variant="ghost" className="flex mt-2 items-center space-x-2 w-full justify-between hover:bg-green-700">
+                                                    <div className="flex items-center space-x-2">
+                                                        <Icon name={item.icon} className="h-5 w-5" />
+                                                        <span>{item.title}</span>
+                                                    </div>
+                                                    <Icon name="ChevronRight" className={`h-4 w-4 transition-transform ${openSections[item.title] ? 'rotate-90' : ''}`} />
+                                                </Button>
+                                            </CollapsibleTrigger>
+                                            <CollapsibleContent className="pl-3 space-y-1">
+                                                {openSections[item.title] && (
+                                                    <div className="pl-4 space-y-2">
+                                                        {item.subItems.map((subItem) => {
+                                                            if (
+                                                                userCommunityOpScreens &&
+                                                                userCommunityOpScreens.permissions.view === "0" &&
+                                                                (subItem.path === userCommunityOpScreens.path || subItem.path === "/community_operations/user_list")
+                                                            ) {
+                                                                return false;
+                                                            } else if (
+                                                                userCommunityOpScreens &&
+                                                                userCommunityOpScreens.permissions.create === "0" &&
+                                                                subItem.path === "/community_operations/add"
+                                                            ) {
+                                                                return false
+                                                            }
+                                                            return (
+                                                                <Button key={subItem.title} variant="ghost" size="sm" className={`${isActive(subItem.path) && "bg-green-700"} mt-2 flex items-center space-x-2 w-full justify-start hover:bg-green-700`} asChild>
+                                                                    <Link href={subItem.path as string}>
+                                                                        <Icon name="Dot" className="h-5 w-5" />
+                                                                        {subItem.title}
+                                                                    </Link>
                                                                 </Button>
-                                                            </CollapsibleTrigger>
-                                                            <CollapsibleContent className="pl-7 space-y-1">
-                                                                {
-                                                                    subItem.subRoutes.map((collaapsibleItem, collapsibleItemIndex) => {
-                                                                        return <Button key={collapsibleItemIndex} variant="ghost" size="sm" className={`${expandedItems.includes(subItem.name) && collaapsibleItem.url === router && "bg-green-700"} mt-2 flex items-center space-x-2 w-full justify-start hover:bg-green-700`} asChild>
-                                                                            <Link href={collaapsibleItem.url as string}>
-                                                                                <Icon name="Dot" className="h-5 w-5" />
-                                                                                {collaapsibleItem.name}
-                                                                            </Link>
-                                                                        </Button>
-                                                                    })
-                                                                }
-                                                            </CollapsibleContent>
-                                                        </Collapsible>
-                                                        : <Button key={subI} variant="ghost" className={`${subItem.url === router && 'bg-green-700'} mt-2 flex items-center space-x-2 w-full justify-start hover:bg-green-700`} asChild>
-                                                            <Link href={subItem.url as string}>
-                                                                <Icon name={subItem.icon} className="h-5 w-5" />
-                                                                <span>{subItem.name}</span>
-                                                            </Link>
-                                                        </Button>
-                                                }
-                                            </div>
-                                        })
-                                    }
+                                                            )
+                                                        })}
+                                                    </div>
+                                                )}
+                                            </CollapsibleContent>
+                                        </Collapsible>
+                                    ) : (
+                                        <Button variant="ghost" className={`${isActive(item.path) && 'bg-green-700'} mt-2 flex items-center space-x-2 w-full justify-start hover:bg-green-700`} asChild>
+                                            <Link href={item.path as string}>
+                                                <Icon name={item.icon} className="h-5 w-5" />
+                                                <span>{item.title}</span>
+                                            </Link>
+                                        </Button>
+                                    )}
                                 </div>
-                            } else {
-                                return <Button key={i} variant="ghost" className={`${item.url === router && 'bg-green-700'} mt-2 flex items-center space-x-2 w-full justify-start hover:bg-green-700`} asChild>
-                                    <Link href={item.url as string}>
-                                        <Icon name={item.icon} className="h-5 w-5" />
-                                        <span>{item.name}</span>
-                                    </Link>
-                                </Button>
-                            }
-                        })
-                    }
+                            ))}
+                        </div>
+                    ))}
                 </nav>
             </aside>
         </ScrollArea>
-    )
-}
+    );
+};
 
-export default LeftSidebar
+export default Sidebar;

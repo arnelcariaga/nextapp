@@ -1,12 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import {
-    Bell,
-    LogOut,
-    Menu,
-} from "lucide-react"
-import { TNavbar, TNavbarUserDropdown } from '@/lib/types'
+import { TNavbarUserDropdown } from '@/lib/types'
 import ThemeToggle from '../ThemeToggle'
 import {
     DropdownMenu,
@@ -25,6 +20,9 @@ import { usePathname } from "next/navigation"
 import { signOutUser } from "@/lib/seed"
 import { useToast } from "@/hooks/use-toast"
 import { appName } from "@/lib/appInfo"
+import { useDispatch } from "react-redux"
+import { setIsSidebarOpen } from "@/redux/slices/appSettingsSlice"
+import { signInServerFunc } from "../UsersElement/signInServerFunc"
 
 const dropdownItems: TNavbarUserDropdown[] = [{
     name: "Mi Perfil",
@@ -41,9 +39,36 @@ const dropdownItems: TNavbarUserDropdown[] = [{
 }]
 
 const Navbar = ({ session }: ISession) => {
-    const [isScrolled, setIsScrolled] = useState(false)
+    const [isScrolled, setIsScrolled] = useState<boolean>(false)
     const pathname = usePathname()
     const { toast } = useToast()
+    const dispatch = useDispatch()
+    const [isBackToUser, setIsBackToUser] = useState<boolean>(false)
+    const [storedUser, setStoredUser] = useState<string>("")
+
+    useEffect(() => {
+        const signAdFromData = localStorage.getItem("@signAsFrom")
+        if (signAdFromData) {
+            setStoredUser(signAdFromData);
+        }
+    }, [])
+
+    function subPathname() {
+        const startsWithCommunityOperations = pathname.startsWith('/community_operations');
+        const endsWithUsers = pathname.endsWith('/users');
+        const endsWithUserProfile = pathname.endsWith('/user_profile');
+        const endsWithUserProfileTrackings = pathname.endsWith('/trackings');
+
+        if (startsWithCommunityOperations && endsWithUsers) {
+            return "Operativo Comunidad -> Usuarios";
+        } else if (startsWithCommunityOperations && endsWithUserProfile) {
+            return "Operativo Comunidad -> Perfil Usuario"
+        } else if (startsWithCommunityOperations && endsWithUserProfileTrackings) {
+            return "Operativo Comunidad -> Seguimiento usuario"
+        }
+        return null; // Devolver null si no coincide
+    }
+
 
     const renderNavbarTitle = () => {
         switch (pathname) {
@@ -59,8 +84,20 @@ const Navbar = ({ session }: ISession) => {
             case "/sais":
                 return "SAIs"
                 break;
-            default:
+            case "/audit_log":
+                return "Registros de auditoría"
                 break;
+            case "/community_operations/add":
+                return "Operativo Comunidad -> Agregar"
+                break;
+            case "/community_operations":
+                return "Operativo Comunidad -> Listado"
+                break;
+            case "/community_operations/user_list":
+                return "Operativo Comunidad -> Lista De Usuarios"
+                break;
+            default:
+                return subPathname() || '';
         }
     }
 
@@ -91,12 +128,35 @@ const Navbar = ({ session }: ISession) => {
         }
     }
 
+    const backToUserSignIn = async () => {
+        setIsBackToUser(true)
+        const signAdFromDataToJson = JSON.parse(storedUser)
+
+        const userData = {
+            to_user_id: Number(signAdFromDataToJson.id),
+            rol_name: signAdFromDataToJson.role_name,
+            from_user_id: Number(signAdFromDataToJson.id),
+            from_username: signAdFromDataToJson.username,
+            username: "",
+            password: "",
+            impersonatedBy: String(signAdFromDataToJson.username),
+        }
+
+        const res = await signInServerFunc(userData);
+
+        if (res) {
+            localStorage.removeItem("@signAsFrom")
+            window.location.replace("/dashboard")
+        }
+        setIsBackToUser(false)
+    }
+
     return (
         <header className={`${isScrolled ? "bg-white dark:bg-gray-900 shadow-md" : "bg-white dark:bg-slate-900"} sticky top-0 z-50 w-full transition-all duration-300`}>
             <div className="flex items-center justify-between p-4">
                 <div className="flex items-center">
-                    <Button variant="ghost" onClick={() => { }} className="md:hidden">
-                        <Menu className="h-6 w-6" />
+                    <Button variant="ghost" onClick={() => dispatch(setIsSidebarOpen())}>
+                        <Icon name="Menu" className="h-6 w-6" />
                     </Button>
                     <h1 className="text-xl font-semibold text-green-600 dark:text-green-400 ml-2">COIN | {navbarTitle}</h1>
                 </div>
@@ -117,7 +177,7 @@ const Navbar = ({ session }: ISession) => {
                     </nav>
 
                     <Button variant="ghost" size="icon">
-                        <Bell className="h-5 w-5" />
+                        <Icon name="Bell" className="h-5 w-5" />
                     </Button>
                     <ThemeToggle />
                     <DropdownMenu>
@@ -132,7 +192,7 @@ const Navbar = ({ session }: ISession) => {
                         <DropdownMenuContent className="w-72" align="end" forceMount>
                             <DropdownMenuLabel className="font-normal">
                                 <div className="flex flex-col space-y-1">
-                                    <p className="text-sm font-medium leading-none">{session?.user?.name + " " + session?.user.last_name + "(" + session?.user.role_name + ")"}</p>
+                                    <p className="text-sm font-medium leading-none">{session?.user?.name + " " + session?.user.last_name + " (" + session?.user.role_name + ")"}</p>
                                     <p className="text-xs leading-none text-muted-foreground">{session?.user.email}</p>
                                 </div>
                             </DropdownMenuLabel>
@@ -152,11 +212,20 @@ const Navbar = ({ session }: ISession) => {
                                 onClick={logoutFn}
                                 className="cursor-pointer"
                             >
-                                <LogOut className="mr-2 h-4 w-4" />
+                                <Icon name="LogOut" className="mr-2 h-4 w-4" />
                                 <span>Cerrar sesi&oacute;n</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
+
+                    {
+                        storedUser !== "" && <Button variant="outline" className="border-amber-500" onClick={backToUserSignIn} disabled={isBackToUser}>
+                            {
+                                isBackToUser && <Icon name="Loader2" className="mr-2 h-4 w-4 animate-spin" />
+                            }
+                            Volver a mi cuenta
+                        </Button>
+                    }
                 </div>
             </div>
         </header>

@@ -1,1 +1,1 @@
-export const appName = "LLDMShop"
+export const appName = "COIN"

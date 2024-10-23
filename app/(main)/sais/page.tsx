@@ -1,9 +1,9 @@
 import SAIsElement from '@/components/SAIsElement'
 
-const Users = () => {
+const Sais = () => {
   return (
     <SAIsElement />
   )
 }
 
-export default Users
+export default Sais

@@ -26,7 +26,7 @@ const Form = () => {
         if (res?.error) {
             toast({
                 variant: "destructive",
-                title: "Inicio se sesion || " + appName,
+                title: "Inicio se sesión || " + appName,
                 description: res.message,
             })
         }

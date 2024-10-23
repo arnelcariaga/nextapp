@@ -16,6 +16,7 @@ import { IUserData } from "@/lib/interfaces"
 import EditUserForm from "./EditUserForm"
 import TableSkeleton from "../MyDataTable/TableSkeleton"
 import { useSession } from "next-auth/react"
+import { signInServerFunc } from "./signInServerFunc"
 
 export default function UsersElement() {
     const [usersData, setUsersData] = useState<IUserData[]>([])
@@ -29,6 +30,8 @@ export default function UsersElement() {
     const closeModalAddUser = useSelector((state: RootState) => state.users.closeModalAddUser)
     const closeModalEditUser = useSelector((state: RootState) => state.users.closeModalEditUser)
     const [selectedUsername, setSelectedUsername] = useState<string>("")
+    const [loadingSignAs, setLoadingSignAs] = useState<boolean>(false)
+
     const { data: session } = useSession()
 
     useEffect(() => {
@@ -38,7 +41,7 @@ export default function UsersElement() {
             if (error) {
                 toast({
                     variant: "destructive",
-                    title: "Roles || " + appName,
+                    title: "Usuarios || " + appName,
                     description: message,
                     duration: 5000
                 })
@@ -118,13 +121,36 @@ export default function UsersElement() {
         setSelectedUserId(uId)
     }
 
+    const signInAs = async (uId: number) => {
+        setLoadingSignAs(true)
+        
+        localStorage.setItem("@signAsFrom", JSON.stringify(session?.user))
+
+        const userData = {
+            to_user_id: uId,
+            rol_name: String(session?.user.role_name),
+            from_user_id: Number(session?.user.id),
+            from_username: String(session?.user.username),
+            username: "",
+            password: "",
+            impersonatedBy: String(session?.user.username)
+        }
+
+        const res = await signInServerFunc(userData);
+
+        if (res) {
+            window.location.replace("/dashboard")
+        }
+
+    }
+
     return (
-        <div className="w-full p-2">
+        <div className="m-2">
             {
                 dataTableLoading ? <TableSkeleton /> :
                     <DataTable
                         data={usersData}
-                        columns={usersColumns(openModalEditUser, openModalDeleteUser)}
+                        columns={usersColumns(openModalEditUser, openModalDeleteUser, signInAs, loadingSignAs)}
                         addBtn={
                             <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddUser(true))}>
                                 <Plus className="mr-2 h-4 w-4 text-white" />
@@ -139,6 +165,7 @@ export default function UsersElement() {
                             id: 'updated_at',
                             desc: true
                         }}
+                        exportData={false}
                     />
             }
 

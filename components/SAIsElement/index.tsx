@@ -10,12 +10,12 @@ import { appName } from "@/lib/appInfo"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "@/redux/store"
 import { Button } from "@/components/ui/button"
-import { Plus, Loader2 } from "lucide-react"
 import { setCloseModalAddSai, setCloseModalEditSai } from "@/redux/slices/saisSlice"
 import { ISai } from "@/lib/interfaces"
 import EditSaiForm from "./EditSaiForm"
 import TableSkeleton from "../MyDataTable/TableSkeleton"
 import { useSession } from "next-auth/react"
+import Icon from "../Icon"
 
 export default function SaisElement() {
     const [saisData, setSaisData] = useState<ISai[]>([])
@@ -90,33 +90,17 @@ export default function SaisElement() {
         if (error) {
             toast({
                 variant: "destructive",
-                title: "Eliminar Usuario || " + appName,
+                title: "Eliminar SAI || " + appName,
                 description: message,
                 duration: 5000
             })
         } else {
-
-            if (data.action === "deleted") {
-                setSaisData((prevS) => {
-                    return prevS.filter((sai) => {
-                        return sai.id !== data.data.id
-                    }
-                    )
-                })
-
-            } else {
-                setSaisData((prevS) => {
-                    return prevS.map((sai) => {
-                        return sai.id === data.id ? { ...data, ...prevS } : sai
-                    }
-                    )
-                })
-
-            }
-
+            const saiId = data["sai_id"]
+            const newSaiData = saisData.filter((item) => item.id !== saiId)
+            setSaisData(newSaiData)
             setOpenDeleteModal(false)
             toast({
-                title: "Eliminar Usuario || " + appName,
+                title: "Eliminar SAI || " + appName,
                 description: message,
                 duration: 5000
             })
@@ -139,7 +123,7 @@ export default function SaisElement() {
                         columns={saisColumns(openModalEditSai, openModalDeleteSai)}
                         addBtn={
                             <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddSai(true))}>
-                                <Plus className="mr-2 h-4 w-4 text-white" />
+                                <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
                                 <span className='text-white'>
                                     Agregar SAIs
                                 </span>
@@ -151,6 +135,7 @@ export default function SaisElement() {
                             id: 'created_at',
                             desc: true
                         }}
+                        exportData={false}
                     />
             }
 
@@ -179,7 +164,7 @@ export default function SaisElement() {
                         disabled={sendingDelete}
                         onClick={deleteSaiFn}>
                         {
-                            sendingDelete && <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            sendingDelete && <Icon name="Loader2" className="mr-2 h-4 w-4 animate-spin" />
                         }
                         Eliminar
                     </Button>

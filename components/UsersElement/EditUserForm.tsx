@@ -67,7 +67,6 @@ const EditUserForm = ({ selectedUserId }: ISelectedUserId) => {
             region: "",
             province_id: 0,
             municipe_id: 0,
-            status: 0,
             municipe: {
                 id: 0,
                 name: "",

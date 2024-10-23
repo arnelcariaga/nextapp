@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
-import { ISai, IStatus } from '@/lib/interfaces'
+import { ISai } from '@/lib/interfaces'
 import { useToast } from "@/hooks/use-toast"
 import { appName } from '@/lib/appInfo'
 import Icon from '../Icon'
-import { getProvinces, getMunicipalities, getSaiById, getStatus, updateSai } from '@/lib/seed'
+import { getProvinces, getMunicipalities, getSaiById, updateSai } from '@/lib/seed'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useDispatch } from 'react-redux'
 import FormSkeleton from '../FormSkeleton'
@@ -37,7 +37,6 @@ const EditSaiForm = ({ selectedSaiId }: ISelectedSaiId) => {
         region: "",
         province_id: 0,
         municipe_id: 0,
-        status: 0,
         municipe: {
             id: 0,
             name: "",
@@ -52,7 +51,6 @@ const EditSaiForm = ({ selectedSaiId }: ISelectedSaiId) => {
             updated_at: ""
         }
     })
-    const [status, setStatus] = useState<IStatus[]>([])
     const [loadingData, setLoadingData] = useState(true)
     const dispatch = useDispatch()
     const { data: session } = useSession()
@@ -78,26 +76,6 @@ const EditSaiForm = ({ selectedSaiId }: ISelectedSaiId) => {
         getMunicipalityById()
     }, [toast, sais.province_id])
 
-    // Load status
-    useEffect(() => {
-        async function getStatusFn() {
-            const { error, data, message } = await getStatus()
-
-            if (error) {
-                toast({
-                    variant: "destructive",
-                    title: "Editar Usuario || " + appName,
-                    description: message,
-                    duration: 5000
-                })
-            } else {
-                setStatus(data)
-            }
-
-        }
-        getStatusFn()
-    }, [toast])
-
     // Load provinces
     useEffect(() => {
         async function getProvincesFn() {
@@ -115,7 +93,7 @@ const EditSaiForm = ({ selectedSaiId }: ISelectedSaiId) => {
             }
         }
         getProvincesFn()
-    }, [toast, setValue])
+    }, [toast])
 
     // Load SAI
     useEffect(() => {
@@ -134,7 +112,6 @@ const EditSaiForm = ({ selectedSaiId }: ISelectedSaiId) => {
                 // Set default province, municipality and status
                 setValue("province_id", data.province_id)
                 setValue("municipe_id", data.municipe_id)
-                setValue("status", data.status)
             }
             setLoadingData(false)
         }
@@ -331,37 +308,6 @@ const EditSaiForm = ({ selectedSaiId }: ISelectedSaiId) => {
                         )}
                     />
                     <span className='text-red-500 text-sm'>{errors.municipe && errors.municipe.name?.message}</span>
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="sai">Status</Label>
-                    <Controller
-                        name="status"
-                        control={control}
-                        rules={{ required: 'Seleccionar status' }}
-                        render={({ field }) => (
-                            <Select
-                                onValueChange={(value) => {
-                                    field.onChange(value);
-                                    handleProvinceChange(value);
-                                }}
-                                value={String(field.value)}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Seleccionar" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {
-                                        status.map(({ id, name, value }) => {
-                                            return <SelectItem key={id} value={value.toString()}>{name}</SelectItem>
-                                        })
-                                    }
-                                </SelectContent>
-                            </Select>
-                        )}
-                    />
-                    <span className='text-red-500 text-sm'>
-                        {errors.status && errors.status?.message}
-                    </span>
                 </div>
             </div>
 

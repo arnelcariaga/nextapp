@@ -2,19 +2,32 @@
 import {
     ColumnDef
 } from "@tanstack/react-table"
-import { IModules } from "@/lib/interfaces"
 import { Checkbox } from "@/components/ui/checkbox"
+
+interface IScreenPermissions {
+    id_role: number
+    id_screen: number
+    view: string
+    create: string
+    edit: string
+    delete: string
+}
+
+interface IModules {
+    id: number
+    name: string
+}
+
+interface IModulesWithPermissions extends IModules {
+    permissions: IScreenPermissions
+}
 
 export const screensModulesColumns = (
     handleCheckboxChange: (
         rowIndex: number,
-        permission: keyof IModules["permissions"]
+        permission: string
     ) => void
-): ColumnDef<IModules>[] => [
-        {
-            accessorKey: "id",
-            accessorFn: (row) => row?.id?.toString(),
-        },
+): ColumnDef<IModulesWithPermissions>[] => [
         {
             accessorKey: "name",
             header: "Módulos",
@@ -24,7 +37,7 @@ export const screensModulesColumns = (
             header: "Ver",
             cell: ({ row }) => {
                 return <Checkbox
-                    checked={row.original.permissions.view}
+                    checked={row.original.permissions.view === "1"}
                     onCheckedChange={() => handleCheckboxChange(row.index, 'view')}
                 />
             },
@@ -34,7 +47,7 @@ export const screensModulesColumns = (
             header: "Crear",
             cell: ({ row }) => {
                 return <Checkbox
-                    checked={row.original.permissions.create}
+                    checked={row.original.permissions.create === "1"}
                     onCheckedChange={() => handleCheckboxChange(row.index, "create")}
                 />
             },
@@ -44,7 +57,7 @@ export const screensModulesColumns = (
             header: "Editar",
             cell: ({ row }) => {
                 return <Checkbox
-                    checked={row.original.permissions.edit}
+                    checked={row.original.permissions.edit === "1"}
                     onCheckedChange={() => handleCheckboxChange(row.index, "edit")}
                 />
             },
@@ -54,7 +67,7 @@ export const screensModulesColumns = (
             header: "Eliminar",
             cell: ({ row }) => {
                 return <Checkbox
-                    checked={row.original.permissions.delete}
+                    checked={row.original.permissions.delete === "1"}
                     onCheckedChange={() => handleCheckboxChange(row.index, "delete")}
                 />
             },

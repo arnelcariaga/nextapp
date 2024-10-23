@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { api_url } from "@/lib/urls";
+import { IModules } from "./lib/interfaces";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -8,38 +9,57 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       credentials: {
         email: {},
         password: {},
+        impersonatedBy: {},
       },
       authorize: async (credentials) => {
-        const res = await fetch(api_url + "/api/signIn", {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({ ...credentials }),
-        });
+        if (credentials.impersonatedBy) {
+          const session = await auth();
 
-        const { error, message, data } = await res.json();
+          const res = await fetch(api_url + "/api/sign_in_as", {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.user.token}`,
+            },
+            body: JSON.stringify({ ...credentials }),
+          });
 
-        if (error) {
-          throw new Error(message);
+          const { error, message, data } = await res.json();
+
+          if (error) {
+            throw new Error(message);
+          }
+          return data;
+        } else {
+          const res = await fetch(api_url + "/api/signIn", {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({ ...credentials }),
+          });
+
+          const { error, message, data } = await res.json();
+
+          if (error) {
+            throw new Error(message);
+          }
+          return data;
         }
-
-        // return user object with their profile data
-        return data
       },
     }),
   ],
   pages: {
     signIn: "/",
+    error: "/not_found"
   },
   callbacks: {
     async jwt({ token, user }) {
-      console.log(user);
-      
       if (user) {
         // If the user exists (i.e., when logging in), add custom fields to the JWT
         token.id = user.id;
+        token.id_sai = user.id_sai;
         token.id_role = user.id_role;
         token.role_name = user.role.name;
         token.profile_img = user.profile_img;
@@ -47,7 +67,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.name = user.name;
         token.last_name = user.last_name;
         token.username = user.username;
-        token.accessToken = user.token
+        token.accessToken = user.token;
+        token.screens = user.role.screens;
       }
 
       return token;
@@ -55,6 +76,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       // Add custom fields from the token to the session object
       if (token) {
+        session.user.id_sai = token.id_sai as number;
         session.user.id = token.id as string;
         session.user.id_role = token.id_role as number;
         session.user.role_name = token.role_name as string;
@@ -64,6 +86,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.last_name = token.last_name as string;
         session.user.username = token.username as string;
         session.user.token = token.accessToken as string;
+        session.user.screens = token.screens as IModules[];
       }
       return session;
     },

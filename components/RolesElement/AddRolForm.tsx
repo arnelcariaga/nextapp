@@ -4,18 +4,47 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2, Save } from "lucide-react"
 import { useForm, SubmitHandler } from "react-hook-form"
-import { IAddRol } from '@/lib/interfaces'
 import { useToast } from "@/hooks/use-toast"
 import { Checkbox } from "@/components/ui/checkbox"
 import DataTable from '../MyDataTable/data-table'
 import { screensModulesColumns } from './screensModulesColumns'
-import { IModules } from "@/lib/interfaces"
 import { getScreensModules, addRol } from '@/lib/seed'
 import { appName } from '@/lib/appInfo'
 import { setCloseModalAddRol, setAddedRoles } from '@/redux/slices/rolesSlice'
 import { useDispatch } from 'react-redux'
 import TableSkeleton from '../MyDataTable/TableSkeleton'
 import { useSession } from 'next-auth/react'
+
+type ScreenModules = {
+    id: number;
+    name: string;
+    created_at: string | null;
+    updated_at: string | null;
+};
+
+interface IScreenPermissions {
+    id_role: number
+    id_screen: number
+    view: string
+    create: string
+    edit: string
+    delete: string
+}
+
+interface IModules {
+    id: number
+    name: string
+}
+
+interface IModulesWithPermissions extends IModules {
+    permissions: IScreenPermissions
+}
+
+interface IAddRol {
+    name: string,
+    isAdmin: boolean,
+    status: number
+}
 
 const AddRolForm = () => {
     const {
@@ -26,12 +55,13 @@ const AddRolForm = () => {
     } = useForm<IAddRol>()
     const { toast } = useToast()
     const [sendingForm, setSendingForm] = useState(false)
-    const [modules, setModules] = useState<IModules[]>([])
+    const [modules, setModules] = useState<IModulesWithPermissions[]>([])
     const [isAdmin, setIsAdmin] = useState(false)
     const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
     const dispatch = useDispatch()
     const { data: session } = useSession()
 
+    // Get screens modules
     useEffect(() => {
         async function getScreensModulesFn() {
             const { error, data, message } = await getScreensModules()
@@ -44,20 +74,21 @@ const AddRolForm = () => {
                     duration: 5000
                 })
             } else {
-                const newData = data.map((item: IModules) => (
-                    {
-                        id: item.id,
-                        name: item.name,
-                        permissions: {
-                            view: false,
-                            create: false,
-                            edit: false,
-                            delete: false
-                        }
-                    }
-                ))
+                const resData: ScreenModules[] = data;
 
-                setModules(newData)
+                const updatedModules: IModulesWithPermissions[] = resData.map((module) => ({
+                    ...module,
+                    permissions: {
+                        id_role: 0,
+                        id_screen: 0,
+                        view: "0",
+                        create: "0",
+                        edit: "0",
+                        delete: "0",
+                    },
+                }));
+
+                setModules(updatedModules);
             }
 
             setDataTableLoading(false)
@@ -69,21 +100,22 @@ const AddRolForm = () => {
     useEffect(() => {
         const allChecked = modules.every(
             (row) =>
-                row.permissions.view &&
-                row.permissions.create &&
-                row.permissions.edit &&
-                row.permissions.delete
+                row.permissions.view === "1" &&
+                row.permissions.create === "1" &&
+                row.permissions.edit === "1" &&
+                row.permissions.delete === "1"
         );
         setIsAdmin(allChecked);
     }, [modules]);
 
-    const handleDataTableCheckboxChange = (rowIndex: number, permissionType: keyof IModules["permissions"]) => {
+    const handleDataTableCheckboxChange = (rowIndex: number, permissionType: string) => {
         const updatedData = [...modules];
+
         updatedData[rowIndex] = {
             ...updatedData[rowIndex],
             permissions: {
                 ...updatedData[rowIndex].permissions,
-                [permissionType]: !updatedData[rowIndex].permissions[permissionType],
+                [permissionType]: updatedData[rowIndex].permissions[permissionType as keyof IModulesWithPermissions["permissions"]] === "0" ? "1" : "0",
             },
         };
         setModules(updatedData);
@@ -92,14 +124,15 @@ const AddRolForm = () => {
     const columns = screensModulesColumns(handleDataTableCheckboxChange)
 
     const handleAdminChange = () => {
-        const updatedData = modules.map((row) => ({
+        const updatedData: IModulesWithPermissions[] = modules.map((row) => ({
             ...row,
             permissions: {
-                id_screen: 0,//We added to prevent type error but we don't use it in DB when adding a rol
-                view: !isAdmin,
-                create: !isAdmin,
-                edit: !isAdmin,
-                delete: !isAdmin,
+                id_role: 0,
+                id_screen: 0,
+                view: !isAdmin ? "1" : "0",
+                create: !isAdmin ? "1" : "0",
+                edit: !isAdmin ? "1" : "0",
+                delete: !isAdmin ? "1" : "0",
             },
         }));
         setModules(updatedData);
@@ -179,13 +212,12 @@ const AddRolForm = () => {
                             data={modules}
                             addBtn={null}
                             columnBtnFilter={false}
-                            columnHidden={{
-                                id: false
-                            }}
+                            columnHidden={{}}
                             orderByObj={{
                                 id: 'name',
                                 desc: false
                             }}
+                            exportData={false}
                         />
                     </>
             }

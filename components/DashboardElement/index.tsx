@@ -12,7 +12,7 @@ import {
 
 const DashboardElement = () => {
     return (
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto">
             <div className="container mx-auto px-6 py-8">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-4">Today is Overview</h2>
                 <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
@@ -68,7 +68,7 @@ const DashboardElement = () => {
                     <CardContent>
                         <div className="relative overflow-x-auto">
                             <table className="w-full text-sm text-left text-gray-500">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                                <thead className="text-xs text-gray-700 uppercase">
                                     <tr>
                                         <th scope="col" className="px-6 py-3">Patient Name</th>
                                         <th scope="col" className="px-6 py-3">Time</th>
@@ -77,7 +77,7 @@ const DashboardElement = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr className="bg-white border-b">
+                                    <tr className="border-b">
                                         <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">John Doe</td>
                                         <td className="px-6 py-4">10:00 AM</td>
                                         <td className="px-6 py-4">Check-up</td>
@@ -85,7 +85,7 @@ const DashboardElement = () => {
                                             <Button size="sm">View Details</Button>
                                         </td>
                                     </tr>
-                                    <tr className="bg-white border-b">
+                                    <tr className="border-b">
                                         <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Jane Smith</td>
                                         <td className="px-6 py-4">11:30 AM</td>
                                         <td className="px-6 py-4">Follow-up</td>
@@ -93,7 +93,7 @@ const DashboardElement = () => {
                                             <Button size="sm">View Details</Button>
                                         </td>
                                     </tr>
-                                    <tr className="bg-white">
+                                    <tr className="border-b">
                                         <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Robert Johnson</td>
                                         <td className="px-6 py-4">2:00 PM</td>
                                         <td className="px-6 py-4">Consultation</td>

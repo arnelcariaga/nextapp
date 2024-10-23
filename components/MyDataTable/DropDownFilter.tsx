@@ -6,8 +6,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
 import Icon from '../Icon';
+import { ScrollArea } from '../ui/scroll-area';
+import sortMixedArray from '@/lib/sortMixedArray';
 
 // Define the props type for DropdownFilter
 interface DropdownFilterProps<TData> {
@@ -26,18 +27,23 @@ const DropdownFilter = <TData,>({ column, table }: DropdownFilterProps<TData>) =
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Icon name="Filter" className='ml-2' size={18}/>
+        <Icon name="Filter" className='ml-2' size={18} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuItem onClick={() => setFilterValue(undefined)}>
-          <span>Todos</span>
-        </DropdownMenuItem>
 
-        {uniqueValues.map((value, index) => (
-          <DropdownMenuItem key={index} onClick={() => setFilterValue(value)}>
-            <span>{String(value)}</span>
+
+      <DropdownMenuContent className="w-56">
+        <ScrollArea className="h-96">
+          <DropdownMenuItem onClick={() => setFilterValue(undefined)}>
+            <span>Todos</span>
           </DropdownMenuItem>
-        ))}
+
+          {uniqueValues.sort(sortMixedArray).map((value, index) => (
+            <DropdownMenuItem key={index} onClick={() => setFilterValue(value)}>
+              <span>{String(value)}</span>
+            </DropdownMenuItem>
+          ))}
+        </ScrollArea>
+
       </DropdownMenuContent>
     </DropdownMenu>
   );

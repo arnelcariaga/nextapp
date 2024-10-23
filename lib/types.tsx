@@ -20,32 +20,21 @@ export type TLeftSidebar = {
     isSidebarOpen: boolean;
 }
 
-type TLeftSidebarItemSubRoute = {
-    name: string;
-    url: string | object;
-    active: boolean;
-    subRoutes: TLeftSidebarItemSubRoute[];
-    isHeader: boolean;
+export interface LeftSidebarMenuItem {
+    title: string;
+    path: string;
+    subItems?: LeftSidebarMenuItem[] | [];
+    category: string;
     icon: keyof typeof Icons;
-    expandable: boolean
-};
-
-export type TLeftSidebarMenuItem = {
-    name: string;
-    url: string | object;
-    active: boolean;
-    subRoutes: TLeftSidebarItemSubRoute[];
-    isHeader: boolean;
-    icon: keyof typeof Icons;
-    expandable: boolean
-};
+    action?: string
+}
 
 // Tyoe for lucide icons
 export type TIconProps = {
     name: keyof typeof Icons;
     size?: number;
     color?: string;
-    className: string
+    className?: string
 };
 
 // Type for adding rol fields
@@ -65,6 +54,7 @@ export type TTableProps<T extends object> = {
         desc: boolean
         id: string
     }
+    exportData: boolean
 };
 
 // Type when editing rol
@@ -75,4 +65,10 @@ export type TSelectedRolObj = {
 
 export type TEditRolForm = {
     selectedRol: TSelectedRolObj
+}
+
+export type TCommunityOperativeUserParams = {
+    params: {
+        id: number
+    }
 }

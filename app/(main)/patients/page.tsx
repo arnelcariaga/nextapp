@@ -1,11 +1,9 @@
-import React from 'react'
+import PatientsElement from '@/components/PatientsElement'
 
-type Props = {}
-
-const Patients = (props: Props) => {
-    return (
-        <div>Patients</div>
-    )
+const Patients = () => {
+  return (
+    <PatientsElement />
+  )
 }
 
 export default Patients

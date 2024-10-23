@@ -11,26 +11,47 @@ import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "@/redux/store"
 import { Button } from "@/components/ui/button"
 import { Plus, Loader2 } from "lucide-react"
-import { setCloseModalAddRol, setCloseModalEditRol, setAddedRoles } from "@/redux/slices/rolesSlice"
-import { IRolesScreens } from "@/lib/interfaces"
+import { setCloseModalAddRol, setCloseModalEditRol } from "@/redux/slices/rolesSlice"
 import EditRolForm from "./EditRolForm"
 import TableSkeleton from "../MyDataTable/TableSkeleton"
-import { TSelectedRolObj } from "@/lib/types"
 import { useSession } from "next-auth/react"
 
+interface IScreenPermissions {
+    id_role: number
+    id_screen: number
+    view: string
+    create: string
+    edit: string
+    delete: string
+}
+
+interface IModules {
+    id: number
+    name: string
+}
+
+interface IModulesWithPermissions extends IModules {
+    permissions: IScreenPermissions
+}
+
+interface IRolesWithScreens {
+    id: number
+    name: string
+    is_admin: boolean
+    updated_at: string
+    screens: Array<IModulesWithPermissions>
+}
+
 export default function RolesElement() {
-    const [rolesData, setRolesData] = useState<IRolesScreens[]>([])
+    const [rolesData, setRolesData] = useState<IRolesWithScreens[]>([])
     const { toast } = useToast()
     const dispatch = useDispatch()
     const closeModalAddRol = useSelector((state: RootState) => state.roles.closeModalAddRol)
     const closeModalEditRol = useSelector((state: RootState) => state.roles.closeModalEditRol)
-    const addedRoles = useSelector((state: RootState) => state.roles.addedRoles as IRolesScreens[])
+    const addedRoles = useSelector((state: RootState) => state.roles.addedRoles as IRolesWithScreens[])
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
     const [sendingDelete, setSendingDelete] = useState(false);
-    const [selectedRolData, setSelectedRolData] = useState<TSelectedRolObj>({
-        id: 0,
-        name: ""
-    })
+    const [selectedRolData, setSelectedRolData] = useState<IRolesWithScreens[]>([])
     const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
     const { data: session } = useSession()
 
@@ -66,7 +87,7 @@ export default function RolesElement() {
                         updatedItems[index] = addedRoles[0]
                         return updatedItems
                     } else {
-                        return [addedRoles[0], ...prevS] as IRolesScreens[]
+                        return [addedRoles[0], ...prevS] as IRolesWithScreens[]
                     }
                 })
             }
@@ -77,10 +98,7 @@ export default function RolesElement() {
     // For deleting role
     const openModalDeleteRol = (rolId: number) => {
         setOpenDeleteModal(true)
-        setSelectedRolData({
-            id: rolId,
-            name: ""
-        })
+        setSelectedRolData([{ id: rolId } as IRolesWithScreens])
     }
 
     const deleteRolFn = async () => {
@@ -91,7 +109,7 @@ export default function RolesElement() {
             from_username: session?.user.username,
         }
 
-        const { error, data, message } = await deleteRol(selectedRolData.id, Array(userData))
+        const { error, data, message } = await deleteRol(Number(selectedRolData[0].id), Array(userData))
         if (error) {
             toast({
                 variant: "destructive",
@@ -100,7 +118,10 @@ export default function RolesElement() {
                 duration: 5000
             })
         } else {
-            dispatch(setAddedRoles([{ ...data }]))
+            const rolId = data["rol_id"]
+            const newRolData = rolesData.filter((item) => item.id !== rolId)
+
+            setRolesData(newRolData)
             setOpenDeleteModal(false)
             toast({
                 title: "Eliminar Rol || " + appName,
@@ -112,7 +133,7 @@ export default function RolesElement() {
     }
 
     // For editing rol
-    const openModalEditRol = async (selectedRol: TSelectedRolObj) => {
+    const openModalEditRol = async (selectedRol: IRolesWithScreens[]) => {
         dispatch(setCloseModalEditRol(true))
         setSelectedRolData(selectedRol)
     }
@@ -138,6 +159,7 @@ export default function RolesElement() {
                             id: 'updated_at',
                             desc: true
                         }}
+                        exportData={false}
                     />
             }
 
@@ -185,7 +207,7 @@ export default function RolesElement() {
                 title="Editar Rol"
                 description=""
                 content={
-                    <EditRolForm selectedRol={selectedRolData} />
+                    <EditRolForm selectedRol={selectedRolData[0]} />
                 }
                 btnTrigger={<></>}
                 myClassName="max-w-[100vw] h-full max-h-[100vh]"

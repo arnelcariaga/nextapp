@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from "@/components/theme-provider"
 import { SessionProvider } from "next-auth/react";
 import CustomReduxProvider from "./CustomReduxProvider";
 
 import "./styles/globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import "react-day-picker/style.css";
 
 export const metadata: Metadata = {
   title: "COIN | Centro de Orientación e Investigación Integral",
@@ -21,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body>
         <CustomReduxProvider>
           <ThemeProvider
             attribute="class"
