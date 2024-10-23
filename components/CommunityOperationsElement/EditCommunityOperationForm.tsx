@@ -17,8 +17,6 @@ import FormSkeleton from '../FormSkeleton'
 import {
     IProvinces,
     IMunicipalities,
-    IShifts,
-    ICommunityOperationTypes,
     IAddCommunityOperation,
     IMunicipalytyPlaces,
     ICommunityOperationDataTable
@@ -26,7 +24,6 @@ import {
 import { z, ZodRawShape } from 'zod';
 import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
     getProvinces,
@@ -247,7 +244,7 @@ function AddCommunityOperationForm({
     };
 
     if (loadingData) {
-        return <Card>
+        return <Card className="border-0">
             <CardContent>
                 <div className="px-3 mt-[4%]">
                     <FormSkeleton />

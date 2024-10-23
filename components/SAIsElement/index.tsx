@@ -144,7 +144,7 @@ export default function SaisElement() {
                 description=""
                 content={<AddSaiForm />}
                 btnTrigger={<></>}
-                myClassName="max-w-[85vw] h-full max-h-[85vh]"
+                myClassName="max-w-[85vw] h-full max-h-[60vh]"
                 closeModal={closeModalAddSai}
                 onOpenChange={() => dispatch(setCloseModalAddSai(!closeModalAddSai))}
             />
@@ -177,7 +177,7 @@ export default function SaisElement() {
                     <EditSaiForm selectedSaiId={selectedSaiId} />
                 }
                 btnTrigger={<></>}
-                myClassName="max-w-[85vw] h-full max-h-[85vh]"
+                myClassName="max-w-[85vw] h-full max-h-[60vh]"
                 closeModal={closeModalEditSai}
                 onOpenChange={() => dispatch(setCloseModalEditSai(!closeModalEditSai))}
             />

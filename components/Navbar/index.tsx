@@ -145,9 +145,9 @@ const Navbar = ({ session }: ISession) => {
         const res = await signInServerFunc(userData);
 
         if (res) {
-            localStorage.removeItem("@signAsFrom")
             window.location.replace("/dashboard")
         }
+        localStorage.removeItem("@signAsFrom")
         setIsBackToUser(false)
     }
 

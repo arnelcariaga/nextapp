@@ -13,6 +13,10 @@ import { setAddedUsers, setCloseModalAddUser } from '@/redux/slices/usersSlice'
 import { useDispatch } from 'react-redux'
 import FormSkeleton from '../FormSkeleton'
 import { useSession } from 'next-auth/react'
+import {
+    DialogClose,
+    DialogFooter
+} from "@/components/ui/dialog"
 
 const AddUserForm = () => {
     const {
@@ -333,13 +337,22 @@ const AddUserForm = () => {
                 </div>
             </div>
 
-            <Button type="submit" className="w-full group bg-green-600 dark:bg-green-900" disabled={sendingForm}>
-                {
-                    sendingForm && <Icon name="Loader2" className="mr-2 h-4 w-4 animate-spin" />
-                }
-                <span className='text-white'>Guardar</span>
-                <Icon name="Save" className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 text-white" />
-            </Button>
+            <div className="flex justify-end mt-[3%]">
+                <DialogFooter className='flex gap-x-4'>
+                    <DialogClose asChild>
+                        <Button className="group">
+                            Cerrar
+                        </Button>
+                    </DialogClose>
+                    <Button type="submit" disabled={sendingForm} className="group bg-green-600 dark:bg-green-900">
+                        {
+                            sendingForm && <Icon name="Loader2" className="mr-2 h-4 w-4 animate-spin" />
+                        }
+                        <span className='text-white'>Guardar</span>
+                        <Icon name="Save" className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 text-white" />
+                    </Button>
+                </DialogFooter>
+            </div>
         </form>
     )
 }

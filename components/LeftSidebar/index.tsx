@@ -194,9 +194,9 @@ const Sidebar = () => {
     }, {});
 
 
-    if (status === "loading") {
-        return <SidebarSkeleton />
-    }
+    // if (status === "loading") {
+    //     return <SidebarSkeleton />
+    // }
     return (
         <ScrollArea className='h-screen'>
             <aside className={`h-full sticky bg-green-600 dark:bg-green-900 text-white space-y-2 py-[2.5%] absolute inset-y-0 left-0 ${isSidebarOpen ? 'translate-x-full w-0' : 'translate-x-0 w-72 px-2'}`}>

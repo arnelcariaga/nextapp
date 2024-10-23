@@ -11,8 +11,8 @@ import {
     Card,
     CardContent
 } from "@/components/ui/card"
-import { getProvinces, getMunicipalities, getShifts, getCommunityOperationTypes, getMunicipalityPlaces, addCommunityOperation } from "@/lib/seed";
-import { IProvinces, IMunicipalities, IShifts, ICommunityOperationTypes, IAddCommunityOperation, IMunicipalytyPlaces } from "@/lib/interfaces";
+import { getProvinces, getMunicipalities, getMunicipalityPlaces, addCommunityOperation } from "@/lib/seed";
+import { IProvinces, IMunicipalities, IAddCommunityOperation, IMunicipalytyPlaces } from "@/lib/interfaces";
 import { useToast } from "@/hooks/use-toast"
 import { appName } from "@/lib/appInfo";
 import FormSkeleton from "../FormSkeleton";

@@ -311,7 +311,7 @@ export default function UserProfile({ params }: TCommunityOperativeUserParams) {
                     setOpenAddTrackingForm={setOpenAddTrackingForm}
                 />}
                 btnTrigger={<></>}
-                myClassName="md:w-[50vw] w-[100vw] h-full max-h-[75vh]"
+                myClassName="md:w-[50vw] w-[100vw] h-full max-h-[65vh]"
                 closeModal={openAddTrackingForm}
                 onOpenChange={() => setOpenAddTrackingForm(!openAddTrackingForm)}
             />
@@ -326,7 +326,7 @@ export default function UserProfile({ params }: TCommunityOperativeUserParams) {
                     setOpenAddEnrollingForm={setOpenAddEnrollingForm}
                 />}
                 btnTrigger={<></>}
-                myClassName="md:w-[40vw] w-[100vw] max-w-[95vw] h-full max-h-[75vh]"
+                myClassName="md:w-[40vw] w-[100vw] max-w-[95vw] h-full max-h-[55vh]"
                 closeModal={openAddEnrollingForm}
                 onOpenChange={() => setOpenAddEnrollingForm(!openAddEnrollingForm)}
             />
