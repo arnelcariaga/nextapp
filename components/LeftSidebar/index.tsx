@@ -148,8 +148,10 @@ const Sidebar = () => {
 
     const filterMenuByPermissions = (menu: LeftSidebarMenuItem[]): LeftSidebarMenuItem[] => {
         return menu.filter((menuItem) => {
+            console.log(session?.user.screens);
+            
             // Encontrar la pantalla correspondiente en los permisos del usuario
-            const screenPermission = status === "authenticated" && session?.user.screens.find(screen => screen.name === menuItem.title);
+            const screenPermission = session?.user.screens.find(screen => screen.name === menuItem.title);
 
             // Si no se encuentran permisos para la pantalla, devolver null
             if (!screenPermission) {
