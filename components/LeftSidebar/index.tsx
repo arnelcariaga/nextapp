@@ -279,7 +279,7 @@ import { RootState } from '@/redux/store';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import Icon from '../Icon';
 import { Separator } from '../ui/separator';
-import { useSession } from 'next-auth/react';
+import { ISession } from '@/lib/interfaces';
 
 const menuItems: LeftSidebarMenuItem[] = [
     {
@@ -390,12 +390,12 @@ const groupByCategory = (items: LeftSidebarMenuItem[]) => {
     }, {} as Record<string, LeftSidebarMenuItem[]>); // Tipamos el acumulador
 };
 
-const LeftSidebar = () => {
+const LeftSidebar = ({ session }: ISession) => {
     const router = useRouter();
     const pathname = usePathname();
     const [menuItemsState, setMenuItemsState] = useState(menuItems);
     const isSidebarOpen = useSelector((state: RootState) => state.appSettings.isSidebarOpen)
-    const { data: session, status } = useSession()
+    //const { data: session, status } = useSession()
 
     useEffect(() => {
         const updatedMenuItems = menuItems.map((item) => {
@@ -434,7 +434,7 @@ const LeftSidebar = () => {
 
     // Filtrar elementos que tienen view: "1"
     const filteredMenuItems = menuItemsState.filter(item =>
-        status === "authenticated" && session?.user.screens.some(perm => perm.path === item.path && perm.permissions.view === "1")
+        session?.user.screens.some(perm => perm.path === item.path && perm.permissions.view === "1")
     );
 
     // Agrupar items por categoría
