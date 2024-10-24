@@ -146,8 +146,8 @@ const Sidebar = () => {
 
     const isActive = (path: string) => pathname === path;
 
-    const filterMenuByPermissions = useCallback((menu: LeftSidebarMenuItem[]) => {
-        return menu.filter((menuItem) => {
+    const filteredMenu = useCallback(() => {
+        return menuItems.filter((menuItem) => {
 
             // Encontrar la pantalla correspondiente en los permisos del usuario
             const screenPermission = session?.user.screens.find(screen => screen.name === menuItem.title);
@@ -183,11 +183,9 @@ const Sidebar = () => {
                 ...menuItem,
             };
         }).filter((menuItem): menuItem is LeftSidebarMenuItem => menuItem !== null); // Filtrar los elementos nulos
-    }, [session])
+    }, [session, menuItems])
 
-    const filteredMenu = filterMenuByPermissions(menuItems);
-
-    const groupedMenuItems = filteredMenu.reduce((acc: { [key: string]: LeftSidebarMenuItem[] }, item) => {
+    const groupedMenuItems = filteredMenu().reduce((acc: { [key: string]: LeftSidebarMenuItem[] }, item) => {
         acc[item.category] = acc[item.category] || [];
         acc[item.category].push(item);
         return acc;
