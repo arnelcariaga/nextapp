@@ -296,7 +296,7 @@ const menuItems: LeftSidebarMenuItem[] = [
     },
     {
         title: 'PowerBI PrEP',
-        path: '/powerbiprep',
+        path: '/powerbi_prep',
         category: 'General',
         icon: "ChartPie"
     },
@@ -314,23 +314,23 @@ const menuItems: LeftSidebarMenuItem[] = [
     },
     {
         title: 'Usuarios PrEP',
-        path: '/prep_users',
+        path: '/users_prep',
         category: 'Formularios Clínicos',
         icon: "BookUser",
         subItems: [
-            { title: 'Agregar', path: '/prep_users/add', category: 'Formularios Clínicos', icon: "Dot" },
-            { title: 'Lista de pacientes', path: '/prep_users', category: 'Formularios Clínicos', icon: "Dot" },
+            { title: 'Agregar', path: '/users_prep/add', category: 'Formularios Clínicos', icon: "Dot" },
+            { title: 'Lista de pacientes', path: '/users_prep', category: 'Formularios Clínicos', icon: "Dot" },
         ],
     },
     {
         title: 'Consejería',
-        path: '/counceling',
+        path: '/counsoling',
         category: 'Formularios Clínicos',
         icon: "Contact",
         subItems: [
-            { title: 'Registro Diario', path: '/counceling/add', category: 'Formularios Clínicos', icon: "Dot", action: "view" },
-            { title: 'Pre-Consejería', path: '/counceling', category: 'Formularios Clínicos', icon: "Dot", action: "create" },
-            { title: 'Post-Consejería', path: '/counceling', category: 'Formularios Clínicos', icon: "Dot", action: "view" },
+            { title: 'Registro Diario', path: '/counsoling/add', category: 'Formularios Clínicos', icon: "Dot", action: "view" },
+            { title: 'Pre-Consejería', path: '/counsoling', category: 'Formularios Clínicos', icon: "Dot", action: "create" },
+            { title: 'Post-Consejería', path: '/counsoling', category: 'Formularios Clínicos', icon: "Dot", action: "view" },
         ],
     },
     {
@@ -346,7 +346,7 @@ const menuItems: LeftSidebarMenuItem[] = [
     },
     {
         title: 'Detección de violencia',
-        path: '/violence_detection',
+        path: '/drogs_detection',
         category: 'Docs',
         icon: "ListChecks"
     },
@@ -368,12 +368,12 @@ const menuItems: LeftSidebarMenuItem[] = [
         icon: "Building2"
     }, {
         title: 'Configuración PowerBI',
-        path: '/powerbi_settings',
+        path: '/settings_powerbi',
         category: 'Administración',
         icon: "Cog"
     }, {
         title: 'Audit Logs',
-        path: '/audit_log',
+        path: '/audit_logs',
         category: 'Administración',
         icon: "ScrollText"
     },
@@ -409,7 +409,7 @@ const LeftSidebar = () => {
             return {
                 ...item,
                 isActive,
-                isOpen: isActive || item.isOpen, 
+                isOpen: isActive || item.isOpen,
                 subItems: updatedSubItems,
             };
         });
@@ -431,12 +431,15 @@ const LeftSidebar = () => {
         });
         setMenuItemsState(updatedItems);
     };
+console.log(session?.user.screens);
+
+    // Filtrar elementos que tienen view: "1"
+    const filteredMenuItems = menuItemsState.filter(item =>
+        session?.user.screens.some(perm => perm.path === item.path && perm.permissions.view === "1")
+    );
 
     // Agrupar items por categoría
-    const categorizedMenuItems = groupByCategory(menuItemsState);
-
-    console.log(session?.user.screens);
-    
+    const categorizedMenuItems = groupByCategory(filteredMenuItems);
 
     return (
         <ScrollArea className='h-screen'>
