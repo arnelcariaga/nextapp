@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { LeftSidebarMenuItem } from '@/lib/types'
@@ -146,10 +146,9 @@ const Sidebar = () => {
 
     const isActive = (path: string) => pathname === path;
 
-    const filterMenuByPermissions = (menu: LeftSidebarMenuItem[]): LeftSidebarMenuItem[] => {
+    const filterMenuByPermissions = useCallback((menu: LeftSidebarMenuItem[]) => {
         return menu.filter((menuItem) => {
-            console.log(session?.user.screens);
-            
+
             // Encontrar la pantalla correspondiente en los permisos del usuario
             const screenPermission = session?.user.screens.find(screen => screen.name === menuItem.title);
 
@@ -183,9 +182,8 @@ const Sidebar = () => {
             return {
                 ...menuItem,
             };
-        })
-            .filter((menuItem): menuItem is LeftSidebarMenuItem => menuItem !== null); // Filtrar los elementos nulos
-    };
+        }).filter((menuItem): menuItem is LeftSidebarMenuItem => menuItem !== null); // Filtrar los elementos nulos
+    }, [session])
 
     const filteredMenu = filterMenuByPermissions(menuItems);
 
