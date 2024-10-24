@@ -431,11 +431,10 @@ const LeftSidebar = () => {
         });
         setMenuItemsState(updatedItems);
     };
-console.log(session?.user.screens);
 
     // Filtrar elementos que tienen view: "1"
     const filteredMenuItems = menuItemsState.filter(item =>
-        session?.user.screens.some(perm => perm.path === item.path && perm.permissions.view === "1")
+        status === "authenticated" && session?.user.screens.some(perm => perm.path === item.path && perm.permissions.view === "1")
     );
 
     // Agrupar items por categoría
