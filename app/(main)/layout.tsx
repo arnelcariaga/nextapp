@@ -12,7 +12,7 @@ export default async function MainLayout({
     return (
         <SessionProvider>
             <div className="flex h-screen bg-slate-50 dark:bg-slate-900">
-                <LeftSidebar />
+                <LeftSidebar session={session} />
 
                 <div className="flex-1 flex flex-col overflow-hidden">
                     <Navbar session={session} />
