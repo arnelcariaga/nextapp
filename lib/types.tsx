@@ -27,6 +27,8 @@ export interface LeftSidebarMenuItem {
     category: string;
     icon: keyof typeof Icons;
     action?: string
+    isActive?: boolean
+    isOpen?: boolean
 }
 
 // Tyoe for lucide icons
