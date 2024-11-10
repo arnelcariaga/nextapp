@@ -12,6 +12,7 @@ import TableSkeleton from "../../MyDataTable/TableSkeleton"
 import { useSession } from "next-auth/react"
 import Icon from "../../Icon"
 import { useRouter } from "next/navigation"
+import useSWR from 'swr'
 
 export default function UserList() {
     const [communityOperationUsersData, setCommunityOperationUsersData] = useState<ICommunityOperationUsers[]>([])
@@ -24,6 +25,10 @@ export default function UserList() {
     const router = useRouter()
     const screen = session?.user.screens.find(screen => screen.path === '/community_operations');
     const [canDelete, setCanDelete] = useState<boolean>(false)
+
+    const { data: swrData, error, isLoading } = useSWR('klk', async () => {
+        return await getAllCommunityOperationUsers(Number(session?.user.id_sai), Number(session?.user.id_role))
+    });
 
     useEffect(() => {
         // Buscar los permisos del usuario para esta pantalla
@@ -39,30 +44,30 @@ export default function UserList() {
         }
     }, [screen]);
 
-    useEffect(() => {
-        async function getCommnutiOperationUsersFn() {
-            if (session) {
-                const { error, data, message } = await getAllCommunityOperationUsers(Number(session.user.id_sai), Number(session.user.id_role))
+    // useEffect(() => {
+    //     async function getCommnutiOperationUsersFn() {
+    //         if (session) {
+    //             const { error, data, message } = await getAllCommunityOperationUsers(Number(session.user.id_sai), Number(session.user.id_role))
 
-                if (error) {
-                    toast({
-                        variant: "destructive",
-                        title: "Operativo Comunidad -> Usuarios || " + appName,
-                        description: message,
-                        duration: 5000
-                    })
-                } else {
-                    setCommunityOperationUsersData(data)
+    //             if (error) {
+    //                 toast({
+    //                     variant: "destructive",
+    //                     title: "Operativo Comunidad -> Usuarios || " + appName,
+    //                     description: message,
+    //                     duration: 5000
+    //                 })
+    //             } else {
+    //                 setCommunityOperationUsersData(data)
 
-                }
-                setDataTableLoading(false)
-            }
-        }
-        getCommnutiOperationUsersFn()
-    }, [toast, session])
-
+    //             }
+    //             setDataTableLoading(false)
+    //         }
+    //     }
+    //     getCommnutiOperationUsersFn()
+    // }, [toast, session])
 
     // For deleting Community Operation User
+    
     const openModalDeleteCommunityOperationUser = (communityOperationUserId: number) => {
         setOpenDeleteModal(true)
         setSelectedCommunityOperationUserId(communityOperationUserId)
@@ -102,9 +107,9 @@ export default function UserList() {
     return (
         <div className="w-full p-2">
             {
-                dataTableLoading ? <TableSkeleton /> :
+                isLoading ? <TableSkeleton /> :
                     <DataTable
-                        data={communityOperationUsersData}
+                        data={swrData.data}
                         columns={communityOperationUsersColumns(openModalDeleteCommunityOperationUser, canDelete)}
                         addBtn={<></>}
                         columnBtnFilter

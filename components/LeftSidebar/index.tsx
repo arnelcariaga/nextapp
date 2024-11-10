@@ -314,12 +314,12 @@ const menuItems: LeftSidebarMenuItem[] = [
     },
     {
         title: 'Usuarios PrEP',
-        path: '/users_prep',
+        path: '/patients_prep',
         category: 'Formularios Clínicos',
         icon: "BookUser",
         subItems: [
-            { title: 'Agregar', path: '/users_prep/add', category: 'Formularios Clínicos', icon: "Dot" },
-            { title: 'Lista de pacientes', path: '/users_prep', category: 'Formularios Clínicos', icon: "Dot" },
+            { title: 'Agregar', path: '/patients_prep/add', category: 'Formularios Clínicos', icon: "Dot" },
+            { title: 'Lista de pacientes', path: '/patients_prep', category: 'Formularios Clínicos', icon: "Dot" },
         ],
     },
     {
@@ -349,6 +349,66 @@ const menuItems: LeftSidebarMenuItem[] = [
         path: '/drogs_detection',
         category: 'Docs',
         icon: "ListChecks"
+    },
+    {
+        title: 'Formulario inscripción de participantes',
+        path: '/participant_registration_form',
+        category: 'Proyecto LISS',
+        icon: "SquareLibrary",
+        subItems: [
+            { title: 'Agregar', path: '/participant_registration_form/add', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Lista de pacientes', path: '/participant_registration_form', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Combinar pacientes', path: '/participant_registration_form/merge', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Transferiridos', path: '/participant_registration_form/transfered', category: 'Proyecto LISS', icon: "Dot" },
+        ],
+    },
+    {
+        title: 'Formulario inscripción de educador Par',
+        path: '/educator_registration_form_par',
+        category: 'Proyecto LISS',
+        icon: "BookOpenText",
+        subItems: [
+            { title: 'Agregar', path: '/educator_registration_form_par/add', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Lista de pacientes', path: '/educator_registration_form_par', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Combinar pacientes', path: '/educator_registration_form_par/merge', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Transferiridos', path: '/educator_registration_form_par/transfered', category: 'Proyecto LISS', icon: "Dot" },
+        ],
+    },
+    {
+        title: 'Sesión LISS',
+        path: '/liss_session',
+        category: 'Proyecto LISS',
+        icon: "BookOpen",
+        subItems: [
+            { title: 'Agregar', path: '/liss_session/add', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Lista de pacientes', path: '/liss_session', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Combinar pacientes', path: '/liss_session/merge', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Transferiridos', path: '/liss_session/transfered', category: 'Proyecto LISS', icon: "Dot" },
+        ],
+    },
+    {
+        title: 'Educador Par',
+        path: '/educator_par',
+        category: 'Proyecto LISS',
+        icon: "NotebookText",
+        subItems: [
+            { title: 'Agregar', path: '/educator_par/add', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Lista de pacientes', path: '/educator_par', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Combinar pacientes', path: '/educator_par/merge', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Transferiridos', path: '/educator_par/transfered', category: 'Proyecto LISS', icon: "Dot" },
+        ],
+    },
+    {
+        title: 'Ficha registro de prueba',
+        path: '/test_record_sheet',
+        category: 'Proyecto LISS',
+        icon: "NotepadText",
+        subItems: [
+            { title: 'Agregar', path: '/test_record_sheet/add', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Lista de pacientes', path: '/test_record_sheet', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Combinar pacientes', path: '/test_record_sheet/merge', category: 'Proyecto LISS', icon: "Dot" },
+            { title: 'Transferiridos', path: '/test_record_sheet/transfered', category: 'Proyecto LISS', icon: "Dot" },
+        ],
     },
     {
         title: 'Usuarios',
@@ -395,7 +455,8 @@ const LeftSidebar = ({ session }: ISession) => {
     const pathname = usePathname();
     const [menuItemsState, setMenuItemsState] = useState(menuItems);
     const isSidebarOpen = useSelector((state: RootState) => state.appSettings.isSidebarOpen)
-    //const { data: session, status } = useSession()
+    const userCommunityOpScreens = session?.user.screens.find((screen) => screen.path === "/community_operations")
+    const canCreate = userCommunityOpScreens?.permissions.create === '0'
 
     useEffect(() => {
         const updatedMenuItems = menuItems.map((item) => {
@@ -447,18 +508,18 @@ const LeftSidebar = ({ session }: ISession) => {
                     {Object.keys(categorizedMenuItems).map((category) => (
                         <div key={category} className="mb-4">
                             {/* Título de la categoría */}
-                            <div className="my-4">
-                                <h2 className="text-xs font-medium leading-none ms-2 uppercase tracking-wide text-gray-300">{category}</h2>
+                            <div className="mt-4">
+                                <h2 className="text-xs font-medium leading-none ms-2 uppercase tracking-wide">{category}</h2>
                                 <Separator className="mt-3 mb-2" />
                             </div>
                             {categorizedMenuItems[category].map((item, index) => (
                                 <div key={item.path} className="mb-2">
                                     {!item.subItems ? (
-                                        // Item sin subItems
+                                        // Item without subItems
                                         <div
                                             className={cn(
                                                 "flex items-center px-4 py-2 cursor-pointer hover:bg-green-700 transition-all",
-                                                item.isActive ? "bg-green-700 text-white" : "text-gray-300"
+                                                item.isActive ? "bg-green-700 text-white font-bold" : "text-gray-100"
                                             )}
                                             onClick={() => handleNavigation(item.path)}
                                         >
@@ -474,7 +535,7 @@ const LeftSidebar = ({ session }: ISession) => {
                                                 <div
                                                     className={cn(
                                                         "flex items-center justify-between px-4 py-2 cursor-pointer hover:bg-green-700 transition-all",
-                                                        item.isActive ? "bg-green-700 text-white" : "text-gray-300"
+                                                        item.isActive ? "bg-green-700 text-white font-bold" : "text-gray-100"
                                                     )}
                                                     onClick={() => toggleCollapse(index)}
                                                 >
@@ -488,21 +549,26 @@ const LeftSidebar = ({ session }: ISession) => {
                                                 </div>
                                             </CollapsibleTrigger>
                                             <CollapsibleContent className="pl-6">
-                                                {item.subItems.map((subItem) => (
-                                                    <div
-                                                        key={subItem.path}
-                                                        className={cn(
-                                                            "cursor-pointer py-2 hover:bg-green-700 transition-all flex items-center my-2",
-                                                            subItem.isActive ? "bg-green-700 text-white" : "text-gray-300"
-                                                        )}
-                                                        onClick={() => handleNavigation(subItem.path)}
-                                                    >
-                                                        <span className="mr-3">
-                                                            <Icon name="Dot" className="h-5 w-5" />
-                                                        </span>
-                                                        <span>{subItem.title}</span>
-                                                    </div>
-                                                ))}
+                                                {item.subItems.map((subItem) => {
+                                                    if (canCreate && subItem.path === "/community_operations/add") {
+                                                        return false
+                                                    }
+                                                    return (
+                                                        <div
+                                                            key={subItem.path}
+                                                            className={cn(
+                                                                "cursor-pointer py-2 hover:bg-green-700 transition-all flex items-center my-2",
+                                                                subItem.isActive ? "bg-green-700 text-white font-bold" : "text-gray-100"
+                                                            )}
+                                                            onClick={() => handleNavigation(subItem.path)}
+                                                        >
+                                                            <span className="mr-1">
+                                                                <Icon name="Dot" className="h-5 w-5" />
+                                                            </span>
+                                                            <span>{subItem.title}</span>
+                                                        </div>
+                                                    )
+                                                })}
                                             </CollapsibleContent>
                                         </Collapsible>
                                     )}

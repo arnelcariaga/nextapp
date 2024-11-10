@@ -10,7 +10,7 @@ import { appName } from "@/lib/appInfo"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "@/redux/store"
 import { Button } from "@/components/ui/button"
-import { Plus, Loader2 } from "lucide-react"
+import Icon from "../Icon"
 import { setCloseModalAddUser, setCloseModalEditUser } from "@/redux/slices/usersSlice"
 import { IUserData } from "@/lib/interfaces"
 import EditUserForm from "./EditUserForm"
@@ -123,7 +123,7 @@ export default function UsersElement() {
 
     const signInAs = async (uId: number) => {
         setLoadingSignAs(true)
-        
+
         localStorage.setItem("@signAsFrom", JSON.stringify(session?.user))
 
         const userData = {
@@ -153,7 +153,7 @@ export default function UsersElement() {
                         columns={usersColumns(openModalEditUser, openModalDeleteUser, signInAs, loadingSignAs)}
                         addBtn={
                             <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddUser(true))}>
-                                <Plus className="mr-2 h-4 w-4 text-white" />
+                                <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
                                 <span className='text-white'>
                                     Agregar Usuario
                                 </span>
@@ -189,7 +189,7 @@ export default function UsersElement() {
                         disabled={sendingDelete}
                         onClick={deleteUserFn}>
                         {
-                            sendingDelete && <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            sendingDelete && <Icon name="Loader2" className="mr-2 h-4 w-4 animate-spin" />
                         }
                         Eliminar
                     </Button>

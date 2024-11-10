@@ -1,11 +1,8 @@
-import React from 'react'
+import UserEnrollings from "@/components/CommunityOperationsElement/UserProfile/UserEnrollings"
+import { TCommunityOperativeUserParams } from "@/lib/types"
 
-type Props = {}
-
-const Enrollings = (props: Props) => {
-  return (
-    <div>Enrollings</div>
-  )
+const Enrollings = ({ params }: TCommunityOperativeUserParams) => {
+  return <UserEnrollings params={params} />
 }
 
 export default Enrollings

@@ -86,18 +86,10 @@ function AddCommunityOperationForm() {
     const { toast } = useToast()
     const { data: session } = useSession()
     const router = useRouter()
-    const screen = session?.user.screens.find(screen => screen.path === '/community_operations');
 
     const methods = useForm<IFormInput>({
         resolver: zodResolver(createSchema(steps[0])),
     });
-
-    useEffect(() => {
-        // Buscar los permisos del usuario para esta pantalla
-        if (screen && screen.permissions.create === '0') {
-            router.push("/not-found")
-        }
-    }, [screen, router]);
 
     // Load provinces
     useEffect(() => {
@@ -202,13 +194,12 @@ function AddCommunityOperationForm() {
 
         } else {
             methods.reset();
-            router.push(`/community_operations/${resData}/users`)
-
             toast({
                 title: "Agregar Operativo Comunidad || " + appName,
                 description: message,
                 duration: 5000
             })
+            router.push(`/community_operations/${resData}/users`)
         }
         setSendingForm(false)
     };
@@ -302,7 +293,7 @@ function AddCommunityOperationForm() {
                                             control={methods.control}
                                             name="date"
                                             render={({ field: { onChange, value } }) => (
-                                                <Popover>
+                                                <Popover modal>
                                                     <PopoverTrigger asChild>
                                                         <div className="space-y-2">
                                                             <Label htmlFor={field.name}>{field.label}</Label>

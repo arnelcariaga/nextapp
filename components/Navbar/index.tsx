@@ -58,13 +58,16 @@ const Navbar = ({ session }: ISession) => {
         const endsWithUsers = pathname.endsWith('/users');
         const endsWithUserProfile = pathname.endsWith('/user_profile');
         const endsWithUserProfileTrackings = pathname.endsWith('/trackings');
+        const endsWithUserProfileEnrollings = pathname.endsWith('/enrollings');
 
         if (startsWithCommunityOperations && endsWithUsers) {
             return "Operativo Comunidad -> Usuarios";
         } else if (startsWithCommunityOperations && endsWithUserProfile) {
             return "Operativo Comunidad -> Perfil Usuario"
         } else if (startsWithCommunityOperations && endsWithUserProfileTrackings) {
-            return "Operativo Comunidad -> Seguimiento usuario"
+            return "Paciente Operativo Comunidad -> Seguimiento usuario"
+        } else if (startsWithCommunityOperations && endsWithUserProfileEnrollings) {
+            return "Paciente Operativo Comunidad -> Situación enrolamiento"
         }
         return null; // Devolver null si no coincide
     }
@@ -84,7 +87,7 @@ const Navbar = ({ session }: ISession) => {
             case "/sais":
                 return "SAIs"
                 break;
-            case "/audit_log":
+            case "/audit_logs":
                 return "Registros de auditoría"
                 break;
             case "/community_operations/add":
@@ -95,6 +98,12 @@ const Navbar = ({ session }: ISession) => {
                 break;
             case "/community_operations/user_list":
                 return "Operativo Comunidad -> Lista De Usuarios"
+                break;
+            case "/patients/add":
+                return "Pacientes -> Agregar"
+                break;
+            case "/participant_registration_form/add":
+                return "Formulario inscripción de participantes -> Agregar"
                 break;
             default:
                 return subPathname() || '';

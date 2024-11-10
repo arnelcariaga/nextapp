@@ -1,11 +1,8 @@
-import React from 'react'
+import UserTrackings from "@/components/CommunityOperationsElement/UserProfile/UserTrackings"
+import { TCommunityOperativeUserParams } from "@/lib/types"
 
-type Props = {}
-
-const Trackings = (props: Props) => {
-  return (
-    <div>Trackings</div>
-  )
+const Trackings = ({params}: TCommunityOperativeUserParams) => {
+  return <UserTrackings params={params} />
 }
 
 export default Trackings

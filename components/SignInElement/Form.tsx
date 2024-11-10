@@ -3,12 +3,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { ArrowRight, Lock, Mail, Loader2 } from "lucide-react"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { IUserCredentials } from '@/lib/interfaces'
 import { useToast } from "@/hooks/use-toast"
 import { appName } from '@/lib/appInfo'
 import { signInServerFunc } from './signInServerFunc'
+import Icon from '../Icon'
 
 const Form = () => {
     const {
@@ -47,7 +47,7 @@ const Form = () => {
                             required: true
                         })}
                     />
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                    <Icon name='Mail' className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                 </div>
             </div>
             <div className="space-y-2">
@@ -61,7 +61,7 @@ const Form = () => {
                             required: true
                         })}
                     />
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                    <Icon name='Lock' className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                 </div>
             </div>
             <div className="flex items-center justify-between">
@@ -78,10 +78,10 @@ const Form = () => {
             </div>
             <Button type="submit" className="w-full group" disabled={sendingForm}>
                 {
-                    sendingForm && <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    sendingForm && <Icon name='Loader2' className="mr-2 h-4 w-4 animate-spin" />
                 }
                 Iniciar
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <Icon name='ArrowRight' className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
         </form>
     )

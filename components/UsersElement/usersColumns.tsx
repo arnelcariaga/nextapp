@@ -24,10 +24,10 @@ export const usersColumns = (openModalEditUser: (id: number) => void, openModalD
                         }
                         Iniciar sesi&oacute;n
                     </Button>
-                    <Button variant="secondary" onClick={() => openModalEditUser(uId)}>
+                    <Button variant="secondary" onClick={() => openModalEditUser(uId)} disabled={loadingSignAs}>
                         <Icon name='Edit' />
                     </Button>
-                    <Button variant="destructive" onClick={() => openModalDeleteUser(uId, username)}>
+                    <Button variant="destructive" onClick={() => openModalDeleteUser(uId, username)} disabled={loadingSignAs}>
                         <Icon name="Trash2" />
                     </Button>
                 </div>

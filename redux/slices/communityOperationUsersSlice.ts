@@ -5,6 +5,8 @@ interface IInitialState {
   closeModalEditCommunityOperationUser: boolean;
   addedCommunityOperationUser: Array<object>;
   addedUserProfile: object;
+  addedCommunityOperationUserTracking: Array<object>;
+  addedCommunityOperationUserEnrolling: Array<object>;
 }
 
 const initialState: IInitialState = {
@@ -12,6 +14,8 @@ const initialState: IInitialState = {
   closeModalEditCommunityOperationUser: false,
   addedCommunityOperationUser: [],
   addedUserProfile: {},
+  addedCommunityOperationUserTracking: [],
+  addedCommunityOperationUserEnrolling: [],
 };
 
 export const communityOperationUsersSlice = createSlice({
@@ -34,6 +38,14 @@ export const communityOperationUsersSlice = createSlice({
       const data = action.payload;
       return { ...state, addedUserProfile: data };
     },
+    setAddedCommunityOperationUserTracking: (state, action) => {
+      const addedCommunityOperationUserTracking = action.payload;
+      return { ...state, addedCommunityOperationUserTracking };
+    },
+    setAddedCommunityOperationUserEnrolling: (state, action) => {
+      const addedCommunityOperationUserEnrolling = action.payload;
+      return { ...state, addedCommunityOperationUserEnrolling };
+    },
   },
 });
 
@@ -42,6 +54,8 @@ export const {
   setCloseModalEditCommunityOperationUser,
   setAddedCommunityOperationUser,
   setAddedUserProfile,
+  setAddedCommunityOperationUserTracking,
+  setAddedCommunityOperationUserEnrolling,
 } = communityOperationUsersSlice.actions;
 
 export default communityOperationUsersSlice.reducer;

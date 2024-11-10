@@ -25,6 +25,10 @@ export const communityOperationsColumns = (
             accessorKey: "community_operation_users_count",
             header: "Cant. Usuarios",
             enableColumnFilter: true,
+            filterFn: (row, columnId, filterValue) => {
+                const cellValue = row.getValue(columnId);
+                return cellValue === filterValue
+            },
         },
         {
             accessorKey: "province.name",

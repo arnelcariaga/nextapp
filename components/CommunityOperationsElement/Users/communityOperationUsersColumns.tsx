@@ -37,7 +37,7 @@ export const communityOperationUsersColumns = (
         },
         {
             accessorKey: "serology_status.name",
-            header: "Estado Serológico",
+            header: "Serología",
             enableColumnFilter: true,
             cell: ({ row }) => {
                 return row.original.serology_status.name

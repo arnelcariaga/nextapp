@@ -4,7 +4,22 @@ import { NextResponse } from "next/server";
 // Helper function to check if the user has access to the screen or subroutes
 function hasAccess(path: string, screens: any[]) {
   // Verifica si alguna ruta en el array de screens es una coincidencia inicial
-  return screens.some((screen) => path.startsWith(screen.path));
+  return screens.some((screen) => {
+    if (
+      // Can user create in this path?
+      screen.permissions.create === "0" &&
+      path === "/community_operations/add"
+    ) {
+      return false;
+    } else if (
+      // Can user view this path and it sub path?
+      screen.permissions.view === "0" &&
+      path.startsWith("/community_operations")
+    ) {
+      return false;
+    }
+    return path.startsWith(screen.path);
+  });
 }
 
 export default auth((req) => {

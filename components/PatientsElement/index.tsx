@@ -10,12 +10,12 @@ import { appName } from "@/lib/appInfo"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "@/redux/store"
 import { Button } from "@/components/ui/button"
-import { Plus, Loader2 } from "lucide-react"
 import { setCloseModalAddSai, setCloseModalEditSai } from "@/redux/slices/saisSlice"
 import { ISai } from "@/lib/interfaces"
 import EditSaiForm from "./EditSaiForm"
 import TableSkeleton from "../MyDataTable/TableSkeleton"
 import { useSession } from "next-auth/react"
+import Icon from "../Icon"
 
 export default function SaisElement() {
     const [saisData, setSaisData] = useState<ISai[]>([])
@@ -139,7 +139,7 @@ export default function SaisElement() {
                         columns={saisColumns(openModalEditSai, openModalDeleteSai)}
                         addBtn={
                             <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddSai(true))}>
-                                <Plus className="mr-2 h-4 w-4 text-white" />
+                                <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
                                 <span className='text-white'>
                                     Agregar SAIs
                                 </span>
@@ -175,7 +175,7 @@ export default function SaisElement() {
                         disabled={sendingDelete}
                         onClick={deleteSaiFn}>
                         {
-                            sendingDelete && <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            sendingDelete && <Icon name="Loader2" className="mr-2 h-4 w-4 animate-spin" />
                         }
                         Eliminar
                     </Button>

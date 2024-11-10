@@ -10,11 +10,11 @@ import { appName } from "@/lib/appInfo"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "@/redux/store"
 import { Button } from "@/components/ui/button"
-import { Plus, Loader2 } from "lucide-react"
 import { setCloseModalAddRol, setCloseModalEditRol } from "@/redux/slices/rolesSlice"
 import EditRolForm from "./EditRolForm"
 import TableSkeleton from "../MyDataTable/TableSkeleton"
 import { useSession } from "next-auth/react"
+import Icon from "../Icon"
 
 interface IScreenPermissions {
     id_role: number
@@ -147,7 +147,7 @@ export default function RolesElement() {
                         columns={rolesColumns(openModalEditRol, openModalDeleteRol)}
                         addBtn={
                             <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddRol(true))}>
-                                <Plus className="mr-2 h-4 w-4 text-white" />
+                                <Icon name='Plus' className="mr-2 h-4 w-4 text-white" />
                                 <span className='text-white'>
                                     Agregar Rol
                                 </span>
@@ -183,7 +183,7 @@ export default function RolesElement() {
                         disabled={sendingDelete}
                         onClick={deleteRolFn}>
                         {
-                            sendingDelete && <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            sendingDelete && <Icon name='Loader2' className="mr-2 h-4 w-4 animate-spin" />
                         }
                         Eliminar
                     </Button>

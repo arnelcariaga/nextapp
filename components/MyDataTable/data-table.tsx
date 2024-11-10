@@ -27,12 +27,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-    ChevronLeft,
-    ChevronRight,
-    ChevronsLeft,
-    ChevronsRight
-} from "lucide-react"
 import { TTableProps } from '@/lib/types'
 import DropdownFilter from './DropDownFilter'
 import * as XLSX from 'xlsx';
@@ -100,7 +94,7 @@ export default function DataTable<T extends object>({
     };
 
     return (
-        <Card className='rounded-none'>
+        <Card className='shadow-lg'>
             <CardHeader>
                 <div className='flex justify-between items-center my-4'>
                     <div className="flex items-center justify-between w-full">
@@ -207,57 +201,6 @@ export default function DataTable<T extends object>({
                         )}
                     </TableBody>
                 </Table>
-                {/* <div className="flex items-center justify-between space-x-2 py-4 mx-4">
-                    <div className="flex-1 text-sm text-muted-foreground">
-                        {table.getFilteredSelectedRowModel().rows.length} de{" "}
-                        {table.getFilteredRowModel().rows.length} fila(s) seleccionada(s).
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => table.setPageIndex(0)}
-                            disabled={!table.getCanPreviousPage()}
-                        >
-                            <ChevronsLeft className="h-4 w-4" />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => table.previousPage()}
-                            disabled={!table.getCanPreviousPage()}
-                        >
-                            <ChevronLeft className="h-4 w-4" />
-                        </Button>
-                        {Array.from({ length: table.getPageCount() }, (_, i) => i + 1).map((pageNumber) => (
-                            <Button
-                                key={pageNumber}
-                                variant={table.getState().pagination.pageIndex + 1 === pageNumber ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => table.setPageIndex(pageNumber - 1)}
-                                type='button'
-                            >
-                                {pageNumber}
-                            </Button>
-                        ))}
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => table.nextPage()}
-                            disabled={!table.getCanNextPage()}
-                        >
-                            <ChevronRight className="h-4 w-4" />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                            disabled={!table.getCanNextPage()}
-                        >
-                            <ChevronsRight className="h-4 w-4" />
-                        </Button>
-                    </div>
-                </div> */}
                 <div className="flex items-center justify-between space-x-2 py-4 mx-4">
                     <div className="flex-1 text-sm text-muted-foreground">
                         Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
@@ -270,7 +213,7 @@ export default function DataTable<T extends object>({
                             onClick={() => table.setPageIndex(0)}
                             disabled={!table.getCanPreviousPage()}
                         >
-                            <ChevronsLeft className="h-4 w-4" />
+                            <Icon name='ChevronsLeft' className="h-4 w-4" />
                         </Button>
                         <Button
                             variant="outline"
@@ -278,7 +221,7 @@ export default function DataTable<T extends object>({
                             onClick={() => table.previousPage()}
                             disabled={!table.getCanPreviousPage()}
                         >
-                            <ChevronLeft className="h-4 w-4" />
+                            <Icon name='ChevronLeft' className="h-4 w-4" />
                         </Button>
 
                         {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((pageNumber) => (
@@ -299,7 +242,7 @@ export default function DataTable<T extends object>({
                             onClick={() => table.nextPage()}
                             disabled={!table.getCanNextPage()}
                         >
-                            <ChevronRight className="h-4 w-4" />
+                            <Icon name='ChevronRight' className="h-4 w-4" />
                         </Button>
                         <Button
                             variant="outline"
@@ -307,7 +250,7 @@ export default function DataTable<T extends object>({
                             onClick={() => table.setPageIndex(pageCount - 1)}
                             disabled={!table.getCanNextPage()}
                         >
-                            <ChevronsRight className="h-4 w-4" />
+                            <Icon name='ChevronsRight' className="h-4 w-4" />
                         </Button>
                     </div>
                 </div>

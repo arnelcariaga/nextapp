@@ -2,7 +2,6 @@ import Icon from "./Icon"
 
 interface Step {
   label: string
-  description?: string
 }
 
 interface StepsIndicatorProps {
@@ -11,11 +10,11 @@ interface StepsIndicatorProps {
   style?: string
 }
 
-export default function StepsIndicator({ steps, currentStep = 1, style = "w-full max-w-3xl mx-auto" }: StepsIndicatorProps = {
+export default function StepsIndicator({ steps, currentStep = 1, style = "w-full max-w-5xl mx-auto" }: StepsIndicatorProps = {
   steps: [
-    { label: "Step 1", description: "Select items" },
-    { label: "Step 2", description: "Enter details" },
-    { label: "Step 3", description: "Confirm order" }
+    { label: "Step 1" },
+    { label: "Step 2"},
+    { label: "Step 3" }
   ],
   currentStep: 1
 }) {
@@ -50,11 +49,6 @@ export default function StepsIndicator({ steps, currentStep = 1, style = "w-full
                   }`}>
                   {step.label}
                 </div>
-                {step.description && (
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {step.description}
-                  </div>
-                )}
               </div>
             </div>
           </li>

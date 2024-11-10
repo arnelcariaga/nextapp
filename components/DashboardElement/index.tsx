@@ -1,14 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-    Bell,
-    Calendar,
-    ChevronDown,
-    ClipboardList,
-    Clock,
-    Menu,
-    User,
-} from "lucide-react"
+import Icon from "../Icon"
 
 const DashboardElement = () => {
     return (
@@ -20,7 +12,7 @@ const DashboardElement = () => {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Total Appointments</CardTitle>
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                            <Icon name="Calendar" className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">15</div>
@@ -31,7 +23,7 @@ const DashboardElement = () => {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">New Patients</CardTitle>
-                            <User className="h-4 w-4 text-muted-foreground" />
+                            <Icon name="User" className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">3</div>
@@ -42,7 +34,7 @@ const DashboardElement = () => {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Pending Lab Results</CardTitle>
-                            <ClipboardList className="h-4 w-4 text-muted-foreground" />
+                            <Icon name="ClipboardList" className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">7</div>
@@ -53,7 +45,7 @@ const DashboardElement = () => {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Avg. Wait Time</CardTitle>
-                            <Clock className="h-4 w-4 text-muted-foreground" />
+                            <Icon name="Clock" className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">18 min</div>

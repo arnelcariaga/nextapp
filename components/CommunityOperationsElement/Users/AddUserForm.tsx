@@ -31,6 +31,7 @@ import {
     DialogFooter
 } from "@/components/ui/dialog"
 import { Card, CardContent } from '@/components/ui/card';
+import calculateAge from '@/lib/calculateAge';
 
 interface IFormInput {
     name: string
@@ -167,12 +168,6 @@ const AddUserForm = ({ params }: TCommunityOperativeUserParams) => {
         loadData();
     }, [toast]);
 
-    const calculateAge = (date: string) => {
-        const currentDate = new Date();
-        const birthDateObj = new Date(date);
-        return differenceInYears(currentDate, birthDateObj);
-    };
-
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
         setSendingForm(true)
 
@@ -286,7 +281,7 @@ const AddUserForm = ({ params }: TCommunityOperativeUserParams) => {
                                                 control={methods.control}
                                                 name={field.name as keyof IFormInput}
                                                 render={({ field: { onChange, value } }) => (
-                                                    <Popover>
+                                                    <Popover modal>
                                                         <PopoverTrigger asChild>
                                                             <div className="space-y-2">
                                                                 <Label htmlFor={field.name}>{field.label}</Label>

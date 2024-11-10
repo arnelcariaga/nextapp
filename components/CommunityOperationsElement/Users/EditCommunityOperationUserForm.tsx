@@ -51,7 +51,7 @@ interface IFormInput {
     serology_status_id: number
     tester: string
     observation: string
-    is_pregnant: number
+    is_pregnant: string
 }
 
 interface IInputsDataFetch {
@@ -99,7 +99,7 @@ const formSchema = z.object({
     name: z.string().min(1, { message: "El nombre es requerido" }),
     last_name: z.string().min(1, { message: "El apellido es requerido" }),
     genre_id: z.string({ required_error: "El género es requerido" }),
-    is_pregnant: z.string().default("2").optional(),
+    is_pregnant: z.string().optional(),
     birth_date: z.date({ required_error: "La fecha de nacimiento es requerida" }),
     age: z.number({ required_error: "La edad es requerida" }),
     doc_id: z.string().optional(),
@@ -117,9 +117,9 @@ const formSchema = z.object({
 }).refine((data) => {
     if (data.genre_id === '2') {
         return !!data.is_pregnant
+    } else {
+        return data.is_pregnant = '2'
     }
-    data.is_pregnant = '2'
-    return true;
 }, {
     message: "Debes especificar si está embarazada",
     path: ['is_pregnant']
@@ -158,7 +158,7 @@ const EditCommunityOperationUserForm = ({ selectedItem }: ISelectedItem) => {
             serology_status_id: selectedItem?.serology_status_id,
             tester: selectedItem?.tester,
             observation: selectedItem?.observation ?? '',
-            is_pregnant: selectedItem?.is_pregnant,
+            is_pregnant: String(selectedItem?.is_pregnant),
         }
     });
 
@@ -254,7 +254,7 @@ const EditCommunityOperationUserForm = ({ selectedItem }: ISelectedItem) => {
                                             <FormField
                                                 control={methods.control}
                                                 name={field.name as keyof IFormInput}
-                                                render={({ field: { value, onChange } }) => {
+                                                render={({ field: { value } }) => {
                                                     return <div className="space-y-2">
                                                         <Label htmlFor={field.name}>{field.label}</Label>
                                                         <div className="relative">
@@ -324,7 +324,7 @@ const EditCommunityOperationUserForm = ({ selectedItem }: ISelectedItem) => {
                                                 control={methods.control}
                                                 name={field.name as keyof IFormInput}
                                                 render={({ field: { onChange, value } }) => (
-                                                    <Popover>
+                                                    <Popover modal>
                                                         <PopoverTrigger asChild>
                                                             <div className="space-y-2">
                                                                 <Label htmlFor={field.name}>{field.label}</Label>

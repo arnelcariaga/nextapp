@@ -1077,7 +1077,8 @@ export const getFappsIdById = async (fapps_id: number) => {
     const token = await getUserToken();
 
     const res = await fetch(
-      api_url + `/api/check_community_operation_user_enrolling_fapps_id/${fapps_id}`,
+      api_url +
+        `/api/check_community_operation_user_enrolling_fapps_id/${fapps_id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -1090,7 +1091,194 @@ export const getFappsIdById = async (fapps_id: number) => {
   } catch (error) {
     return jsonResponse(
       true,
-      "Hubo un error al cargar los ID FAPPS, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      "Hubo un error al cargar el ID FAPPS, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+export const getCommunityOperationUserTrackingsById = async (
+  user_id: number
+) => {
+  try {
+    const token = await getUserToken();
+
+    const res = await fetch(
+      api_url + `/api/get_user_community_operation_user_trackings`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ user_id }),
+      }
+    );
+    const resJson = await res.json();
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al cargar los seguimientos de este usuario, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+export const deleteCommunityOperationUserTracking = async (
+  data: Array<object>
+) => {
+  try {
+    const token = await getUserToken();
+    const res = await fetch(
+      api_url + `/api/delete_community_operation_user_tracking`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          ...data[0],
+        }),
+      }
+    );
+    const resJson = await res.json();
+
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al eliminar el seguimiento de este usuario, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+export const getCommunityOperationUserEnrollingsById = async (
+  user_id: number
+) => {
+  try {
+    const token = await getUserToken();
+
+    const res = await fetch(
+      api_url + `/api/get_user_community_operation_user_enrollings`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ user_id }),
+      }
+    );
+    const resJson = await res.json();
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al cargar la situación de enrolamiento del usuario, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+// --------------------------------- API call for patients ---------------------------------
+export const getFappsIdByPatientId = async (fapps_id: number) => {
+  try {
+    const token = await getUserToken();
+
+    const res = await fetch(
+      api_url + `/api/check_patient_fapps_id/${fapps_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const resJson = await res.json();
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al cargar el ID FAPPS, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+export const addPatient = async (data: Array<object>) => {
+  try {
+    const token = await getUserToken();
+    const res = await fetch(api_url + "/api/add_community_operation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ...data[0] }),
+    });
+
+    const resJson = await res.json();
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al agregar operativo comunidad, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+// --------------------------------- API call for participant inscriptions form ---------------------------------
+export const getUniqueNumber = async (uniqueNumber: number) => {
+  try {
+    const token = await getUserToken();
+
+    const res = await fetch(
+      api_url + `/api/check_participant_unique_number/${uniqueNumber}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const resJson = await res.json();
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al cargar el número único, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+export const addParticipantInscriptionForm = async (data: Array<object>) => {
+  try {
+    const token = await getUserToken();
+    const res = await fetch(api_url + "/api/add_participant_inscription_form", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ...data[0] }),
+    });
+
+    const resJson = await res.json();
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al agregar formulario de inscripción de participantes, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
       []
     );
   }

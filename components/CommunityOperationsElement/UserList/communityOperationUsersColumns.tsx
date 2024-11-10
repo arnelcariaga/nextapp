@@ -18,9 +18,11 @@ export const communityOperationUsersColumns = (
             header: "IDFAPPS",
             enableColumnFilter: true,
             filterFn: (row, columnId, filterValue) => {
-                const cellValue = row.getValue(columnId); // Convertir a string para la comparación
-                return cellValue === filterValue // Comparación exacta
+                const cellValue = row.getValue(columnId);
+                return cellValue === filterValue
             },
+            accessorFn: (row) => (row.fapps_id === null || row.fapps_id === 0 ? "Sin ID FAPPS" : row.fapps_id),
+            cell: ({ row }) => row.original.fapps_id === null || row.original.fapps_id === 0 ? "Sin ID FAPPS" : row.original.fapps_id
         },
         {
             accessorKey: "name",
@@ -35,8 +37,8 @@ export const communityOperationUsersColumns = (
             header: "No. Ref.",
             enableColumnFilter: true,
             filterFn: (row, columnId, filterValue) => {
-                const cellValue = row.getValue(columnId); // Convertir a string para la comparación
-                return cellValue === filterValue // Comparación exacta
+                const cellValue = row.getValue(columnId);
+                return cellValue === filterValue
             },
         },
         {
@@ -51,6 +53,10 @@ export const communityOperationUsersColumns = (
             accessorKey: "serology_status.name",
             header: "Serología",
             enableColumnFilter: true,
+            filterFn: (row, columnId, filterValue) => {
+                const cellValue = row.getValue(columnId);
+                return cellValue === filterValue
+            },
             cell: ({ row }) => {
                 return row.original.serology_status.name
             }

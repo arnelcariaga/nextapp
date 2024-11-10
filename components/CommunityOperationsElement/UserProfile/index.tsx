@@ -3,13 +3,10 @@ import { useState, useEffect } from "react"
 import {
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { getCommunityOperationUserDetails } from "@/lib/seed"
 import { ICommunityOperationUserDetails } from "@/lib/interfaces"
 import { useToast } from "@/hooks/use-toast"
@@ -23,12 +20,12 @@ import MyDialog from "@/components/MyDialog"
 import AddTrackingForm from "./AddTrackingForm"
 import AddEnrollingForm from "./AddEnrollingForm"
 import AddIndexForm from "./AddIndexForm"
-import copyToClipboard from "@/lib/copyToClickboard"
 import Link from "next/link"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "@/redux/store"
 import EditCommunityOperationUserForm from "../Users/EditCommunityOperationUserForm"
 import { setCloseModalEditCommunityOperationUser } from "@/redux/slices/communityOperationUsersSlice"
+import UserDetailsHeader from "./UserDetailsHeader"
 
 export default function UserProfile({ params }: TCommunityOperativeUserParams) {
     const [userDetails, setUserDetails] = useState<ICommunityOperationUserDetails>()
@@ -45,6 +42,19 @@ export default function UserProfile({ params }: TCommunityOperativeUserParams) {
     const closeModalEditCommunityOperationUser = useSelector((state: RootState) => state.communityOperationUsers.closeModalEditCommunityOperationUser)
     const addedCommunityOperationUser = useSelector((state: RootState) => state.communityOperationUsers.addedCommunityOperationUser as ICommunityOperationUserDetails[])
     const dispatch = useDispatch()
+    const screen = session?.user.screens.find(screen => screen.path === '/community_operations');
+    const [canCreate, setCanCreate] = useState<boolean>(false)
+    const [canEdit, setcanEdit] = useState<boolean>(false)
+
+    // Check user permissions
+    useEffect(() => {
+        if (screen && screen.permissions.create === '1') {
+            setCanCreate(true)
+        }
+        if (screen && screen.permissions.edit === '1') {
+            setcanEdit(true)
+        }
+    }, [screen]);
 
     useEffect(() => {
         function getAddedCommunityOperationUserProfile() {
@@ -93,24 +103,6 @@ export default function UserProfile({ params }: TCommunityOperativeUserParams) {
         getCommnutiOperationUsersFn()
     }, [toast, session, params, router])
 
-    const handleCopy = async (text: string) => {
-        try {
-            await copyToClipboard(text);
-            toast({
-                title: "Operativo Comunidad -> Perfil Usuario || " + appName,
-                description: "IDFAPPS copiado",
-                duration: 5000
-            })
-        } catch {
-            toast({
-                variant: "destructive",
-                title: "Operativo Comunidad -> Perfil Usuario || " + appName,
-                description: "Error al copiar el IDFAPPS",
-                duration: 5000
-            })
-        }
-    };
-
     const renderUserTrackingNumber = (): number => {
         if (countTracking !== 0) {
             return countTracking
@@ -132,65 +124,11 @@ export default function UserProfile({ params }: TCommunityOperativeUserParams) {
         <div className="container mx-auto p-4 max-w-full">
             <div className="flex flex-col lg:flex-row gap-6">
                 <div className="w-full lg:w-2/3">
-                    <Card className="shadow-lg">
-                        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                            <Avatar className="w-20 h-20">
-                                <AvatarFallback>{userDetails?.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1">
-                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                                    <div>
-                                        <CardTitle className="text-2xl sm:text-3xl">{userDetails?.name + " " + userDetails?.last_name}</CardTitle>
-                                        <div className="flex items-center gap-4">
-                                            <CardDescription className="text-base sm:text-md font-bold">
-                                                SAI: <span className="font-normal">
-                                                    {userDetails?.sai ? userDetails?.sai.name : 'Sin SAI'}
-                                                </span>
-                                            </CardDescription>
-                                            <div className="flex items-center">
-                                                <CardDescription className="text-base sm:text-md font-bold">
-                                                    IDFAPPS: <span className="font-normal">
-                                                        {userDetails?.fapps_id}
-                                                    </span>
-                                                </CardDescription>
-                                                <Button variant="ghost" size="icon" onClick={() => handleCopy(String(userDetails?.fapps_id))}>
-                                                    <Icon name="Clipboard" />
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <Button variant="outline" className="mt-2 sm:mt-0 border-green-700" onClick={() => dispatch(setCloseModalEditCommunityOperationUser(true))}>
-                                        <Icon name="Edit" className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                                <div className="flex flex-wrap gap-2 mt-2">
-                                    <Badge>{userDetails?.genre.name}</Badge>
-                                    {userDetails?.is_pregnant === 1 && <Badge className="bg-green-700">Embarazada</Badge>}
-                                    <Badge className="bg-blue-700">{userDetails?.serology_status.name}</Badge>
-                                </div>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="grid gap-4 mt-3">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="flex items-center gap-2">
-                                    <Icon name="Earth" className="h-4 w-4 text-muted-foreground" />
-                                    <span><span className="font-bold">Nacionalidad:</span> {userDetails?.nationality.name}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Icon name="Phone" className="h-4 w-4 text-muted-foreground" />
-                                    <span><span className="font-bold">Tel&eacute;fono:</span> {userDetails?.tel}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Icon name="RotateCcw" className="h-4 w-4 text-muted-foreground" />
-                                    <span><span className="font-bold">Edad:</span> {userDetails?.age}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Icon name="IdCard" className="h-4 w-4 text-muted-foreground" />
-                                    <span><span className="font-bold">Documento de identidad:</span> {userDetails?.doc_id}</span>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <UserDetailsHeader
+                        userDetails={userDetails as ICommunityOperationUserDetails}
+                        canEdit={canEdit}
+                        showDescription
+                    />
                 </div>
                 {
                     // If user negative = 2 don't show form
@@ -216,14 +154,16 @@ export default function UserProfile({ params }: TCommunityOperativeUserParams) {
                                                 </Link>
                                                 <p className="text-sm text-muted-foreground">{renderUserTrackingNumber()} {renderUserTrackingNumber() > 1 ? 'registros' : 'registro'}</p>
                                             </div>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
-                                                onClick={() => setOpenAddTrackingForm(true)}
-                                            >
-                                                <Icon name="Plus" className="h-4 w-4" />
-                                            </Button>
+                                            {
+                                                canCreate && <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
+                                                    onClick={() => setOpenAddTrackingForm(true)}
+                                                >
+                                                    <Icon name="Plus" className="h-4 w-4" />
+                                                </Button>
+                                            }
                                         </div>
                                         <div
                                             className="flex items-center justify-between py-3 border-b last:border-b-0"
@@ -235,7 +175,7 @@ export default function UserProfile({ params }: TCommunityOperativeUserParams) {
                                                 <p className="text-sm text-muted-foreground">{renderUserEnrollingNumber()} {renderUserEnrollingNumber() > 1 ? 'registros' : 'registro'}</p>
                                             </div>
                                             {
-                                                renderUserEnrollingNumber() === 0 && <Button
+                                                renderUserEnrollingNumber() === 0 && canCreate && <Button
                                                     variant="ghost"
                                                     size="icon"
                                                     className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
@@ -253,7 +193,7 @@ export default function UserProfile({ params }: TCommunityOperativeUserParams) {
                                                 <p className="text-sm text-muted-foreground">0 registros</p>
                                             </div>
                                             {
-                                                renderUserEnrollingNumber() > 0 &&
+                                                renderUserEnrollingNumber() > 0 && canCreate &&
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
@@ -284,7 +224,7 @@ export default function UserProfile({ params }: TCommunityOperativeUserParams) {
                                                     <p className="text-sm text-muted-foreground">0 registros</p>
                                                 </div>
                                                 {
-                                                    userDetails.fapps_id !== 0 &&
+                                                    userDetails.fapps_id !== 0 && canCreate &&
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"

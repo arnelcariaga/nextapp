@@ -23,7 +23,7 @@ import { getSAIs, addCommunityOperationUserEnrolling, getFappsIdById } from '@/l
 import { TCommunityOperativeUserParams } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { ISai } from '@/lib/interfaces';
-import { setAddedUserProfile } from '@/redux/slices/communityOperationUsersSlice';
+import { setAddedUserProfile, setAddedCommunityOperationUserEnrolling } from '@/redux/slices/communityOperationUsersSlice';
 import { useDispatch } from 'react-redux';
 import {
   DialogClose,
@@ -39,7 +39,7 @@ interface IAddForm {
 
 interface IFormInput {
   enrolling_sai_id: number
-  fapps_id: number
+  fapps_id: string
   enrolling_date: string
   treatment_start_date: string
   tester: string
@@ -55,7 +55,7 @@ const formInputs: IAddForm[] = [
 
 const formSchema = z.object({
   enrolling_sai_id: z.string({ required_error: "SAI requerido" }),
-  fapps_id: z.string({ required_error: "klkl" }).min(6, { message: "ID FAPPS debe contener minimo 6 caracteres" }).max(6, { message: "Máximo 6 carácteres" }),
+  fapps_id: z.string({ required_error: "Campo requerido" }).min(6, { message: "ID FAPPS debe contener minimo 6 carácteres" }).max(10, { message: "Carácteres muy largos" }),
   enrolling_date: z.date({ required_error: "La fecha es requerida" }),
   treatment_start_date: z.date().optional(),
   tester: z.string().min(1, { message: "Campo requerido" })
@@ -104,6 +104,9 @@ const AddEnrollingForm = ({ params, userName, setCountEnrolling, setOpenAddEnrol
 
         if (error) {
           methods.setError("fapps_id", { message }, { shouldFocus: true })
+          methods.setValue('fapps_id', '')
+        } else {
+          methods.clearErrors("fapps_id")
         }
 
       }
@@ -121,6 +124,9 @@ const AddEnrollingForm = ({ params, userName, setCountEnrolling, setOpenAddEnrol
     setSendingForm(true)
     const newData = {
       ...data,
+      id: null,
+      fapps_id: Number(data.fapps_id),
+      treatment_start_date: data.treatment_start_date === undefined ? null : data.treatment_start_date,
       community_operation_user_id: params.id,
       user_id: session?.user.id,
       sai_id: session?.user.id_sai,
@@ -143,7 +149,7 @@ const AddEnrollingForm = ({ params, userName, setCountEnrolling, setOpenAddEnrol
         methods.setError("fapps_id", { message }, { shouldFocus: true })
       } else {
         dispatch(setAddedUserProfile(resData))
-
+        dispatch(setAddedCommunityOperationUserEnrolling([resData]))
         setCountEnrolling(1)
         setOpenAddEnrollingForm(false)
         toast({
@@ -194,7 +200,7 @@ const AddEnrollingForm = ({ params, userName, setCountEnrolling, setOpenAddEnrol
                     control={methods.control}
                     name={field.name as keyof IFormInput}
                     render={({ field: { onChange, value } }) => (
-                      <Popover>
+                      <Popover modal>
                         <PopoverTrigger asChild>
                           <div className="space-y-2">
                             <Label htmlFor={field.name}>{field.label}</Label>
@@ -203,7 +209,7 @@ const AddEnrollingForm = ({ params, userName, setCountEnrolling, setOpenAddEnrol
                                 type="text"
                                 className="border cursor-pointer"
                                 readOnly
-                                value={value ? format(value, "d/M/yyyy") : "Seleccionar"}
+                                value={value ? format(value, "dd/MM/yy") : "Seleccionar"}
                               />
                               <Icon name="CalendarIcon" className='absolute right-0 me-3 top-1/2 transform -translate-y-1/2 text-gray-400' size={18} />
                             </div>
@@ -214,8 +220,8 @@ const AddEnrollingForm = ({ params, userName, setCountEnrolling, setOpenAddEnrol
                             mode="single"
                             selected={new Date(value as keyof IFormInput)}
                             onSelect={onChange}
-                            startMonth={new Date(1930, 0)}
-                            endMonth={new Date(2013, 11)}
+                            startMonth={new Date(2015, 0)}
+                            endMonth={new Date(2024, 11)}
                           />
                         </PopoverContent>
                       </Popover>

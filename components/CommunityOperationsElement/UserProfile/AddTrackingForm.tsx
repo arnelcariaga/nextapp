@@ -27,6 +27,8 @@ import {
   DialogClose,
   DialogFooter
 } from "@/components/ui/dialog"
+import { setAddedCommunityOperationUserTracking } from '@/redux/slices/communityOperationUsersSlice';
+import { useDispatch } from 'react-redux';
 
 interface IAddTrackingForm {
   name: string
@@ -69,6 +71,7 @@ const AddTrackingForm = ({ params, userName, setCountTracking, setOpenAddTrackin
   const [sendingForm, setSendingForm] = useState<boolean>(false)
   const { toast } = useToast()
   const { data: session } = useSession()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     async function getEnrollingTypesFn() {
@@ -99,6 +102,7 @@ const AddTrackingForm = ({ params, userName, setCountTracking, setOpenAddTrackin
     const newData = {
       ...data,
       community_operation_user_id: params.id,
+      id: null,
       user_id: session?.user.id,
       sai_id: session?.user.id_sai,
       from_username: session?.user.username,
@@ -115,7 +119,8 @@ const AddTrackingForm = ({ params, userName, setCountTracking, setOpenAddTrackin
         duration: 5000
       })
     } else {
-      setCountTracking(resData)
+      dispatch(setAddedCommunityOperationUserTracking([resData.data]))
+      setCountTracking(resData.count)
       setOpenAddTrackingForm(false)
       toast({
         title: "Operativo Comunidad -> Perfil Usuario || " + appName,
@@ -163,7 +168,7 @@ const AddTrackingForm = ({ params, userName, setCountTracking, setOpenAddTrackin
                     control={methods.control}
                     name={field.name as keyof IFormInput}
                     render={({ field: { onChange, value } }) => (
-                      <Popover>
+                      <Popover modal>
                         <PopoverTrigger asChild>
                           <div className="space-y-2">
                             <Label htmlFor={field.name}>{field.label}</Label>
@@ -172,7 +177,7 @@ const AddTrackingForm = ({ params, userName, setCountTracking, setOpenAddTrackin
                                 type="text"
                                 className="border cursor-pointer"
                                 readOnly
-                                value={value ? format(value, "d/M/yyyy") : "Seleccionar"}
+                                value={value ? format(value, "dd/MM/yy") : "Seleccionar"}
                               />
                               <Icon name="CalendarIcon" className='absolute right-0 me-3 top-1/2 transform -translate-y-1/2 text-gray-400' size={18} />
                             </div>
@@ -183,8 +188,8 @@ const AddTrackingForm = ({ params, userName, setCountTracking, setOpenAddTrackin
                             mode="single"
                             selected={new Date(value as keyof IFormInput)}
                             onSelect={onChange}
-                            startMonth={new Date(1930, 0)}
-                            endMonth={new Date(2013, 11)}
+                            startMonth={new Date(2015, 0)}
+                            endMonth={new Date(2024, 11)}
                           />
                         </PopoverContent>
                       </Popover>

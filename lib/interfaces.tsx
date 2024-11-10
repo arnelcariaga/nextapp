@@ -291,3 +291,29 @@ export interface ICommunityOperationUserDetails extends ICommunityOperationUsers
     name: string
   }
 }
+
+export interface IUserCommunityUserTracking {
+  id: number
+  sai: {
+      id: number
+      name: string
+  }
+  date: Date
+  enrolling_type: {
+      id: number
+      name: string
+  }
+  observations: string
+}
+
+export interface IUserCommunityUserEnrolling {
+  id: number
+  fapps_id: number
+  sai: {
+      id: number
+      name: string
+  }
+  enrolling_date: Date
+  treatment_start_date: Date
+  tester: string
+}

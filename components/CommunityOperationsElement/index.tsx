@@ -16,7 +16,6 @@ import Link from "next/link"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "@/redux/store"
 import { setCloseModalEditCommunityOperation } from "@/redux/slices/communityOperationsSlice"
-import { useRouter } from "next/navigation"
 
 export default function CommunityOperationsElement() {
     const [communityOperationsData, setCommunityOperationsData] = useState<ICommunityOperationDataTable[]>([])
@@ -30,29 +29,23 @@ export default function CommunityOperationsElement() {
     const addedCommunityOperation = useSelector((state: RootState) => state.communityOperations.addedCommunityOperation as ICommunityOperationDataTable[])
     const [selectedCommunityOperationId, setSelectedCommunityOperationId] = useState<number>(0);
     const dispatch = useDispatch()
-    const router = useRouter()
     const screen = session?.user.screens.find(screen => screen.path === '/community_operations');
     const [canDelete, setCanDelete] = useState<boolean>(false);
     const [canEdit, setCanEdit] = useState<boolean>(false);
+    const [canCreate, setCanCreate] = useState<boolean>(false);
 
+    // Check user permissions
     useEffect(() => {
-        // Buscar los permisos del usuario para esta pantalla
-        if (screen && screen.permissions.view === '0') {
-            router.push("/not-found")
-        }
-    }, [screen, router]);
-
-    useEffect(() => {
-        // Buscar los permisos del usuario para esta pantalla
         if (screen && screen.permissions.delete === '1') {
             setCanDelete(true)
         }
-    }, [screen]);
 
-    useEffect(() => {
-        // Buscar los permisos del usuario para esta pantalla
         if (screen && screen.permissions.edit === '1') {
             setCanEdit(true)
+        }
+
+        if (screen && screen.permissions.create === '1') {
+            setCanCreate(true)
         }
     }, [screen]);
 
@@ -153,16 +146,14 @@ export default function CommunityOperationsElement() {
                         data={communityOperationsData}
                         columns={communityOperationsColumns(openModalEditCommunityOperation, openModalDeleteCommunityOperation, canDelete, canEdit)}
                         addBtn={
-                            screen?.permissions.create === "0" ? <></> :
-                                <Button variant="outline" className='bg-green-600 dark:bg-green-900' asChild>
-                                    <Link href="/community_operations/add">
-                                        <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
-                                        <span className='text-white'>
-                                            Agregar Operativo
-                                        </span>
-                                    </Link>
-
-                                </Button>
+                            canCreate ? <Button variant="outline" className='bg-green-600 dark:bg-green-900' asChild>
+                                <Link href="/community_operations/add">
+                                    <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
+                                    <span className='text-white'>
+                                        Agregar Operativo
+                                    </span>
+                                </Link>
+                            </Button> : <></>
                         }
                         columnBtnFilter
                         columnHidden={{}}

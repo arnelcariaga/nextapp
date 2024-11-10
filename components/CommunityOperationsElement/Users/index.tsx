@@ -37,22 +37,11 @@ export default function Users({ params }: TCommunityOperativeUserParams) {
     const [canDelete, setCanDelete] = useState<boolean>(false);
     const [canEdit, setCanEdit] = useState<boolean>(false);
 
+    // Check user permission
     useEffect(() => {
-        // Buscar los permisos del usuario para esta pantalla
-        if (screen && screen.permissions.view === '0') {
-            router.push("/not-found")
-        }
-    }, [screen, router]);
-
-    useEffect(() => {
-        // Buscar los permisos del usuario para esta pantalla
         if (screen && screen.permissions.delete === '1') {
             setCanDelete(true)
         }
-    }, [screen]);
-
-    useEffect(() => {
-        // Buscar los permisos del usuario para esta pantalla
         if (screen && screen.permissions.edit === '1') {
             setCanEdit(true)
         }
@@ -157,12 +146,13 @@ export default function Users({ params }: TCommunityOperativeUserParams) {
                         data={communityOperationUsersData}
                         columns={communityOperationUsersColumns(openModalEditCommunityOperationUser, openModalDeleteCommunityOperationUser, canDelete, canEdit)}
                         addBtn={
-                            <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddCommunityOperationUser(true))}>
-                                <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
-                                <span className='text-white'>
-                                    Agregar Usuario
-                                </span>
-                            </Button>
+                            screen?.permissions.create === "0" ? <></> :
+                                <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddCommunityOperationUser(true))}>
+                                    <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
+                                    <span className='text-white'>
+                                        Agregar Usuario
+                                    </span>
+                                </Button>
                         }
                         columnBtnFilter
                         columnHidden={{}}
