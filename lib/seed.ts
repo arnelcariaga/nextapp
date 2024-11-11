@@ -203,6 +203,7 @@ export const getStatus = async () => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      credentials: 'include'
     });
     const resJson = await res.json();
     // I don't call jsonResponse here becouse the structure of res it's the same
