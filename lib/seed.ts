@@ -185,13 +185,9 @@ export const getSAIs = async () => {
       },
     });
     const resJson = await res.json();
-    console.log(resJson);
-    
     // I don't call jsonResponse here becouse the structure of res it's the same
     return resJson;
   } catch (error) {
-    console.log(error);
-    
     return jsonResponse(
       true,
       "Hubo un error al cargar los SAIs, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
