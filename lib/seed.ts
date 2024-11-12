@@ -185,6 +185,7 @@ export const getSAIs = async () => {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+      credentials: 'include'
     });
     const resJson = await res.json();
     // I don't call jsonResponse here becouse the structure of res it's the same
