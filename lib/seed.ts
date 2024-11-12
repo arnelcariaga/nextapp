@@ -179,7 +179,7 @@ export const getSAIs = async () => {
   try {
     const token = await getUserToken();
 
-    const aa = await fetch(api_url + "/api/sanctum/csrf-cookie", {
+    const aa = await fetch(api_url + "/sanctum/csrf-cookie", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
