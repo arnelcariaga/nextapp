@@ -182,6 +182,7 @@ export const getSAIs = async () => {
     const res = await fetch(api_url + "/api/sais", {
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     });
     const resJson = await res.json();
