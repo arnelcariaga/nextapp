@@ -185,6 +185,8 @@ export const getSAIs = async () => {
       },
     });
     const resJson = await res.json();
+    console.log(resJson);
+    
     // I don't call jsonResponse here becouse the structure of res it's the same
     return resJson;
   } catch (error) {
