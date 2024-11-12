@@ -178,9 +178,8 @@ export const getUsers = async () => {
 export const getSAIs = async () => {
   try {
     const token = await getUserToken();
-console.log(token);
 
-    const res = await fetch("/api/sais", {
+    const res = await fetch(api_url + "/api/sais", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
