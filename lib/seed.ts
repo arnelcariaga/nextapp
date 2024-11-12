@@ -182,7 +182,6 @@ export const getSAIs = async () => {
     const res = await fetch(api_url + "/api/sais", {
       headers: {
         Authorization: `Bearer ${token}`,
-        'Access-Control-Allow-Origin': '*'
       },
     });
     const resJson = await res.json();
