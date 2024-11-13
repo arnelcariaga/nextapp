@@ -180,12 +180,9 @@ export const getSAIs = async () => {
     const token = await getUserToken();
 
     const res = await fetch(api_url + "/api/sais", {
-      method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
       },
-      credentials: 'include'
     });
     const resJson = await res.json();
     // I don't call jsonResponse here becouse the structure of res it's the same
