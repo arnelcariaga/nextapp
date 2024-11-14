@@ -25,6 +25,7 @@ const Form = () => {
     const onSubmit: SubmitHandler<IUserCredentials> = async (data) => {
         setSendingForm(true)
         const res = await signInServerFunc(data)
+        await update()
         if (res?.error) {
             toast({
                 variant: "destructive",
@@ -34,7 +35,6 @@ const Form = () => {
         }
         //Don't redirect becouse if there is not error the signIn function from Auth.js redirect the user efter sign in it's correct
         setSendingForm(false)
-        update()
     }
 
     return (
