@@ -1,10 +1,10 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { rolesColumns } from "./rolesColumns"
 import DataTable from "../MyDataTable/data-table"
 import MyDialog from "../MyDialog"
 import AddRolForm from "./AddRolForm"
-import { getRoles, deleteRol } from "@/lib/seed"
+import { deleteRol } from "@/lib/seed"
 import { useToast } from "@/hooks/use-toast"
 import { appName } from "@/lib/appInfo"
 import { useSelector, useDispatch } from "react-redux"
@@ -12,9 +12,10 @@ import { RootState } from "@/redux/store"
 import { Button } from "@/components/ui/button"
 import { setCloseModalAddRol, setCloseModalEditRol } from "@/redux/slices/rolesSlice"
 import EditRolForm from "./EditRolForm"
-import TableSkeleton from "../MyDataTable/TableSkeleton"
+import TableSkeleton from "../TableSkeleton"
 import { useSession } from "next-auth/react"
 import Icon from "../Icon"
+import { revalidateFn } from "../CommunityOperationsElement/revalidateActions"
 
 interface IScreenPermissions {
     id_role: number
@@ -42,60 +43,65 @@ interface IRolesWithScreens {
     screens: Array<IModulesWithPermissions>
 }
 
-export default function RolesElement() {
-    const [rolesData, setRolesData] = useState<IRolesWithScreens[]>([])
+interface IComponentProps {
+    data: IRolesWithScreens[]
+}
+
+export default function RolesElement({ data }: IComponentProps) {
+    //const [rolesData, setRolesData] = useState<IRolesWithScreens[]>([])
     const { toast } = useToast()
     const dispatch = useDispatch()
     const closeModalAddRol = useSelector((state: RootState) => state.roles.closeModalAddRol)
     const closeModalEditRol = useSelector((state: RootState) => state.roles.closeModalEditRol)
-    const addedRoles = useSelector((state: RootState) => state.roles.addedRoles as IRolesWithScreens[])
+    //const addedRoles = useSelector((state: RootState) => state.roles.addedRoles as IRolesWithScreens[])
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
     const [sendingDelete, setSendingDelete] = useState(false);
     const [selectedRolData, setSelectedRolData] = useState<IRolesWithScreens[]>([])
-    const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
+    //const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
     const { data: session } = useSession()
 
-    useEffect(() => {
-        async function getRolesFn() {
-            const { error, data, message } = await getRoles()
+    // useEffect(() => {
+    //     async function getRolesFn() {
+    //         const { error, data, message } = await getRoles()
 
-            if (error) {
-                toast({
-                    variant: "destructive",
-                    title: "Roles || " + appName,
-                    description: message,
-                    duration: 5000
-                })
-            } else {
-                setRolesData([...data])
-            }
-            setDataTableLoading(false)
-        }
-        getRolesFn()
-    }, [toast])
+    //         if (error) {
+    //             toast({
+    //                 variant: "destructive",
+    //                 title: "Roles || " + appName,
+    //                 description: message,
+    //                 duration: 5000
+    //             })
+    //         } else {
+    //             setRolesData([...data])
+    //         }
+    //         setDataTableLoading(false)
+    //     }
+    //     getRolesFn()
+    // }, [toast])
 
-    useEffect(() => {
-        function getAddedRol() {
-            // If a new rol added, update array for UI
-            if (addedRoles.length > 0) {
-                setRolesData((prevS) => {
-                    const index = prevS.findIndex(item => item.id === addedRoles[0].id)
+    // useEffect(() => {
+    //     function getAddedRol() {
+    //         // If a new rol added, update array for UI
+    //         if (addedRoles.length > 0) {
+    //             setRolesData((prevS) => {
+    //                 const index = prevS.findIndex(item => item.id === addedRoles[0].id)
 
-                    if (index !== -1) {
-                        const updatedItems = [...prevS]
+    //                 if (index !== -1) {
+    //                     const updatedItems = [...prevS]
 
-                        updatedItems[index] = addedRoles[0]
-                        return updatedItems
-                    } else {
-                        return [addedRoles[0], ...prevS] as IRolesWithScreens[]
-                    }
-                })
-            }
-        }
-        getAddedRol()
-    }, [addedRoles])
+    //                     updatedItems[index] = addedRoles[0]
+    //                     return updatedItems
+    //                 } else {
+    //                     return [addedRoles[0], ...prevS] as IRolesWithScreens[]
+    //                 }
+    //             })
+    //         }
+    //     }
+    //     getAddedRol()
+    // }, [addedRoles])
 
     // For deleting role
+    
     const openModalDeleteRol = (rolId: number) => {
         setOpenDeleteModal(true)
         setSelectedRolData([{ id: rolId } as IRolesWithScreens])
@@ -109,7 +115,7 @@ export default function RolesElement() {
             from_username: session?.user.username,
         }
 
-        const { error, data, message } = await deleteRol(Number(selectedRolData[0].id), Array(userData))
+        const { error, message } = await deleteRol(Number(selectedRolData[0].id), Array(userData))
         if (error) {
             toast({
                 variant: "destructive",
@@ -118,10 +124,10 @@ export default function RolesElement() {
                 duration: 5000
             })
         } else {
-            const rolId = data["rol_id"]
-            const newRolData = rolesData.filter((item) => item.id !== rolId)
-
-            setRolesData(newRolData)
+            // const rolId = data["rol_id"]
+            // const newRolData = rolesData.filter((item) => item.id !== rolId)
+            // setRolesData(newRolData)
+            await revalidateFn('/roles')
             setOpenDeleteModal(false)
             toast({
                 title: "Eliminar Rol || " + appName,
@@ -141,9 +147,9 @@ export default function RolesElement() {
     return (
         <div className="w-full p-2">
             {
-                dataTableLoading ? <TableSkeleton /> :
+                !data ? <TableSkeleton /> :
                     <DataTable
-                        data={rolesData}
+                        data={data}
                         columns={rolesColumns(openModalEditRol, openModalDeleteRol)}
                         addBtn={
                             <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddRol(true))}>

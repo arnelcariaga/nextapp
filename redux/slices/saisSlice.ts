@@ -3,13 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 interface IInitialState {
   closeModalAddSai: boolean
   closeModalEditSai: boolean
-  addedSais: Array<object>
+  //addedSais: Array<object>
 }
 
 const initialState: IInitialState = {
   closeModalAddSai: false,
   closeModalEditSai: false,
-  addedSais: []
+  //addedSais: []
 };
 
 export const saisSlice = createSlice({
@@ -24,13 +24,13 @@ export const saisSlice = createSlice({
       const closeModalEditSai = action.payload;
       return { ...state, closeModalEditSai };
     },
-    setAddedSais: (state, action) => {
-      const sai = action.payload;
-      return { ...state, addedSais: sai };
-    },
+    // setAddedSais: (state, action) => {
+    //   const sai = action.payload;
+    //   return { ...state, addedSais: sai };
+    // },
   },
 });
 
-export const { setCloseModalAddSai, setAddedSais, setCloseModalEditSai } = saisSlice.actions;
+export const { setCloseModalAddSai, setCloseModalEditSai } = saisSlice.actions;
 
 export default saisSlice.reducer;

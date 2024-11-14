@@ -3,16 +3,16 @@ import {
     ColumnDef
 } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
-import { IUserCommunityUserEnrolling } from "@/lib/interfaces"
+import { IUserCommunityUserTracking } from "@/lib/interfaces"
 import { format, parseISO } from "date-fns";
 import Icon from "@/components/Icon";
 
-export const communityOperationUsersColumns = (
-    openModalEditCommunityOperationUser: (data: IUserCommunityUserEnrolling[]) => void,
+export const communityOperationUserTrackingColumns = (
+    openModalEditCommunityOperationUser: (data: IUserCommunityUserTracking[]) => void,
     openModalDeleteCommunityOperationUserTracking: (communityOperationUserTrackingId: number) => void,
     canDelete: boolean,
     canEdit: boolean
-): ColumnDef<IUserCommunityUserEnrolling>[] => [
+): ColumnDef<IUserCommunityUserTracking>[] => [
         {
             accessorKey: "sai.name",
             header: "SAI",
@@ -22,33 +22,27 @@ export const communityOperationUsersColumns = (
             }
         },
         {
-            accessorKey: "enrolling_date",
-            header: "Fecha enrolamiento",
+            accessorKey: "date",
+            header: "Fecha",
             enableColumnFilter: true,
             enableSorting: false,
-            accessorFn: (row) => (format(row.enrolling_date, "dd/MM/yy")),
+            accessorFn: (row) => (format(row.date, "dd/MM/yy")),
             cell: ({ row }) => {
-                const date = parseISO(String(row.original.enrolling_date))
-                return format(date, 'dd/MM/yy')
+                const parseISODate = parseISO(String(row.original.date))
+                return format(parseISODate, 'dd/MM/yy')
             }
         },
         {
-            accessorKey: "treatment_start_date",
-            header: "Fecha inicio tratamiento",
+            accessorKey: "enrolling_type.name",
+            header: "Causa no enrolamiento",
             enableColumnFilter: true,
-            accessorFn: (row) => {
-                const date = row.treatment_start_date
-                return date !== null ? format(date, 'dd/MM/yy') : 'Sin fecha'
-            },
             cell: ({ row }) => {
-                const date = row.original.treatment_start_date
-                return date !== null ? format(parseISO(String(date)), 'dd/MM/yy') : 'Sin fecha'
+                return row.original.enrolling_type.name
             }
         },
         {
-            accessorKey: "tester",
-            header: "Promotor que enrolea",
-            enableColumnFilter: true
+            accessorKey: "observations",
+            header: "Observaciones"
         },
         {
             id: "actions",

@@ -32,6 +32,8 @@ import DropdownFilter from './DropDownFilter'
 import * as XLSX from 'xlsx';
 import Icon from '../Icon'
 import { Card, CardHeader, CardContent } from '../ui/card'
+import Pagination from './Pagination'
+import { usePagination } from '@/hooks/usePagination'
 
 export default function DataTable<T extends object>({
     data,
@@ -47,6 +49,7 @@ export default function DataTable<T extends object>({
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(columnHidden)
     const [rowSelection, setRowSelection] = useState({})
     const [globalFilter, setGlobalFilter] = useState('')
+    const { onPaginationChange, pagination } = usePagination()
 
     const table = useReactTable({
         data,
@@ -69,17 +72,12 @@ export default function DataTable<T extends object>({
             columnFilters,
             columnVisibility,
             rowSelection,
-            globalFilter
+            globalFilter,
+            pagination
         },
-        autoResetPageIndex: false
+        autoResetPageIndex: false,
+        onPaginationChange
     })
-
-    const pageIndex = table.getState().pagination.pageIndex;
-    const pageCount = table.getPageCount();
-    const pagesToShow = 5;
-
-    const startPage = Math.max(0, pageIndex - Math.floor(pagesToShow / 2));
-    const endPage = Math.min(pageCount - 1, startPage + pagesToShow - 1);
 
     const exportToExcel = () => {
         // Convertir los datos a un formato de hoja de trabajo
@@ -201,59 +199,7 @@ export default function DataTable<T extends object>({
                         )}
                     </TableBody>
                 </Table>
-                <div className="flex items-center justify-between space-x-2 py-4 mx-4">
-                    <div className="flex-1 text-sm text-muted-foreground">
-                        Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
-                        {" "} | {table.getFilteredRowModel().rows.length} fila(s) en total.
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => table.setPageIndex(0)}
-                            disabled={!table.getCanPreviousPage()}
-                        >
-                            <Icon name='ChevronsLeft' className="h-4 w-4" />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => table.previousPage()}
-                            disabled={!table.getCanPreviousPage()}
-                        >
-                            <Icon name='ChevronLeft' className="h-4 w-4" />
-                        </Button>
-
-                        {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((pageNumber) => (
-                            <Button
-                                key={pageNumber}
-                                variant={table.getState().pagination.pageIndex === pageNumber ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => table.setPageIndex(pageNumber)}
-                                type="button"
-                            >
-                                {pageNumber + 1}
-                            </Button>
-                        ))}
-
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => table.nextPage()}
-                            disabled={!table.getCanNextPage()}
-                        >
-                            <Icon name='ChevronRight' className="h-4 w-4" />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => table.setPageIndex(pageCount - 1)}
-                            disabled={!table.getCanNextPage()}
-                        >
-                            <Icon name='ChevronsRight' className="h-4 w-4" />
-                        </Button>
-                    </div>
-                </div>
+                <Pagination table={table} />
             </CardContent>
         </Card>
     )

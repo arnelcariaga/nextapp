@@ -9,15 +9,16 @@ import DataTable from '../MyDataTable/data-table'
 import { screensModulesColumns } from './screensModulesColumns'
 import { getScreensModules, updateRol } from '@/lib/seed'
 import { appName } from '@/lib/appInfo'
-import { setCloseModalEditRol, setAddedRoles } from '@/redux/slices/rolesSlice'
+import { setCloseModalEditRol } from '@/redux/slices/rolesSlice'
 import { useDispatch } from 'react-redux'
-import TableSkeleton from '../MyDataTable/TableSkeleton'
+import TableSkeleton from '../TableSkeleton'
 import { useSession } from 'next-auth/react'
 import {
     DialogClose,
     DialogFooter
 } from "@/components/ui/dialog"
 import Icon from '../Icon'
+import { revalidateFn } from '../CommunityOperationsElement/revalidateActions'
 
 interface IScreenPermissions {
     id_role: number
@@ -58,8 +59,7 @@ const EditRolForm = ({ selectedRol }: ISelectedRol) => {
         register,
         handleSubmit,
         formState: { errors },
-        setFocus,
-        setValue
+        setFocus
     } = useForm<IAddRol>()
     const { toast } = useToast()
     const [sendingForm, setSendingForm] = useState(false)
@@ -189,7 +189,8 @@ const EditRolForm = ({ selectedRol }: ISelectedRol) => {
                 duration: 5000
             })
         } else {
-            dispatch(setAddedRoles([{ ...resData }]))
+            //dispatch(setAddedRoles([{ ...resData }]))
+            await revalidateFn('/roles')
             dispatch(setCloseModalEditRol(false))
         }
         setSendingForm(false)

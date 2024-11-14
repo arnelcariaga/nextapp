@@ -3,32 +3,36 @@ import { useEffect, useState } from "react"
 import { communityOperationUsersColumns } from "./communityOperationUsersColumns"
 import DataTable from "../../MyDataTable/data-table"
 import MyDialog from "../../MyDialog"
-import { deleteCommunityOperationUser, getAllCommunityOperationUsers } from "@/lib/seed"
+import { deleteCommunityOperationUser } from "@/lib/seed"
 import { useToast } from "@/hooks/use-toast"
 import { appName } from "@/lib/appInfo"
 import { Button } from "@/components/ui/button"
 import { ICommunityOperationUsers } from "@/lib/interfaces"
-import TableSkeleton from "../../MyDataTable/TableSkeleton"
+import TableSkeleton from "../../TableSkeleton"
 import { useSession } from "next-auth/react"
 import Icon from "../../Icon"
 import { useRouter } from "next/navigation"
-import useSWR from 'swr'
+//import useSWR from 'swr'
+import { revalidateFn } from "../revalidateActions"
 
-export default function UserList() {
-    const [communityOperationUsersData, setCommunityOperationUsersData] = useState<ICommunityOperationUsers[]>([])
+interface IComponentProps {
+    data: ICommunityOperationUsers[]
+}
+export default function UserList({ data }: IComponentProps) {
+    //const [communityOperationUsersData, setCommunityOperationUsersData] = useState<ICommunityOperationUsers[]>([])
     const { toast } = useToast()
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
     const [sendingDelete, setSendingDelete] = useState(false);
-    const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
+    //const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
     const [selectedCommunityOperationUserId, setSelectedCommunityOperationUserId] = useState<number>()
     const { data: session } = useSession()
     const router = useRouter()
     const screen = session?.user.screens.find(screen => screen.path === '/community_operations');
     const [canDelete, setCanDelete] = useState<boolean>(false)
 
-    const { data: swrData, error, isLoading } = useSWR('klk', async () => {
-        return await getAllCommunityOperationUsers(Number(session?.user.id_sai), Number(session?.user.id_role))
-    });
+    // const { data: swrData, error, isLoading } = useSWR('data', async () => {
+    //     return await getAllCommunityOperationUsers(Number(session?.user.id_sai), Number(session?.user.id_role))
+    // });
 
     useEffect(() => {
         // Buscar los permisos del usuario para esta pantalla
@@ -67,7 +71,7 @@ export default function UserList() {
     // }, [toast, session])
 
     // For deleting Community Operation User
-    
+
     const openModalDeleteCommunityOperationUser = (communityOperationUserId: number) => {
         setOpenDeleteModal(true)
         setSelectedCommunityOperationUserId(communityOperationUserId)
@@ -82,7 +86,7 @@ export default function UserList() {
             from_username: session?.user.username,
         }]
 
-        const { error, data, message } = await deleteCommunityOperationUser(communityOperationUserData)
+        const { error, message } = await deleteCommunityOperationUser(communityOperationUserData)
 
         if (error) {
             toast({
@@ -92,8 +96,9 @@ export default function UserList() {
                 duration: 5000
             })
         } else {
-            const newCommunityOperationUserData = communityOperationUsersData.filter((item) => item.id !== selectedCommunityOperationUserId)
-            setCommunityOperationUsersData(newCommunityOperationUserData)
+            //const newCommunityOperationUserData = communityOperationUsersData.filter((item) => item.id !== selectedCommunityOperationUserId)
+            //setCommunityOperationUsersData(newCommunityOperationUserData)
+            await revalidateFn('/community_operations/user_list')
             setOpenDeleteModal(false)
             toast({
                 title: "Eliminar Usuario De Operativo Comunidad || " + appName,
@@ -107,9 +112,9 @@ export default function UserList() {
     return (
         <div className="w-full p-2">
             {
-                isLoading ? <TableSkeleton /> :
+                !data ? <TableSkeleton /> :
                     <DataTable
-                        data={swrData.data}
+                        data={data}
                         columns={communityOperationUsersColumns(openModalDeleteCommunityOperationUser, canDelete)}
                         addBtn={<></>}
                         columnBtnFilter

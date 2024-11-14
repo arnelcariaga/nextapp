@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import { z, ZodRawShape } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,11 +11,11 @@ import {
     Card,
     CardContent
 } from "@/components/ui/card"
-import { getProvinces, getMunicipalities, getMunicipalityPlaces, addCommunityOperation } from "@/lib/seed";
+import { getMunicipalities, getMunicipalityPlaces, addCommunityOperation } from "@/lib/seed";
 import { IProvinces, IMunicipalities, IAddCommunityOperation, IMunicipalytyPlaces } from "@/lib/interfaces";
 import { useToast } from "@/hooks/use-toast"
 import { appName } from "@/lib/appInfo";
-import FormSkeleton from "../FormSkeleton";
+//import FormSkeleton from "../FormSkeleton";
 import Calendar from "../Calendar";
 import {
     Popover,
@@ -39,6 +39,10 @@ interface IFormInput {
     no_team: number
     operation_type: number
     activity_location: string
+}
+
+interface IComponentProps {
+    provinces: IProvinces[]
 }
 
 // Steps structure
@@ -76,13 +80,13 @@ const createSchema = (step: any) => {
     return z.object(shape);
 };
 
-function AddCommunityOperationForm() {
-    const [provinces, setProvinces] = useState<IProvinces[]>([])
+function AddCommunityOperationForm({ provinces }: IComponentProps) {
+    //const [provinces, setProvinces] = useState<IProvinces[]>([])
     const [municipalities, setMunicipalities] = useState<IMunicipalities[]>([]);
     const [municipalityPlaces, setMunicipalityPlaces] = useState<IMunicipalytyPlaces[]>([]);
-    const [loadingData, setLoadingData] = useState<boolean>(true)
+    const [loadingData, setLoadingData] = useState<boolean>(false)
     const [sendingForm, setSendingForm] = useState<boolean>(false)
-    const [showingSkeleton, setShowingSkeleton] = useState<boolean>(true)
+    //const [showingSkeleton, setShowingSkeleton] = useState<boolean>(true)
     const { toast } = useToast()
     const { data: session } = useSession()
     const router = useRouter()
@@ -92,30 +96,30 @@ function AddCommunityOperationForm() {
     });
 
     // Load provinces
-    useEffect(() => {
-        async function getProvincesFn() {
-            const { error, data, message } = await getProvinces()
+    // useEffect(() => {
+    //     async function getProvincesFn() {
+    //         const { error, data, message } = await getProvinces()
 
-            if (error) {
-                toast({
-                    variant: "destructive",
-                    title: "Agregar Operativo Comunidad || " + appName,
-                    description: message,
-                    duration: 5000
-                })
-            } else {
-                setProvinces(data)
-            }
-            setLoadingData(false)
-        }
-        getProvincesFn()
-    }, [toast])
+    //         if (error) {
+    //             toast({
+    //                 variant: "destructive",
+    //                 title: "Agregar Operativo Comunidad || " + appName,
+    //                 description: message,
+    //                 duration: 5000
+    //             })
+    //         } else {
+    //             setProvinces(data)
+    //         }
+    //         setLoadingData(false)
+    //     }
+    //     getProvincesFn()
+    // }, [toast])
 
-    useEffect(() => {
-        setTimeout(() => {
-            setShowingSkeleton(false)
-        }, 2000);
-    }, [])
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         setShowingSkeleton(false)
+    //     }, 2000);
+    // }, [])
 
     const handleProvinceChange = async (val: string) => {
         setLoadingData(true)
@@ -204,15 +208,15 @@ function AddCommunityOperationForm() {
         setSendingForm(false)
     };
 
-    if (showingSkeleton) {
-        return <Card className="mx-5 mt-3 shadow">
-            <CardContent>
-                <div className="px-3 mt-[4%]">
-                    <FormSkeleton />
-                </div>
-            </CardContent>
-        </Card>
-    }
+    // if (showingSkeleton) {
+    //     return <Card className="mx-5 mt-3 shadow">
+    //         <CardContent>
+    //             <div className="px-3 mt-[4%]">
+    //                 <FormSkeleton />
+    //             </div>
+    //         </CardContent>
+    //     </Card>
+    // }
     return (
         <FormProvider {...methods}>
             <Card className="mx-5 mt-3 shadow">
@@ -238,7 +242,7 @@ function AddCommunityOperationForm() {
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {
-                                                            loadingData ?
+                                                            !provinces || loadingData ?
                                                                 <Icon name="Loader2" className="mr-2 h-4 w-4 animate-spin" /> :
                                                                 <SelectGroup>
 

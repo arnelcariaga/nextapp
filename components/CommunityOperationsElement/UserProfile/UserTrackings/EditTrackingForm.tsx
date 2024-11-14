@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import Icon from '@/components/Icon';
 import Calendar from '@/components/Calendar';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
@@ -26,10 +26,11 @@ import {
     DialogClose,
     DialogFooter
 } from "@/components/ui/dialog"
-import { setAddedCommunityOperationUserTracking } from '@/redux/slices/communityOperationUsersSlice';
-import { useDispatch } from 'react-redux';
+//import { setAddedCommunityOperationUserTracking } from '@/redux/slices/communityOperationUsersSlice';
+//import { useDispatch } from 'react-redux';
 import { IUserCommunityUserTracking } from '@/lib/interfaces';
 import { TCommunityOperativeUserParams } from '@/lib/types';
+import { revalidateFn } from '../../revalidateActions';
 
 interface IAddTrackingForm {
     name: string
@@ -39,7 +40,7 @@ interface IAddTrackingForm {
 }
 
 interface IFormInput {
-    date: Date
+    date: string
     enrolling_type_id: string
     observations: string
 }
@@ -56,7 +57,9 @@ const formInputs: IAddTrackingForm[] = [
 ];
 
 const formSchema = z.object({
-    date: z.date({ required_error: "La fecha es requerida" }),
+    date: z.string({ required_error: "La fecha es requerida" }).refine((val) => !val || /^\d{4}-\d{2}-\d{2}$/.test(val), {
+        message: "Por favor introduzca una fecha válida",
+    }),
     enrolling_type_id: z.string({ required_error: "Campo requerido" }),
     observations: z.string().min(1, { message: "Campo requerido" }),
 })
@@ -72,7 +75,9 @@ const EditTrackingForm = ({ setOpenEditTrackingForm, selectedItem, params, userN
     const [sendingForm, setSendingForm] = useState<boolean>(false)
     const { toast } = useToast()
     const { data: session } = useSession()
-    const dispatch = useDispatch()
+    const [openCalendar, setOpenCalendar] = useState<boolean>(false)
+
+    // const dispatch = useDispatch()
 
     useEffect(() => {
         async function getEnrollingTypesFn() {
@@ -95,7 +100,7 @@ const EditTrackingForm = ({ setOpenEditTrackingForm, selectedItem, params, userN
     const methods = useForm<IFormInput>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            date: new Date(String(selectedItem[0].date)),
+            date: String(selectedItem[0].date),
             enrolling_type_id: String(selectedItem[0].enrolling_type.id),
             observations: selectedItem[0].observations
         }
@@ -114,7 +119,7 @@ const EditTrackingForm = ({ setOpenEditTrackingForm, selectedItem, params, userN
             userName
         }
 
-        const { error, data: resData, message } = await addCommunityOperationUserTracking(Array(newData))
+        const { error, message } = await addCommunityOperationUserTracking(Array(newData))
 
         if (error) {
             toast({
@@ -124,7 +129,8 @@ const EditTrackingForm = ({ setOpenEditTrackingForm, selectedItem, params, userN
                 duration: 5000
             })
         } else {
-            dispatch(setAddedCommunityOperationUserTracking([resData.data]))
+            //dispatch(setAddedCommunityOperationUserTracking([resData.data]))
+            await revalidateFn(`/community_operations/${params.id}/user_profile/trackings`)
             setOpenEditTrackingForm(false)
             toast({
                 title: "Operativo Comunidad -> Perfil Usuario || " + appName,
@@ -178,34 +184,47 @@ const EditTrackingForm = ({ setOpenEditTrackingForm, selectedItem, params, userN
                                     <FormField
                                         control={methods.control}
                                         name="date"
-                                        render={({ field: { onChange, value } }) => (
-                                            <Popover modal>
-                                                <PopoverTrigger asChild>
-                                                    <div className="space-y-2">
-                                                        <Label htmlFor={field.name}>{field.label}</Label>
-                                                        <div className="relative">
-                                                            <Input
-                                                                type="text"
-                                                                className="border cursor-pointer"
-                                                                readOnly
-                                                                value={value ? format(value, "dd/MM/yy") : "Seleccionar"}
-                                                            />
-                                                            <Icon name="CalendarIcon" className='absolute right-0 me-3 top-1/2 transform -translate-y-1/2 text-gray-400' size={18} />
+                                        render={({ field: { onChange, value } }) => {
+                                            let defaultDate
+                                            if (value) {
+                                                defaultDate = parseISO(value)
+                                            }
+
+                                            return (
+                                                <Popover modal open={openCalendar} onOpenChange={setOpenCalendar}>
+                                                    <PopoverTrigger asChild>
+                                                        <div className="space-y-2">
+                                                            <Label htmlFor={field.name}>{field.label}</Label>
+                                                            <div className="relative">
+                                                                <Input
+                                                                    type="text"
+                                                                    className="border cursor-pointer"
+                                                                    readOnly
+                                                                    value={value ? format(String(defaultDate), "dd/MM/yy") : "Seleccionar"}
+                                                                />
+                                                                <Icon name="CalendarIcon" className='absolute right-0 me-3 top-1/2 transform -translate-y-1/2 text-gray-400' size={18} />
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </PopoverTrigger>
-                                                <PopoverContent className="w-auto p-0" align="start">
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={new Date(value)}
-                                                        defaultMonth={new Date(value)}
-                                                        onSelect={onChange}
-                                                        startMonth={new Date(2015, 0)}
-                                                        endMonth={new Date(2024, 11)}
-                                                    />
-                                                </PopoverContent>
-                                            </Popover>
-                                        )}
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0" align="start">
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={defaultDate}
+                                                            defaultMonth={defaultDate}
+                                                            onSelect={(date) => {
+                                                                if (date) {
+                                                                    const formattedDate = format(date, "yyyy-MM-dd")
+                                                                    onChange(formattedDate)
+                                                                    setOpenCalendar(false)
+                                                                }
+                                                            }}
+                                                            startMonth={new Date(2015, 0)}
+                                                            endMonth={new Date(2024, 11)}
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                            )
+                                        }}
                                     /> : <div className="space-y-2">
                                         <Label htmlFor={field.name}>{field.label}</Label>
                                         <div className="relative">

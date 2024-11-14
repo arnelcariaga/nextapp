@@ -3,13 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 interface IInitialState {
   closeModalAddUser: boolean
   closeModalEditUser: boolean
-  addedUsers: Array<object>
+  //addedUsers: Array<object>
 }
 
 const initialState: IInitialState = {
   closeModalAddUser: false,
   closeModalEditUser: false,
-  addedUsers: []
+  //addedUsers: []
 };
 
 export const usersSlice = createSlice({
@@ -24,13 +24,13 @@ export const usersSlice = createSlice({
       const closeModalEditUser = action.payload;
       return { ...state, closeModalEditUser };
     },
-    setAddedUsers: (state, action) => {
-      const user = action.payload;
-      return { ...state, addedUsers: user };
-    },
+    // setAddedUsers: (state, action) => {
+    //   const user = action.payload;
+    //   return { ...state, addedUsers: user };
+    // },
   },
 });
 
-export const { setCloseModalAddUser, setAddedUsers, setCloseModalEditUser } = usersSlice.actions;
+export const { setCloseModalAddUser, setCloseModalEditUser } = usersSlice.actions;
 
 export default usersSlice.reducer;

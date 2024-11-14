@@ -56,26 +56,6 @@ export const addRol = async (data: Array<object>) => {
   }
 };
 
-export const getRoles = async () => {
-  try {
-    const token = await getUserToken();
-    const res = await fetch(api_url + "/api/roles", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const resJson = await res.json();
-    // I don't call jsonResponse here becouse the structure of res it's the same
-    return resJson;
-  } catch (error) {
-    return jsonResponse(
-      true,
-      "Hubo un error al cargar los módulos, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
-      []
-    );
-  }
-};
-
 export const deleteRol = async (rolId: number | null, data: Array<object>) => {
   try {
     const token = await getUserToken();
@@ -154,48 +134,6 @@ export const updateRol = async (rolId: number | null, data: Array<object>) => {
 };
 
 // --------------------------------- API call for users CRUD ---------------------------------
-export const getUsers = async () => {
-  try {
-    const token = await getUserToken();
-
-    const res = await fetch(api_url + "/api/users", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const resJson = await res.json();
-    // I don't call jsonResponse here becouse the structure of res it's the same
-    return resJson;
-  } catch (error) {
-    return jsonResponse(
-      true,
-      "Hubo un error al cargar los usuarios, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
-      []
-    );
-  }
-};
-
-export const getSAIs = async () => {
-  try {
-    const token = await getUserToken();
-
-    const res = await fetch(api_url + "/api/sais", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const resJson = await res.json();
-    // I don't call jsonResponse here becouse the structure of res it's the same
-    return resJson;
-  } catch (error) {
-    return jsonResponse(
-      true,
-      "Hubo un error al cargar los SAIs, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
-      []
-    );
-  }
-};
-
 export const getStatus = async () => {
   try {
     const token = await getUserToken();
@@ -478,28 +416,6 @@ export const updateSai = async (saiId: number | null, data: Array<object>) => {
   }
 };
 
-// --------------------------------- API call for Activity logs ---------------------------------
-export const getActivityLogs = async () => {
-  try {
-    const token = await getUserToken();
-
-    const res = await fetch(api_url + "/api/activity_logs", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const resJson = await res.json();
-    // I don't call jsonResponse here becouse the structure of res it's the same
-    return resJson;
-  } catch (error) {
-    return jsonResponse(
-      true,
-      "Hubo un error al cargar los registros de auditoría, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
-      []
-    );
-  }
-};
-
 // --------------------------------- API call for community operations ---------------------------------
 export const getShifts = async () => {
   try {
@@ -586,32 +502,6 @@ export const addCommunityOperation = async (data: Array<object>) => {
     return jsonResponse(
       true,
       "Hubo un error al agregar operativo comunidad, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
-      []
-    );
-  }
-};
-
-export const getCommunityOperationsBySai = async (sai_id: number) => {
-  try {
-    const token = await getUserToken();
-
-    const res = await fetch(api_url + "/api/get_community_operations_by_sai", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        sai_id,
-      }),
-    });
-    const resJson = await res.json();
-    // I don't call jsonResponse here becouse the structure of res it's the same
-    return resJson;
-  } catch (error) {
-    return jsonResponse(
-      true,
-      "Hubo un error al cargar los operativos comunidad de este SAI, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
       []
     );
   }
@@ -841,39 +731,6 @@ export const addCommunityOperationUser = async (data: Array<object>) => {
   }
 };
 
-export const getCommunityOperationUsersBySaiAndOerationId = async (
-  sai_id: number,
-  operation_id: number
-) => {
-  try {
-    const token = await getUserToken();
-
-    const res = await fetch(
-      api_url + "/api/get_community_operation_users_by_sai_and_operation_id",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          sai_id,
-          operation_id,
-        }),
-      }
-    );
-    const resJson = await res.json();
-    // I don't call jsonResponse here becouse the structure of res it's the same
-    return resJson;
-  } catch (error) {
-    return jsonResponse(
-      true,
-      "Hubo un error al cargar los operativos comunidad del usuario, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
-      []
-    );
-  }
-};
-
 export const updateCommunityOperationUser = async (data: Array<object>) => {
   try {
     const token = await getUserToken();
@@ -924,74 +781,72 @@ export const deleteCommunityOperationUser = async (data: Array<object>) => {
   }
 };
 
-export const getAllCommunityOperationUsers = async (
-  sai_id: number,
-  rol_id: number
-) => {
-  try {
-    const token = await getUserToken();
-
-    const res = await fetch(
-      api_url + "/api/get_all_community_operation_users",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          sai_id,
-          rol_id,
-        }),
-      }
-    );
-    const resJson = await res.json();
-    // I don't call jsonResponse here becouse the structure of res it's the same
-    return resJson;
-  } catch (error) {
-    return jsonResponse(
-      true,
-      "Hubo un error al cargar todos los usuarios de los operativos comunidad, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
-      []
-    );
-  }
-};
-
 // --------------------------------- API call for community operations user profile ---------------------------------
-export const getCommunityOperationUserDetails = async (
+
+//Start Shared in other screens fetchers
+export async function getUserDetails(
   sai_id: number,
   rol_id: number,
-  community_operation_user_id: number
-) => {
-  try {
-    const token = await getUserToken();
+  community_operation_user_id: number,
+  token: string | undefined
+) {
+  const res = await fetch(
+    api_url + "/api/get_community_operation_user_details",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        sai_id,
+        rol_id,
+        community_operation_user_id,
+      }),
+    }
+  );
 
-    const res = await fetch(
-      api_url + "/api/get_community_operation_user_details",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          sai_id,
-          rol_id,
-          community_operation_user_id,
-        }),
-      }
-    );
-    const resJson = await res.json();
-    // I don't call jsonResponse here becouse the structure of res it's the same
-    return resJson;
-  } catch (error) {
-    return jsonResponse(
-      true,
-      "Hubo un error al cargar los detalles del usuarios, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
-      []
-    );
+  const { data, message, error } = await res.json();
+
+  if (error) {
+    throw Error(message);
   }
-};
+
+  return data;
+}
+
+export async function getRoles(token: string | undefined) {
+  const res = await fetch(api_url + "/api/roles", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const { data, message, error } = await res.json();
+
+  if (error) {
+    throw Error(message);
+  }
+
+  return data;
+}
+
+export async function getSais(token: string | undefined) {
+  const res = await fetch(api_url + "/api/sais", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const { data, message, error } = await res.json();
+
+  if (error) {
+    throw Error(message);
+  }
+
+  return data;
+}
+//End Shared in other screens fetchers
 
 export const getEnrollingTypes = async () => {
   try {
@@ -1097,35 +952,6 @@ export const getFappsIdById = async (fapps_id: number) => {
   }
 };
 
-export const getCommunityOperationUserTrackingsById = async (
-  user_id: number
-) => {
-  try {
-    const token = await getUserToken();
-
-    const res = await fetch(
-      api_url + `/api/get_user_community_operation_user_trackings`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ user_id }),
-      }
-    );
-    const resJson = await res.json();
-    // I don't call jsonResponse here becouse the structure of res it's the same
-    return resJson;
-  } catch (error) {
-    return jsonResponse(
-      true,
-      "Hubo un error al cargar los seguimientos de este usuario, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
-      []
-    );
-  }
-};
-
 export const deleteCommunityOperationUserTracking = async (
   data: Array<object>
 ) => {
@@ -1157,35 +983,6 @@ export const deleteCommunityOperationUserTracking = async (
   }
 };
 
-export const getCommunityOperationUserEnrollingsById = async (
-  user_id: number
-) => {
-  try {
-    const token = await getUserToken();
-
-    const res = await fetch(
-      api_url + `/api/get_user_community_operation_user_enrollings`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ user_id }),
-      }
-    );
-    const resJson = await res.json();
-    // I don't call jsonResponse here becouse the structure of res it's the same
-    return resJson;
-  } catch (error) {
-    return jsonResponse(
-      true,
-      "Hubo un error al cargar la situación de enrolamiento del usuario, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
-      []
-    );
-  }
-};
-
 // --------------------------------- API call for patients ---------------------------------
 export const getFappsIdByPatientId = async (fapps_id: number) => {
   try {
@@ -1206,6 +1003,37 @@ export const getFappsIdByPatientId = async (fapps_id: number) => {
     return jsonResponse(
       true,
       "Hubo un error al cargar el ID FAPPS, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
+      []
+    );
+  }
+};
+
+export const deleteCommunityOperationUserEnrolling = async (
+  data: Array<object>
+) => {
+  try {
+    const token = await getUserToken();
+    const res = await fetch(
+      api_url + `/api/delete_community_operation_user_enrolling`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          ...data[0],
+        }),
+      }
+    );
+    const resJson = await res.json();
+
+    // I don't call jsonResponse here becouse the structure of res it's the same
+    return resJson;
+  } catch (error) {
+    return jsonResponse(
+      true,
+      "Hubo un error al eliminar el seguimiento de este usuario, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
       []
     );
   }
@@ -1285,60 +1113,6 @@ export const addParticipantInscriptionForm = async (data: Array<object>) => {
 };
 
 //-----------------------------------------FOR ADMIN----------------------------------------------
-export const getCommunityOperations = async () => {
-  try {
-    const token = await getUserToken();
-
-    const res = await fetch(api_url + "/api/get_community_operations", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const resJson = await res.json();
-    // I don't call jsonResponse here becouse the structure of res it's the same
-    return resJson;
-  } catch (error) {
-    return jsonResponse(
-      true,
-      "Hubo un error al cargar los operativos de comunidad, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
-      []
-    );
-  }
-};
-
-export const getCommunityOperationUsersByOperationId = async (
-  operation_id: number
-) => {
-  try {
-    const token = await getUserToken();
-
-    const res = await fetch(
-      api_url + "/api/get_community_operation_users_by_operation_id",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          operation_id,
-        }),
-      }
-    );
-    const resJson = await res.json();
-    // I don't call jsonResponse here becouse the structure of res it's the same
-    return resJson;
-  } catch (error) {
-    return jsonResponse(
-      true,
-      "Hubo un error al cargar los usuarios de este operativo comunidad, verififique su conexion a internet e intente de nuevo, si el problema persiste comuníquese con soporte",
-      []
-    );
-  }
-};
-
 export const signInAsAnotherUser = async (data: Array<object>) => {
   try {
     const token = await getUserToken();

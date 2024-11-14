@@ -25,13 +25,14 @@ import { format, differenceInYears } from 'date-fns';
 import { IFormstep } from '@/lib/interfaces';
 import { Textarea } from "@/components/ui/textarea"
 import { ICommunityOperationUsersDataTable } from '@/lib/interfaces';
-import { setAddedCommunityOperationUser, setCloseModalEditCommunityOperationUser } from '@/redux/slices/communityOperationUsersSlice';
+import { setCloseModalEditCommunityOperationUser } from '@/redux/slices/communityOperationUsersSlice';
 import FormSkeleton from '@/components/FormSkeleton';
 import {
     DialogClose,
     DialogFooter
 } from "@/components/ui/dialog"
 import { Card, CardContent } from '@/components/ui/card';
+import { revalidateFn } from '../revalidateActions';
 
 interface IFormInput {
     name: string
@@ -222,7 +223,9 @@ const EditCommunityOperationUserForm = ({ selectedItem }: ISelectedItem) => {
                 duration: 5000
             })
         } else {
-            dispatch(setAddedCommunityOperationUser([{ ...resData }]))
+            //dispatch(setAddedCommunityOperationUser([{ ...resData }]))
+            await revalidateFn('/community_operations/user_list')
+            await revalidateFn(`/community_operations/${selectedItem?.community_operation_id}/users`)
             dispatch(setCloseModalEditCommunityOperationUser(false))
             toast({
                 title: "Editar Uusuario a Operativo Comunidad || " + appName,

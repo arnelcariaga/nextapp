@@ -3,30 +3,35 @@ import { useEffect, useState } from "react"
 import { communityOperationsColumns } from "./communityOperationsColumns"
 import DataTable from "../MyDataTable/data-table"
 import MyDialog from "../MyDialog"
-import { deleteCommunityOperation, getCommunityOperationsBySai, getCommunityOperations } from "@/lib/seed"
+import { deleteCommunityOperation } from "@/lib/seed"
 import { useToast } from "@/hooks/use-toast"
 import { appName } from "@/lib/appInfo"
 import { Button } from "@/components/ui/button"
 import { ICommunityOperationDataTable } from "@/lib/interfaces"
 import EditCommunityOperationForm from "./EditCommunityOperationForm"
-import TableSkeleton from "../MyDataTable/TableSkeleton"
+import TableSkeleton from "../TableSkeleton"
 import { useSession } from "next-auth/react"
 import Icon from "../Icon"
 import Link from "next/link"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "@/redux/store"
 import { setCloseModalEditCommunityOperation } from "@/redux/slices/communityOperationsSlice"
+import { revalidateFn } from "./revalidateActions"
 
-export default function CommunityOperationsElement() {
-    const [communityOperationsData, setCommunityOperationsData] = useState<ICommunityOperationDataTable[]>([])
+interface IComponentProps {
+    data: ICommunityOperationDataTable[]
+}
+
+export default function CommunityOperationsElement({ data }: IComponentProps) {
+    //const [communityOperationsData, setCommunityOperationsData] = useState<ICommunityOperationDataTable[]>([])
     const { toast } = useToast()
     const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false)
     const [sendingDelete, setSendingDelete] = useState<boolean>(false);
     const [selectedCommunityOperation, setSelectedCommunityOperation] = useState<ICommunityOperationDataTable>()
-    const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
+    //const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
     const { data: session } = useSession()
     const closeModalEditCommunityOperation = useSelector((state: RootState) => state.communityOperations.closeModalEditCommunityOperation)
-    const addedCommunityOperation = useSelector((state: RootState) => state.communityOperations.addedCommunityOperation as ICommunityOperationDataTable[])
+    //const addedCommunityOperation = useSelector((state: RootState) => state.communityOperations.addedCommunityOperation as ICommunityOperationDataTable[])
     const [selectedCommunityOperationId, setSelectedCommunityOperationId] = useState<number>(0);
     const dispatch = useDispatch()
     const screen = session?.user.screens.find(screen => screen.path === '/community_operations');
@@ -49,53 +54,54 @@ export default function CommunityOperationsElement() {
         }
     }, [screen]);
 
-    useEffect(() => {
-        function getAddedCommunityOperation() {
-            // If a new community operation added, update array for UI
-            if (addedCommunityOperation.length > 0) {
-                setCommunityOperationsData((prevS) => {
-                    const index = prevS.findIndex(item => item.id === addedCommunityOperation[0].id)
+    // useEffect(() => {
+    //     function getAddedCommunityOperation() {
+    //         // If a new community operation added, update array for UI
+    //         if (addedCommunityOperation.length > 0) {
+    //             setCommunityOperationsData((prevS) => {
+    //                 const index = prevS.findIndex(item => item.id === addedCommunityOperation[0].id)
 
-                    if (index !== -1) {
-                        const updatedItems = [...prevS]
+    //                 if (index !== -1) {
+    //                     const updatedItems = [...prevS]
 
-                        updatedItems[index] = addedCommunityOperation[0]
-                        return updatedItems
-                    } else {
-                        return [addedCommunityOperation[0], ...prevS] as ICommunityOperationDataTable[]
-                    }
-                })
-            }
-        }
-        getAddedCommunityOperation()
-    }, [addedCommunityOperation])
+    //                     updatedItems[index] = addedCommunityOperation[0]
+    //                     return updatedItems
+    //                 } else {
+    //                     return [addedCommunityOperation[0], ...prevS] as ICommunityOperationDataTable[]
+    //                 }
+    //             })
+    //         }
+    //     }
+    //     getAddedCommunityOperation()
+    // }, [addedCommunityOperation])
 
-    useEffect(() => {
-        async function getCommunityOperationsBySaiFn() {
-            if (session) {
-                const { error, data, message } = String(session.user.id_role) === "1" ? await getCommunityOperations() : await getCommunityOperationsBySai(Number(session?.user.id_sai))
+    // useEffect(() => {
+    //     async function getCommunityOperationsBySaiFn() {
+    //         if (session) {
+    //             const { error, data, message } = String(session.user.id_role) === "1" ? await getCommunityOperations() : await getCommunityOperationsBySai(Number(session?.user.id_sai))
 
-                if (error) {
-                    toast({
-                        variant: "destructive",
-                        title: "Operativo Comunidad || " + appName,
-                        description: message,
-                        duration: 5000
-                    })
-                } else {
-                    String(session.user.id_role) === "1"
-                        ?
-                        setCommunityOperationsData([...data])
-                        :
-                        setCommunityOperationsData([...data[0]["community_operations"]])
-                }
-                setDataTableLoading(false)
-            }
-        }
-        getCommunityOperationsBySaiFn()
-    }, [toast, session])
+    //             if (error) {
+    //                 toast({
+    //                     variant: "destructive",
+    //                     title: "Operativo Comunidad || " + appName,
+    //                     description: message,
+    //                     duration: 5000
+    //                 })
+    //             } else {
+    //                 String(session.user.id_role) === "1"
+    //                     ?
+    //                     setCommunityOperationsData([...data])
+    //                     :
+    //                     setCommunityOperationsData([...data[0]["community_operations"]])
+    //             }
+    //             setDataTableLoading(false)
+    //         }
+    //     }
+    //     getCommunityOperationsBySaiFn()
+    // }, [toast, session])
 
     // For deleting Community Operation
+    
     const openModalDeleteCommunityOperation = (communityOperationId: number) => {
         setOpenDeleteModal(true)
         setSelectedCommunityOperationId(communityOperationId)
@@ -120,8 +126,9 @@ export default function CommunityOperationsElement() {
                 duration: 5000
             })
         } else {
-            const newCommunityOperationData = communityOperationsData.filter((item) => item.id !== selectedCommunityOperationId)
-            setCommunityOperationsData(newCommunityOperationData)
+            // const newCommunityOperationData = communityOperationsData.filter((item) => item.id !== selectedCommunityOperationId)
+            // setCommunityOperationsData(newCommunityOperationData)
+            await revalidateFn()
             setOpenDeleteModal(false)
             toast({
                 title: "Eliminar Operativo Comunidad || " + appName,
@@ -141,9 +148,9 @@ export default function CommunityOperationsElement() {
     return (
         <div className="w-full p-2">
             {
-                dataTableLoading ? <TableSkeleton /> :
+                !data ? <TableSkeleton /> :
                     <DataTable
-                        data={communityOperationsData}
+                        data={data}
                         columns={communityOperationsColumns(openModalEditCommunityOperation, openModalDeleteCommunityOperation, canDelete, canEdit)}
                         addBtn={
                             canCreate ? <Button variant="outline" className='bg-green-600 dark:bg-green-900' asChild>

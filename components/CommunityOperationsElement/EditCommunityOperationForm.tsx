@@ -39,11 +39,12 @@ import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover'
 import Calendar from '../Calendar'
 import { format } from 'date-fns'
 import { useDispatch } from 'react-redux'
-import { setCloseModalEditCommunityOperation, setAddedCommunityOperation } from '@/redux/slices/communityOperationsSlice'
+import { setCloseModalEditCommunityOperation } from '@/redux/slices/communityOperationsSlice'
 import {
     DialogClose,
     DialogFooter
 } from "@/components/ui/dialog"
+import { revalidateFn } from './revalidateActions'
 
 interface IFormInput {
     province: number
@@ -232,7 +233,8 @@ function AddCommunityOperationForm({
                 duration: 5000
             })
         } else {
-            dispatch(setAddedCommunityOperation([{ ...resData }]))
+            await revalidateFn('/community_operations')
+            //dispatch(setAddedCommunityOperation([{ ...resData }]))
             dispatch(setCloseModalEditCommunityOperation(false))
             toast({
                 title: "Editar Operativo Comunidad || " + appName,

@@ -18,13 +18,13 @@ export const communityOperationsSlice = createSlice({
       const closeModalEditCommunityOperation = action.payload;
       return { ...state, closeModalEditCommunityOperation };
     },
-    setAddedCommunityOperation: (state, action) => {
-      const communityOperation = action.payload;
-      return { ...state, addedCommunityOperation: communityOperation };
-    },
+    // setAddedCommunityOperation: (state, action) => {
+    //   const communityOperation = action.payload;
+    //   return { ...state, addedCommunityOperation: communityOperation };
+    // },
   },
 });
 
-export const { setCloseModalEditCommunityOperation, setAddedCommunityOperation } = communityOperationsSlice.actions;
+export const { setCloseModalEditCommunityOperation } = communityOperationsSlice.actions;
 
 export default communityOperationsSlice.reducer;

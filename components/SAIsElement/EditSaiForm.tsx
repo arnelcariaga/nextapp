@@ -12,11 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useDispatch } from 'react-redux'
 import FormSkeleton from '../FormSkeleton'
 import { useSession } from 'next-auth/react'
-import { setAddedSais, setCloseModalEditSai } from '@/redux/slices/saisSlice'
+import { setCloseModalEditSai } from '@/redux/slices/saisSlice'
 import {
     DialogClose,
     DialogFooter
 } from "@/components/ui/dialog"
+import { revalidateFn } from '../CommunityOperationsElement/revalidateActions'
 
 interface ISelectedSaiId {
     selectedSaiId: number
@@ -141,7 +142,8 @@ const EditSaiForm = ({ selectedSaiId }: ISelectedSaiId) => {
                 duration: 5000
             })
         } else {
-            dispatch(setAddedSais([{ ...resData }]))
+            //dispatch(setAddedSais([{ ...resData }]))
+            await revalidateFn('/sais')
             dispatch(setCloseModalEditSai(false))
             toast({
                 title: "Editar SAI || " + appName,

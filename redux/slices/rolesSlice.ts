@@ -3,13 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 interface IInitialState {
   closeModalAddRol: boolean
   closeModalEditRol: boolean
-  addedRoles: Array<object>
+  //addedRoles: Array<object>
 }
 
 const initialState: IInitialState = {
   closeModalAddRol: false,
   closeModalEditRol: false,
-  addedRoles: []
+  //addedRoles: []
 };
 
 export const rolesSlice = createSlice({
@@ -24,13 +24,13 @@ export const rolesSlice = createSlice({
       const closeModalEditRol = action.payload;
       return { ...state, closeModalEditRol };
     },
-    setAddedRoles: (state, action) => {
-      const rol = action.payload;
-      return { ...state, addedRoles: rol };
-    },
+    // setAddedRoles: (state, action) => {
+    //   const rol = action.payload;
+    //   return { ...state, addedRoles: rol };
+    // },
   },
 });
 
-export const { setCloseModalAddRol, setAddedRoles, setCloseModalEditRol } = rolesSlice.actions;
+export const { setCloseModalAddRol, setCloseModalEditRol } = rolesSlice.actions;
 
 export default rolesSlice.reducer;

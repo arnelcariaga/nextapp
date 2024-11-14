@@ -16,6 +16,7 @@ export const usersColumns = (openModalEditUser: (id: number) => void, openModalD
         cell: ({ row }) => {
             const uId = row.original.id
             const username = row.original.username
+            const status = row.original.status
             return (
                 <div className="space-x-2 flex aligns-center">
                     <Button variant="default" className="bg-amber-500" onClick={() => signInAs(uId)} disabled={loadingSignAs}>
@@ -27,9 +28,11 @@ export const usersColumns = (openModalEditUser: (id: number) => void, openModalD
                     <Button variant="secondary" onClick={() => openModalEditUser(uId)} disabled={loadingSignAs}>
                         <Icon name='Edit' />
                     </Button>
-                    <Button variant="destructive" onClick={() => openModalDeleteUser(uId, username)} disabled={loadingSignAs}>
-                        <Icon name="Trash2" />
-                    </Button>
+                    {
+                        status === 1 && <Button variant="destructive" onClick={() => openModalDeleteUser(uId, username)} disabled={loadingSignAs}>
+                            <Icon name="Trash2" />
+                        </Button>
+                    }
                 </div>
             )
         },

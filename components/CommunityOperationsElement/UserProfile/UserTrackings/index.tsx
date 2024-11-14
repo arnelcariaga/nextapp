@@ -1,40 +1,47 @@
 "use client"
 import { useEffect, useState } from "react"
-import { communityOperationUsersColumns } from "./communityOperationUsersColumns"
+import { communityOperationUserTrackingColumns } from "./communityOperationUserTrackingColumns"
 import DataTable from "@/components/MyDataTable/data-table"
 import MyDialog from "@/components/MyDialog"
-import { deleteCommunityOperationUserTracking, getCommunityOperationUserTrackingsById, getCommunityOperationUserDetails } from "@/lib/seed"
+import { deleteCommunityOperationUserTracking } from "@/lib/seed"
 import { useToast } from "@/hooks/use-toast"
 import { appName } from "@/lib/appInfo"
-import { useSelector } from "react-redux"
-import { RootState } from "@/redux/store"
+// import { useSelector } from "react-redux"
+// import { RootState } from "@/redux/store"
 import { Button } from "@/components/ui/button"
 import { ICommunityOperationUserDetails, IUserCommunityUserTracking } from "@/lib/interfaces"
 import EditTrackingForm from "./EditTrackingForm"
-import TableSkeleton from "@/components/MyDataTable/TableSkeleton"
+import TableSkeleton from "@/components/TableSkeleton"
 import { useSession } from "next-auth/react"
 import Icon from "@/components/Icon"
 import { TCommunityOperativeUserParams } from "@/lib/types"
-import { useRouter } from "next/navigation"
+//import { useRouter } from "next/navigation"
 import UserDetailsHeader from "../UserDetailsHeader"
 import CommunityOperationUserTrackingsSkeleton from "@/components/CommunityOperationUserTrackingsSkeleton"
 import AddTrackingForm from "../AddTrackingForm"
+import { revalidateFn } from "../../revalidateActions"
 
-export default function UserTrackings({ params }: TCommunityOperativeUserParams) {
-    const [communityOperationUserTrackingsData, setCommunityOperationUserTrackingsData] = useState<IUserCommunityUserTracking[]>([])
+interface IComponentProps {
+    data: ICommunityOperationUserDetails
+    params: TCommunityOperativeUserParams['params']
+    communityOperationUserTrackingsData: IUserCommunityUserTracking[]
+}
+
+export default function UserTrackings({ params, data, communityOperationUserTrackingsData }: IComponentProps) {
+    //const [communityOperationUserTrackingsData, setCommunityOperationUserTrackingsData] = useState<IUserCommunityUserTracking[]>([])
     const { toast } = useToast()
-    const addedCommunityOperationUserTracking = useSelector((state: RootState) => state.communityOperationUsers.addedCommunityOperationUserTracking as IUserCommunityUserTracking[])
+    //const addedCommunityOperationUserTracking = useSelector((state: RootState) => state.communityOperationUsers.addedCommunityOperationUserTracking as IUserCommunityUserTracking[])
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
     const [sendingDelete, setSendingDelete] = useState(false);
     const [selectedCommunityOperationUserTrackingData, setSelectedCommunityOperationUserTrackingData] = useState<IUserCommunityUserTracking[]>([])
-    const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
+    //const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
     const [selectedCommunityOperationUserTrackingId, setSelectedCommunityOperationUserTrackingId] = useState<number>()
     const { data: session } = useSession()
-    const router = useRouter()
+    //const router = useRouter()
     const screen = session?.user.screens.find(screen => screen.path === '/community_operations');
     const [canDelete, setCanDelete] = useState<boolean>(false);
     const [canEdit, setCanEdit] = useState<boolean>(false);
-    const [userDetails, setUserDetails] = useState<ICommunityOperationUserDetails>()
+    //const [userDetails, setUserDetails] = useState<ICommunityOperationUserDetails>()
     const [openAddTrackingForm, setOpenAddTrackingForm] = useState<boolean>(false)
     const [openEditTrackingForm, setOpenEditTrackingForm] = useState<boolean>(false)
 
@@ -49,73 +56,74 @@ export default function UserTrackings({ params }: TCommunityOperativeUserParams)
     }, [screen]);
 
     // Get User details
-    useEffect(() => {
-        async function getCommnutiOperationUsersFn() {
-            if (session) {
-                const { error, data, message } = await getCommunityOperationUserDetails(Number(session?.user.id_sai), Number(session?.user.id_role), params.id)
+    // useEffect(() => {
+    //     async function getCommnutiOperationUsersFn() {
+    //         if (session) {
+    //             const { error, data, message } = await getCommunityOperationUserDetails(Number(session?.user.id_sai), Number(session?.user.id_role), params.id)
 
-                if (error) {
-                    toast({
-                        variant: "destructive",
-                        title: "Operativo Comunidad -> Perfil Usuario || " + appName,
-                        description: message,
-                        duration: 5000
-                    })
-                    router.push("/not_found")
-                } else {
-                    setUserDetails(data)
+    //             if (error) {
+    //                 toast({
+    //                     variant: "destructive",
+    //                     title: "Operativo Comunidad -> Perfil Usuario || " + appName,
+    //                     description: message,
+    //                     duration: 5000
+    //                 })
+    //                 router.push("/not_found")
+    //             } else {
+    //                 setUserDetails(data)
 
-                }
-                setDataTableLoading(false)
-            }
-        }
-        getCommnutiOperationUsersFn()
-    }, [toast, session, params, router])
+    //             }
+    //             setDataTableLoading(false)
+    //         }
+    //     }
+    //     getCommnutiOperationUsersFn()
+    // }, [toast, session, params, router])
 
     // Get user trackings
-    useEffect(() => {
-        async function getCommnutiOperationUserTrackingsByIdFn() {
-            if (session?.user.id) {
-                const { error, data, message } = await getCommunityOperationUserTrackingsById(Number(params.id))
+    // useEffect(() => {
+    //     async function getCommnutiOperationUserTrackingsByIdFn() {
+    //         if (session?.user.id) {
+    //             const { error, data, message } = await getCommunityOperationUserTrackingsById(Number(params.id))
 
-                if (error) {
-                    toast({
-                        variant: "destructive",
-                        title: "Operativo Comunidad -> Seguimientos del usuario || " + appName,
-                        description: message,
-                        duration: 5000
-                    })
-                } else {
-                    setCommunityOperationUserTrackingsData(data)
-                }
-                setDataTableLoading(false)
-            }
-        }
-        getCommnutiOperationUserTrackingsByIdFn()
-    }, [toast, session?.user.id, params.id, router])
+    //             if (error) {
+    //                 toast({
+    //                     variant: "destructive",
+    //                     title: "Operativo Comunidad -> Seguimientos del usuario || " + appName,
+    //                     description: message,
+    //                     duration: 5000
+    //                 })
+    //             } else {
+    //                 setCommunityOperationUserTrackingsData(data)
+    //             }
+    //             setDataTableLoading(false)
+    //         }
+    //     }
+    //     getCommnutiOperationUserTrackingsByIdFn()
+    // }, [toast, session?.user.id, params.id, router])
 
-    useEffect(() => {
-        function getAddedCommunityOperationUserTracking() {
-            // If a new Community Operation User tracking added, update array for UI
-            if (addedCommunityOperationUserTracking.length > 0) {
-                setCommunityOperationUserTrackingsData((prevS) => {
-                    const index = prevS.findIndex(item => item.id === addedCommunityOperationUserTracking[0].id)
+    // useEffect(() => {
+    //     function getAddedCommunityOperationUserTracking() {
+    //         // If a new Community Operation User tracking added, update array for UI
+    //         if (addedCommunityOperationUserTracking.length > 0) {
+    //             setCommunityOperationUserTrackingsData((prevS) => {
+    //                 const index = prevS.findIndex(item => item.id === addedCommunityOperationUserTracking[0].id)
 
-                    if (index !== -1) {
-                        const updatedItems = [...prevS]
+    //                 if (index !== -1) {
+    //                     const updatedItems = [...prevS]
 
-                        updatedItems[index] = addedCommunityOperationUserTracking[0]
-                        return updatedItems
-                    } else {
-                        return [addedCommunityOperationUserTracking[0], ...prevS] as IUserCommunityUserTracking[]
-                    }
-                })
-            }
-        }
-        getAddedCommunityOperationUserTracking()
-    }, [addedCommunityOperationUserTracking])
+    //                     updatedItems[index] = addedCommunityOperationUserTracking[0]
+    //                     return updatedItems
+    //                 } else {
+    //                     return [addedCommunityOperationUserTracking[0], ...prevS] as IUserCommunityUserTracking[]
+    //                 }
+    //             })
+    //         }
+    //     }
+    //     getAddedCommunityOperationUserTracking()
+    // }, [addedCommunityOperationUserTracking])
 
     // For deleting Community Operation User
+
     const openModalDeleteCommunityOperationUserTracking = (communityOperationUserTrackingId: number) => {
         setOpenDeleteModal(true)
         setSelectedCommunityOperationUserTrackingId(communityOperationUserTrackingId)
@@ -141,8 +149,9 @@ export default function UserTrackings({ params }: TCommunityOperativeUserParams)
                 duration: 5000
             })
         } else {
-            const newCommunityOperationUserTrackingData = communityOperationUserTrackingsData.filter((item) => item.id !== selectedCommunityOperationUserTrackingId)
-            setCommunityOperationUserTrackingsData(newCommunityOperationUserTrackingData)
+            // const newCommunityOperationUserTrackingData = communityOperationUserTrackingsData.filter((item) => item.id !== selectedCommunityOperationUserTrackingId)
+            // setCommunityOperationUserTrackingsData(newCommunityOperationUserTrackingData)
+            await revalidateFn(`/community_operations/${params.id}/user_profile/trackings`)
             setOpenDeleteModal(false)
             toast({
                 title: "Eliminar seguimiento del usuario || " + appName,
@@ -159,43 +168,46 @@ export default function UserTrackings({ params }: TCommunityOperativeUserParams)
         setSelectedCommunityOperationUserTrackingData(data)
     }
 
-    if (userDetails === undefined) {
+    if (!data) {
         return <CommunityOperationUserTrackingsSkeleton />
     }
     return (
         <div className="w-full p-2">
-            <UserDetailsHeader showDescription={false} userDetails={userDetails as ICommunityOperationUserDetails} canEdit={false} />
-            {
-                dataTableLoading ? <TableSkeleton /> :
-                    <DataTable
-                        data={communityOperationUserTrackingsData}
-                        columns={communityOperationUsersColumns(openModalEditCommunityOperationUser, openModalDeleteCommunityOperationUserTracking, canDelete, canEdit)}
-                        addBtn={
-                            screen?.permissions.create === "0" ? <></> :
-                                <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => setOpenAddTrackingForm(true)}>
-                                    <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
-                                    <span className='text-white'>
-                                        Nuevo seguimiento
-                                    </span>
-                                </Button>
-                        }
-                        columnBtnFilter
-                        columnHidden={{}}
-                        orderByObj={{
-                            id: 'date',
-                            desc: true
-                        }}
-                        exportData={false}
-                    />
-            }
+            <UserDetailsHeader showDescription={false} userDetails={data as ICommunityOperationUserDetails} canEdit={false} />
+            <div className="mt-2">
+                {
+                    !communityOperationUserTrackingsData ? <TableSkeleton /> :
+                        <DataTable
+                            data={communityOperationUserTrackingsData}
+                            columns={communityOperationUserTrackingColumns(openModalEditCommunityOperationUser, openModalDeleteCommunityOperationUserTracking, canDelete, canEdit)}
+                            addBtn={
+                                screen?.permissions.create === "0" ? <></> :
+                                    <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => setOpenAddTrackingForm(true)}>
+                                        <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
+                                        <span className='text-white'>
+                                            Nuevo seguimiento
+                                        </span>
+                                    </Button>
+                            }
+                            columnBtnFilter
+                            columnHidden={{}}
+                            orderByObj={{
+                                id: 'date',
+                                desc: true
+                            }}
+                            exportData={false}
+                        />
+                }
+            </div>
+
 
             <MyDialog
                 title="Paciente Operartivo Comunidad -> Agregar seguimiento"
                 description=""
                 content={<AddTrackingForm
                     params={params}
-                    userName={userDetails?.name + " " + userDetails?.last_name}
-                    setCountTracking={() => { }}
+                    userName={data?.name + " " + data?.last_name}
+                    //setCountTracking={() => { }}
                     setOpenAddTrackingForm={setOpenAddTrackingForm}
                 />}
                 btnTrigger={<></>}
@@ -233,7 +245,7 @@ export default function UserTrackings({ params }: TCommunityOperativeUserParams)
                         selectedItem={selectedCommunityOperationUserTrackingData}
                         setOpenEditTrackingForm={setOpenEditTrackingForm}
                         params={params}
-                        userName={userDetails?.name + " " + userDetails?.last_name}
+                        userName={data?.name + " " + data?.last_name}
                     />
                 }
                 btnTrigger={<></>}

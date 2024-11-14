@@ -21,17 +21,18 @@ import {
 import {
     FormField
 } from "@/components/ui/form"
-import { format, differenceInYears } from 'date-fns';
+import { format } from 'date-fns';
 import { IFormstep } from '@/lib/interfaces';
 import { Textarea } from "@/components/ui/textarea"
 import { TCommunityOperativeUserParams } from "@/lib/types"
-import { setAddedCommunityOperationUser, setCloseModalAddCommunityOperationUser } from '@/redux/slices/communityOperationUsersSlice';
+import { setCloseModalAddCommunityOperationUser } from '@/redux/slices/communityOperationUsersSlice';
 import {
     DialogClose,
     DialogFooter
 } from "@/components/ui/dialog"
 import { Card, CardContent } from '@/components/ui/card';
 import calculateAge from '@/lib/calculateAge';
+import { revalidateFn } from '../revalidateActions';
 
 interface IFormInput {
     name: string
@@ -190,13 +191,15 @@ const AddUserForm = ({ params }: TCommunityOperativeUserParams) => {
                 duration: 5000
             })
         } else {
-            dispatch(setAddedCommunityOperationUser([{ ...resData }]))
+            //dispatch(setAddedCommunityOperationUser([{ ...resData }]))
             dispatch(setCloseModalAddCommunityOperationUser(false))
             toast({
                 title: "Agregar Uusuario a Operativo Comunidad || " + appName,
                 description: message,
                 duration: 5000
             })
+            await revalidateFn('/community_operations/user_list')
+            await revalidateFn(`/community_operations/${params.id}/users`)
         }
         setSendingForm(false)
     };

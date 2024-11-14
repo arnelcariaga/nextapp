@@ -19,7 +19,7 @@ import { format } from 'date-fns';
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { appName } from '@/lib/appInfo';
-import { getSAIs } from '@/lib/seed';
+import { getSais } from '@/lib/seed';
 import { TCommunityOperativeUserParams } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { ISai } from '@/lib/interfaces';
@@ -159,23 +159,25 @@ const AddIndexForm = ({ params, userName, setCountEnrolling, setOpenAddIndexForm
   const { toast } = useToast()
   const { data: session } = useSession()
 
+  // Load SAIs
   useEffect(() => {
-    async function getSaisFn() {
-      const { error, data, message } = await getSAIs()
-
-      if (error) {
-        toast({
-          variant: "destructive",
-          title: "Operativo Comunidad -> Perfil Usuario || " + appName,
-          description: message,
-          duration: 5000
-        })
-      } else {
-        setSais(data)
+    async function getSAIsFn() {
+      if (session?.user.token) {
+        try {
+          const data = await getSais(session?.user.token)
+          setSais(data)
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Agregar Usuario || " + appName,
+            description: error,
+            duration: 5000
+          })
+        }
       }
     }
-    getSaisFn()
-  }, [toast])
+    getSAIsFn()
+  }, [toast, session?.user.token])
 
   const methods = useForm<IFormInput>({
     resolver: zodResolver(formSchema),

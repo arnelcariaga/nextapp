@@ -7,9 +7,9 @@ import { IAddUserForm, ISai, IRoles, IStatus } from '@/lib/interfaces'
 import { useToast } from "@/hooks/use-toast"
 import { appName } from '@/lib/appInfo'
 import Icon from '../Icon'
-import { getSAIs, getRoles, getStatus, addUser } from '@/lib/seed'
+import { getRoles, getStatus, addUser, getSais } from '@/lib/seed'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { setAddedUsers, setCloseModalAddUser } from '@/redux/slices/usersSlice'
+import { setCloseModalAddUser } from '@/redux/slices/usersSlice'
 import { useDispatch } from 'react-redux'
 import FormSkeleton from '../FormSkeleton'
 import { useSession } from 'next-auth/react'
@@ -17,6 +17,7 @@ import {
     DialogClose,
     DialogFooter
 } from "@/components/ui/dialog"
+import { revalidateFn } from '../CommunityOperationsElement/revalidateActions'
 
 const AddUserForm = () => {
     const {
@@ -38,42 +39,42 @@ const AddUserForm = () => {
     // Load SAIs
     useEffect(() => {
         async function getSAIsFn() {
-            const { error, data, message } = await getSAIs()
-
-            if (error) {
-                toast({
-                    variant: "destructive",
-                    title: "Agregar Usuario || " + appName,
-                    description: message,
-                    duration: 5000
-                })
-            } else {
-                setSais(data)
+            if (session?.user.token) {
+                try {
+                    const data = await getSais(session?.user.token)
+                    setSais(data)
+                } catch (error: any) {
+                    toast({
+                        variant: "destructive",
+                        title: "Agregar Usuario || " + appName,
+                        description: error,
+                        duration: 5000
+                    })
+                }
             }
-
         }
         getSAIsFn()
-    }, [toast])
+    }, [toast, session?.user.token])
 
     // Load roles
     useEffect(() => {
         async function getRolesFn() {
-            const { error, data, message } = await getRoles()
-
-            if (error) {
-                toast({
-                    variant: "destructive",
-                    title: "Agregar Usuario || " + appName,
-                    description: message,
-                    duration: 5000
-                })
-            } else {
-                setRoles(data)
+            if (session?.user.token) {
+                try {
+                    const data = await getRoles(session?.user.token)
+                    setRoles(data)
+                } catch (error: any) {
+                    toast({
+                        variant: "destructive",
+                        title: "Agregar Usuario || " + appName,
+                        description: error,
+                        duration: 5000
+                    })
+                }
             }
-
         }
         getRolesFn()
-    }, [toast])
+    }, [toast, session?.user.token])
 
     // Load status, i put the setLoadingInputsData(false) here couz it's the last query, so i query above first
     useEffect(() => {
@@ -113,7 +114,7 @@ const AddUserForm = () => {
             from_username: session?.user.username
         }
 
-        const { error, data: resData, message } = await addUser(Array(newData))
+        const { error, message } = await addUser(Array(newData))
 
         if (error) {
             toast({
@@ -123,7 +124,8 @@ const AddUserForm = () => {
                 duration: 5000
             })
         } else {
-            dispatch(setAddedUsers([{ ...resData }]))
+            //dispatch(setAddedUsers([{ ...resData }]))
+            await revalidateFn('/users')
             dispatch(setCloseModalAddUser(false))
             toast({
                 title: "Agregar Usuario || " + appName,

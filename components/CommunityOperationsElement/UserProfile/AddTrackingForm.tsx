@@ -27,8 +27,9 @@ import {
   DialogClose,
   DialogFooter
 } from "@/components/ui/dialog"
-import { setAddedCommunityOperationUserTracking } from '@/redux/slices/communityOperationUsersSlice';
+//import { setAddedCommunityOperationUserTracking } from '@/redux/slices/communityOperationUsersSlice';
 import { useDispatch } from 'react-redux';
+import { revalidateFn } from '../revalidateActions';
 
 interface IAddTrackingForm {
   name: string
@@ -62,11 +63,10 @@ const formSchema = z.object({
 
 interface IComponentProps extends TCommunityOperativeUserParams {
   userName: string
-  setCountTracking: Dispatch<SetStateAction<number>>
   setOpenAddTrackingForm: Dispatch<SetStateAction<boolean>>
 }
 
-const AddTrackingForm = ({ params, userName, setCountTracking, setOpenAddTrackingForm }: IComponentProps) => {
+const AddTrackingForm = ({ params, userName, setOpenAddTrackingForm }: IComponentProps) => {
   const [enrollingTypes, setEnrollingTypes] = useState<IEnrollingType[]>([])
   const [sendingForm, setSendingForm] = useState<boolean>(false)
   const { toast } = useToast()
@@ -109,7 +109,7 @@ const AddTrackingForm = ({ params, userName, setCountTracking, setOpenAddTrackin
       userName
     }
 
-    const { error, data: resData, message } = await addCommunityOperationUserTracking(Array(newData))
+    const { error, message } = await addCommunityOperationUserTracking(Array(newData))
 
     if (error) {
       toast({
@@ -119,8 +119,9 @@ const AddTrackingForm = ({ params, userName, setCountTracking, setOpenAddTrackin
         duration: 5000
       })
     } else {
-      dispatch(setAddedCommunityOperationUserTracking([resData.data]))
-      setCountTracking(resData.count)
+      //dispatch(setAddedCommunityOperationUserTracking([resData.data]))
+      await revalidateFn(`/community_operations/${params.id}/user_profile`)
+      //setCountTracking(resData.count)
       setOpenAddTrackingForm(false)
       toast({
         title: "Operativo Comunidad -> Perfil Usuario || " + appName,

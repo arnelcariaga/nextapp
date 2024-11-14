@@ -1,13 +1,10 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { auditLogsColumns } from "./auditLogsColumns"
 import DataTable from "../MyDataTable/data-table"
 import MyDialog from "../MyDialog"
-import { getActivityLogs } from "@/lib/seed"
-import { useToast } from "@/hooks/use-toast"
-import { appName } from "@/lib/appInfo"
 import { IAuditLogs } from "@/lib/interfaces"
-import TableSkeleton from "../MyDataTable/TableSkeleton"
+import TableSkeleton from "../TableSkeleton"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "../ui/label"
 import {
@@ -15,46 +12,46 @@ import {
     DialogFooter
 } from "@/components/ui/dialog"
 import { Button } from "../ui/button"
+import Icon from "../Icon"
+import { revalidateFn } from "../CommunityOperationsElement/revalidateActions"
 
-export default function AuditLogsElement() {
-    const [auditLogs, setAuditLogsData] = useState<IAuditLogs[]>([])
+interface IComponentProps {
+    data: IAuditLogs[]
+}
+
+export default function AuditLogsElement({ data }: IComponentProps) {
+    //const [auditLogs, setAuditLogsData] = useState<IAuditLogs[]>([])
     const [selectedAuditLogs, setSelectedAuditLogs] = useState<IAuditLogs[]>([])
-    const { toast } = useToast()
+    //const { toast } = useToast()
     const [openMoreInfoModal, setOpenMoreInfoModal] = useState(false)
-    const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
-
-    useEffect(() => {
-        async function getAuditLogsFn() {
-            const { error, data, message } = await getActivityLogs()
-
-            if (error) {
-                toast({
-                    variant: "destructive",
-                    title: "Registros de auditoría || " + appName,
-                    description: message,
-                    duration: 5000
-                })
-            } else {
-                setAuditLogsData([...data])
-            }
-            setDataTableLoading(false)
-        }
-        getAuditLogsFn()
-    }, [toast])
+    const [refreshingData, setRefreshingData] = useState(false)
+    //const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
 
     const openModalMoreInfo = async (data: IAuditLogs) => {
         setOpenMoreInfoModal(true)
         setSelectedAuditLogs([data])
     }
 
+    const refreshData = async () => {
+        setRefreshingData(true)
+        await revalidateFn('/audit_logs')
+        setRefreshingData(false)
+    }
+
     return (
         <div className="w-full p-2">
             {
-                dataTableLoading ? <TableSkeleton /> :
+                !data ? <TableSkeleton /> :
                     <DataTable
-                        data={auditLogs}
+                        data={data}
                         columns={auditLogsColumns(openModalMoreInfo)}
-                        addBtn={<></>}
+                        addBtn={
+                            <Button variant="secondary" className='me-4' onClick={refreshData} disabled={refreshingData}>
+                                {
+                                    refreshingData ? <Icon name="Loader2" className="mr-2 h-4 w-4 animate-spin" /> : <Icon name='RefreshCcw' />
+                                }
+                            </Button>
+                        }
                         columnBtnFilter
                         columnHidden={{}}
                         orderByObj={{

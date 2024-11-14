@@ -7,16 +7,17 @@ import { IAddUserForm, ISai, IRoles, IStatus, IUserData } from '@/lib/interfaces
 import { useToast } from "@/hooks/use-toast"
 import { appName } from '@/lib/appInfo'
 import Icon from '../Icon'
-import { getSAIs, getRoles, getUserById, getStatus, updateUser } from '@/lib/seed'
+import { getSais, getRoles, getUserById, getStatus, updateUser } from '@/lib/seed'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useDispatch } from 'react-redux'
 import FormSkeleton from '../FormSkeleton'
-import { setAddedUsers, setCloseModalEditUser } from '@/redux/slices/usersSlice'
+import { setCloseModalEditUser } from '@/redux/slices/usersSlice'
 import { useSession } from 'next-auth/react'
 import {
     DialogClose,
     DialogFooter
 } from "@/components/ui/dialog"
+import { revalidateFn } from '../CommunityOperationsElement/revalidateActions'
 
 interface ISelectedUserId {
     selectedUserId: number
@@ -92,42 +93,42 @@ const EditUserForm = ({ selectedUserId }: ISelectedUserId) => {
     // Load SAIs
     useEffect(() => {
         async function getSAIsFn() {
-            const { error, data, message } = await getSAIs()
-
-            if (error) {
-                toast({
-                    variant: "destructive",
-                    title: "Editar Usuario || " + appName,
-                    description: message,
-                    duration: 5000
-                })
-            } else {
-                setSais(data)
+            if (session?.user.token) {
+                try {
+                    const data = await getSais(session?.user.token)
+                    setSais(data)
+                } catch (error: any) {
+                    toast({
+                        variant: "destructive",
+                        title: "Agregar Usuario || " + appName,
+                        description: error,
+                        duration: 5000
+                    })
+                }
             }
-
         }
         getSAIsFn()
-    }, [toast])
+    }, [toast, session?.user.token])
 
     // Load roles
     useEffect(() => {
         async function getRolesFn() {
-            const { error, data, message } = await getRoles()
-
-            if (error) {
-                toast({
-                    variant: "destructive",
-                    title: "Editar Usuario || " + appName,
-                    description: message,
-                    duration: 5000
-                })
-            } else {
-                setRoles(data)
+            if (session?.user.token) {
+                try {
+                    const data = await getRoles(session?.user.token)
+                    setRoles(data)
+                } catch (error: any) {
+                    toast({
+                        variant: "destructive",
+                        title: "Agregar Usuario || " + appName,
+                        description: error,
+                        duration: 5000
+                    })
+                }
             }
-
         }
         getRolesFn()
-    }, [toast])
+    }, [toast, session?.user.token])
 
     // Load status
     useEffect(() => {
@@ -194,7 +195,8 @@ const EditUserForm = ({ selectedUserId }: ISelectedUserId) => {
                 duration: 5000
             })
         } else {
-            dispatch(setAddedUsers([{ ...resData }]))
+            //dispatch(setAddedUsers([{ ...resData }]))
+            await revalidateFn('/users')
             dispatch(setCloseModalEditUser(false))
             toast({
                 title: "Editar Usuario || " + appName,

@@ -12,11 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useDispatch } from 'react-redux'
 import FormSkeleton from '../FormSkeleton'
 import { useSession } from 'next-auth/react'
-import { setAddedSais, setCloseModalAddSai } from '@/redux/slices/saisSlice'
+import { setCloseModalAddSai } from '@/redux/slices/saisSlice'
 import {
     DialogClose,
     DialogFooter
 } from "@/components/ui/dialog"
+import { revalidateFn } from '../CommunityOperationsElement/revalidateActions'
 
 const AddSaiForm = () => {
     const {
@@ -88,7 +89,7 @@ const AddSaiForm = () => {
             from_username: session?.user.username
         }
 
-        const { error, data: resData, message } = await addSAI(Array(newData))
+        const { error, message } = await addSAI(Array(newData))
 
         if (error) {
             toast({
@@ -98,9 +99,8 @@ const AddSaiForm = () => {
                 duration: 5000
             })
         } else {
-            console.log(resData);
-
-            dispatch(setAddedSais([{ ...resData }]))
+            //dispatch(setAddedSais([{ ...resData }]))
+            await revalidateFn('/sais')
             dispatch(setCloseModalAddSai(false))
             toast({
                 title: "Agregar SAI || " + appName,

@@ -1,10 +1,10 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { usersColumns } from "./usersColumns"
 import DataTable from "../MyDataTable/data-table"
 import MyDialog from "../MyDialog"
 import AddUserForm from "./AddUserForm"
-import { getUsers, deleteUser } from "@/lib/seed"
+import { deleteUser } from "@/lib/seed"
 import { useToast } from "@/hooks/use-toast"
 import { appName } from "@/lib/appInfo"
 import { useSelector, useDispatch } from "react-redux"
@@ -14,19 +14,24 @@ import Icon from "../Icon"
 import { setCloseModalAddUser, setCloseModalEditUser } from "@/redux/slices/usersSlice"
 import { IUserData } from "@/lib/interfaces"
 import EditUserForm from "./EditUserForm"
-import TableSkeleton from "../MyDataTable/TableSkeleton"
+import TableSkeleton from "../TableSkeleton"
 import { useSession } from "next-auth/react"
 import { signInServerFunc } from "./signInServerFunc"
+import { revalidateFn } from "../CommunityOperationsElement/revalidateActions"
 
-export default function UsersElement() {
-    const [usersData, setUsersData] = useState<IUserData[]>([])
+interface IComponentProps {
+    data: IUserData[]
+}
+
+export default function UsersElement({ data }: IComponentProps) {
+    //const [usersData, setUsersData] = useState<IUserData[]>([])
     const { toast } = useToast()
     const dispatch = useDispatch()
-    const addedUsers = useSelector((state: RootState) => state.users.addedUsers as IUserData[])
+    //const addedUsers = useSelector((state: RootState) => state.users.addedUsers as IUserData[])
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
     const [sendingDelete, setSendingDelete] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<number>(0)
-    const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
+    //const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
     const closeModalAddUser = useSelector((state: RootState) => state.users.closeModalAddUser)
     const closeModalEditUser = useSelector((state: RootState) => state.users.closeModalEditUser)
     const [selectedUsername, setSelectedUsername] = useState<string>("")
@@ -34,45 +39,45 @@ export default function UsersElement() {
 
     const { data: session } = useSession()
 
-    useEffect(() => {
-        async function getUsersFn() {
-            const { error, data, message } = await getUsers()
+    // useEffect(() => {
+    //     async function getUsersFn() {
+    //         const { error, data, message } = await getUsers()
 
-            if (error) {
-                toast({
-                    variant: "destructive",
-                    title: "Usuarios || " + appName,
-                    description: message,
-                    duration: 5000
-                })
-            } else {
-                setUsersData([...data])
-            }
-            setDataTableLoading(false)
-        }
-        getUsersFn()
-    }, [toast])
+    //         if (error) {
+    //             toast({
+    //                 variant: "destructive",
+    //                 title: "Usuarios || " + appName,
+    //                 description: message,
+    //                 duration: 5000
+    //             })
+    //         } else {
+    //             setUsersData([...data])
+    //         }
+    //         setDataTableLoading(false)
+    //     }
+    //     getUsersFn()
+    // }, [toast])
 
-    useEffect(() => {
-        function getAddedRol() {
-            // If a new rol added, update array for UI
-            if (addedUsers.length > 0) {
-                setUsersData((prevS) => {
-                    const index = prevS.findIndex(item => item.id === addedUsers[0].id)
+    // useEffect(() => {
+    //     function getAddedRol() {
+    //         // If a new rol added, update array for UI
+    //         if (addedUsers.length > 0) {
+    //             setUsersData((prevS) => {
+    //                 const index = prevS.findIndex(item => item.id === addedUsers[0].id)
 
-                    if (index !== -1) {
-                        const updatedItems = [...prevS]
+    //                 if (index !== -1) {
+    //                     const updatedItems = [...prevS]
 
-                        updatedItems[index] = addedUsers[0]
-                        return updatedItems
-                    } else {
-                        return [addedUsers[0], ...prevS] as IUserData[]
-                    }
-                })
-            }
-        }
-        getAddedRol()
-    }, [addedUsers])
+    //                     updatedItems[index] = addedUsers[0]
+    //                     return updatedItems
+    //                 } else {
+    //                     return [addedUsers[0], ...prevS] as IUserData[]
+    //                 }
+    //             })
+    //         }
+    //     }
+    //     getAddedRol()
+    // }, [addedUsers])
 
     // For deleting user
     const openModalDeleteUser = (uId: number, username: string) => {
@@ -90,7 +95,8 @@ export default function UsersElement() {
             from_username: session?.user.username,
         }]
 
-        const { error, data, message } = await deleteUser(selectedUserId, userData)
+        const { error, message } = await deleteUser(selectedUserId, userData)
+
         if (error) {
             toast({
                 variant: "destructive",
@@ -99,12 +105,13 @@ export default function UsersElement() {
                 duration: 5000
             })
         } else {
-            setUsersData((prevS) => {
-                return prevS.map((user) => {
-                    return user.id === data.id ? { ...data, ...prevS } : user
-                }
-                )
-            })
+            // setUsersData((prevS) => {
+            //     return prevS.map((user) => {
+            //         return user.id === data.id ? { ...data, ...prevS } : user
+            //     }
+            //     )
+            // })
+            await revalidateFn('/users')
             setOpenDeleteModal(false)
             toast({
                 title: "Eliminar Usuario || " + appName,
@@ -147,9 +154,9 @@ export default function UsersElement() {
     return (
         <div className="m-2">
             {
-                dataTableLoading ? <TableSkeleton /> :
+                !data ? <TableSkeleton /> :
                     <DataTable
-                        data={usersData}
+                        data={data}
                         columns={usersColumns(openModalEditUser, openModalDeleteUser, signInAs, loadingSignAs)}
                         addBtn={
                             <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddUser(true))}>
@@ -174,7 +181,7 @@ export default function UsersElement() {
                 description=""
                 content={<AddUserForm />}
                 btnTrigger={<></>}
-                myClassName="max-w-[85vw] h-full max-h-[85vh]"
+                myClassName="max-w-[85vw] h-full max-h-[75vh]"
                 closeModal={closeModalAddUser}
                 onOpenChange={() => dispatch(setCloseModalAddUser(!closeModalAddUser))}
             />
@@ -207,7 +214,7 @@ export default function UsersElement() {
                     <EditUserForm selectedUserId={selectedUserId} />
                 }
                 btnTrigger={<></>}
-                myClassName="max-w-[85vw] h-full max-h-[85vh]"
+                myClassName="max-w-[85vw] h-full max-h-[75vh]"
                 closeModal={closeModalEditUser}
                 onOpenChange={() => dispatch(setCloseModalEditUser(!closeModalEditUser))}
             />

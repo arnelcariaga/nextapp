@@ -9,15 +9,16 @@ import DataTable from '../MyDataTable/data-table'
 import { screensModulesColumns } from './screensModulesColumns'
 import { getScreensModules, addRol } from '@/lib/seed'
 import { appName } from '@/lib/appInfo'
-import { setCloseModalAddRol, setAddedRoles } from '@/redux/slices/rolesSlice'
+import { setCloseModalAddRol } from '@/redux/slices/rolesSlice'
 import { useDispatch } from 'react-redux'
-import TableSkeleton from '../MyDataTable/TableSkeleton'
+import TableSkeleton from '../TableSkeleton'
 import { useSession } from 'next-auth/react'
 import {
     DialogClose,
     DialogFooter
 } from "@/components/ui/dialog"
 import Icon from '../Icon'
+import { revalidateFn } from '../CommunityOperationsElement/revalidateActions'
 
 type ScreenModules = {
     id: number;
@@ -165,7 +166,8 @@ const AddRolForm = () => {
                 duration: 5000
             })
         } else {
-            dispatch(setAddedRoles([{ ...resData }]))
+            //dispatch(setAddedRoles([{ ...resData }]))
+            await revalidateFn('/roles')
             dispatch(setCloseModalAddRol(false))
         }
         setSendingForm(false)
