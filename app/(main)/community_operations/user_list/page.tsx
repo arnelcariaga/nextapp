@@ -1,11 +1,10 @@
+import { Suspense } from "react";
 import { auth } from "@/auth"
 import { api_url } from "@/lib/urls"
-import dynamic from 'next/dynamic';
+//import dynamic from 'next/dynamic';
 import TableSkeleton from "@/components/TableSkeleton";
 
-const UserList = dynamic(() => import('@/components/CommunityOperationsElement/UserList'), {
-    loading: () => <TableSkeleton />
-})
+import UserList from '@/components/CommunityOperationsElement/UserList'
 
 const CommunityOperationsUserList = async () => {
     const session = await auth()
@@ -28,7 +27,9 @@ const CommunityOperationsUserList = async () => {
         throw Error(message)
     }
 
-    return <UserList data={data} session={session} />
+    return <Suspense fallback={<TableSkeleton />}>
+        <UserList data={data} session={session} />
+    </Suspense>
 }
 
 export default CommunityOperationsUserList
