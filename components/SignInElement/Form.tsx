@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast"
 import { appName } from '@/lib/appInfo'
 import { signInServerFunc } from './signInServerFunc'
 import Icon from '../Icon'
+import { useSession } from 'next-auth/react'
 
 const Form = () => {
     const {
@@ -19,6 +20,7 @@ const Form = () => {
     const { toast } = useToast()
     const [sendingForm, setSendingForm] = useState(false)
     const [rememberMe, setRememberMe] = useState(false)
+    const { update } = useSession()
 
     const onSubmit: SubmitHandler<IUserCredentials> = async (data) => {
         setSendingForm(true)
@@ -32,6 +34,7 @@ const Form = () => {
         }
         //Don't redirect becouse if there is not error the signIn function from Auth.js redirect the user efter sign in it's correct
         setSendingForm(false)
+        update()
     }
 
     return (

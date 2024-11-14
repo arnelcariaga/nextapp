@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { api_url } from "@/lib/urls";
 import { IModules } from "./lib/interfaces";
 
-export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
+export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
       credentials: {
