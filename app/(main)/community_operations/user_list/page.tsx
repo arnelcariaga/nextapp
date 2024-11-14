@@ -1,8 +1,7 @@
 import { Suspense } from "react";
 import { auth } from "@/auth"
 import { api_url } from "@/lib/urls"
-//import dynamic from 'next/dynamic';
-import TableSkeleton from "@/components/TableSkeleton";
+import Loading from "../loading";
 
 import UserList from '@/components/CommunityOperationsElement/UserList'
 
@@ -27,7 +26,7 @@ const CommunityOperationsUserList = async () => {
         throw Error(message)
     }
 
-    return <Suspense fallback={<TableSkeleton />}>
+    return <Suspense fallback={<Loading />}>
         <UserList data={data} session={session} />
     </Suspense>
 }

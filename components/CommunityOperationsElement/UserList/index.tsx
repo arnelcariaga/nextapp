@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast"
 import { appName } from "@/lib/appInfo"
 import { Button } from "@/components/ui/button"
 import { ICommunityOperationUsers } from "@/lib/interfaces"
-import TableSkeleton from "../../TableSkeleton"
+//import TableSkeleton from "../../TableSkeleton"
 //import { useSession } from "next-auth/react"
 import Icon from "../../Icon"
 import { useRouter } from "next/navigation"
@@ -114,9 +114,7 @@ export default function UserList({ data, session }: IComponentProps) {
 
     return (
         <div className="w-full p-2">
-            {
-                !data ? <TableSkeleton /> :
-                    <DataTable
+            <DataTable
                         data={data}
                         columns={communityOperationUsersColumns(openModalDeleteCommunityOperationUser, canDelete)}
                         addBtn={<></>}
@@ -128,7 +126,6 @@ export default function UserList({ data, session }: IComponentProps) {
                         }}
                         exportData={false}
                     />
-            }
 
             <MyDialog
                 title="Eliminar Usuario de Operativo Cominidad"
