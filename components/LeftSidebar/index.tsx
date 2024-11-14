@@ -270,7 +270,7 @@
 // export default Sidebar;
 
 import { LeftSidebarMenuItem } from '@/lib/types'
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils"; // Utility function for conditional classes
@@ -280,7 +280,6 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import Icon from '../Icon';
 import { Separator } from '../ui/separator';
 import { ISession } from '@/lib/interfaces';
-import Link from 'next/link';
 
 const menuItems: LeftSidebarMenuItem[] = [
     {
@@ -452,7 +451,7 @@ const groupByCategory = (items: LeftSidebarMenuItem[]) => {
 };
 
 const LeftSidebar = ({ session }: ISession) => {
-    //const router = useRouter();
+    const router = useRouter();
     const pathname = usePathname();
     const [menuItemsState, setMenuItemsState] = useState(menuItems);
     const isSidebarOpen = useSelector((state: RootState) => state.appSettings.isSidebarOpen)
@@ -480,9 +479,9 @@ const LeftSidebar = ({ session }: ISession) => {
 
     }, [pathname]);
 
-    // const handleNavigation = (path: string) => {
-    //     router.push(path);
-    // };
+    const handleNavigation = (path: string) => {
+        router.push(path);
+    };
 
     const toggleCollapse = (index: number) => {
         const updatedItems = menuItemsState.map((item, i) => {
@@ -517,18 +516,18 @@ const LeftSidebar = ({ session }: ISession) => {
                                 <div key={item.path} className="mb-2">
                                     {!item.subItems ? (
                                         // Item without subItems
-                                        <Link
+                                        <div
                                             className={cn(
                                                 "flex items-center px-4 py-2 cursor-pointer hover:bg-green-700 transition-all",
                                                 item.isActive ? "bg-green-700 text-white font-bold" : "text-gray-100"
                                             )}
-                                            href={item.path}
+                                            onClick={() => handleNavigation(item.path)}
                                         >
                                             <span className="mr-3">
                                                 <Icon name={item.icon} />
                                             </span>
                                             <span>{item.title}</span>
-                                        </Link>
+                                        </div>
                                     ) : (
                                         // Items for collapse
                                         <Collapsible key={item.path} open={item.isOpen}>
@@ -555,19 +554,19 @@ const LeftSidebar = ({ session }: ISession) => {
                                                         return false
                                                     }
                                                     return (
-                                                        <Link
+                                                        <div
                                                             key={subItem.path}
                                                             className={cn(
                                                                 "cursor-pointer py-2 hover:bg-green-700 transition-all flex items-center my-2",
                                                                 subItem.isActive ? "bg-green-700 text-white font-bold" : "text-gray-100"
                                                             )}
-                                                            href={subItem.path}
+                                                            onClick={() => handleNavigation(subItem.path)}
                                                         >
                                                             <span className="mr-1">
                                                                 <Icon name="Dot" className="h-5 w-5" />
                                                             </span>
                                                             <span>{subItem.title}</span>
-                                                        </Link>
+                                                        </div>
                                                     )
                                                 })}
                                             </CollapsibleContent>
