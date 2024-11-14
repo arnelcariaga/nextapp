@@ -1,6 +1,11 @@
 import { auth } from "@/auth"
-import UserList from "@/components/CommunityOperationsElement/UserList"
 import { api_url } from "@/lib/urls"
+import dynamic from 'next/dynamic';
+import TableSkeleton from "@/components/TableSkeleton";
+
+const UserList = dynamic(() => import('@/components/CommunityOperationsElement/UserList'), {
+    loading: () => <TableSkeleton />
+})
 
 const CommunityOperationsUserList = async () => {
     const session = await auth()
@@ -16,7 +21,7 @@ const CommunityOperationsUserList = async () => {
             rol_id: Number(session?.user.id_role),
         }),
     })
-    
+
     const { data, message, error } = await res.json()
 
     if (error) {
