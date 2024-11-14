@@ -23,7 +23,7 @@ const CommunityOperationsUserList = async () => {
         throw Error(message)
     }
 
-    return <UserList data={data} />
+    return <UserList data={data} session={session} />
 }
 
 export default CommunityOperationsUserList

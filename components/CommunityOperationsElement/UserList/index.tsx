@@ -14,18 +14,21 @@ import Icon from "../../Icon"
 import { useRouter } from "next/navigation"
 //import useSWR from 'swr'
 import { revalidateFn } from "../revalidateActions"
+import { ISession } from "@/lib/interfaces"
 
 interface IComponentProps {
     data: ICommunityOperationUsers[]
+    session: ISession['session']
 }
-export default function UserList({ data }: IComponentProps) {
+
+export default function UserList({ data, session }: IComponentProps) {
     //const [communityOperationUsersData, setCommunityOperationUsersData] = useState<ICommunityOperationUsers[]>([])
     const { toast } = useToast()
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
     const [sendingDelete, setSendingDelete] = useState(false);
     //const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
     const [selectedCommunityOperationUserId, setSelectedCommunityOperationUserId] = useState<number>()
-    const { data: session } = useSession()
+    //const { data: session } = useSession()
     const router = useRouter()
     const screen = session?.user.screens.find(screen => screen.path === '/community_operations');
     const [canDelete, setCanDelete] = useState<boolean>(false)
