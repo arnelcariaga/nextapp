@@ -116,7 +116,7 @@ export default function CommunityOperationsElement({ data }: IComponentProps) {
             from_username: session?.user.username,
         }]
 
-        const { error, data, message } = await deleteCommunityOperation(communityOperationData)
+        const { error, message } = await deleteCommunityOperation(communityOperationData)
 
         if (error) {
             toast({
@@ -128,7 +128,7 @@ export default function CommunityOperationsElement({ data }: IComponentProps) {
         } else {
             // const newCommunityOperationData = communityOperationsData.filter((item) => item.id !== selectedCommunityOperationId)
             // setCommunityOperationsData(newCommunityOperationData)
-            await revalidateFn()
+            await revalidateFn('/community_operations')
             setOpenDeleteModal(false)
             toast({
                 title: "Eliminar Operativo Comunidad || " + appName,
