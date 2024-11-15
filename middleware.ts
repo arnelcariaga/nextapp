@@ -26,8 +26,12 @@ export default auth((req) => {
   const { nextUrl, auth } = req;
   const pathname = nextUrl.pathname;
   const origin = nextUrl.origin;
+  const isMaintenanceMode = process.env.MAINTENANCE_MODE === "true";
 
-  console.log(pathname);
+  if (isMaintenanceMode) {
+    const newUrl = new URL("/not-found", origin); // Redirigir a la página de mantenimiento
+    return NextResponse.redirect(newUrl);
+  }
 
   // Permitir acceso a la página de error o la raíz
   if (pathname === "/not-found") {
