@@ -27,6 +27,8 @@ export default auth((req) => {
   const pathname = nextUrl.pathname;
   const origin = nextUrl.origin;
 
+  console.log(pathname);
+
   // Permitir acceso a la página de error o la raíz
   if (pathname === "/not-found") {
     return NextResponse.next();
@@ -69,6 +71,7 @@ export default auth((req) => {
 // Set routes to apply the middleware
 export const config = {
   matcher: [
+    "/",
     "/dashboard",
     "/community_operations/:path*",
     "/roles",

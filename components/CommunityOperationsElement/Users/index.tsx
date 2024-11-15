@@ -11,10 +11,10 @@ import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "@/redux/store"
 import { Button } from "@/components/ui/button"
 import { setCloseModalAddCommunityOperationUser, setCloseModalEditCommunityOperationUser } from "@/redux/slices/communityOperationUsersSlice"
-import { ICommunityOperationUsersDataTable } from "@/lib/interfaces"
+import { ICommunityOperationUsersDataTable, ISession } from "@/lib/interfaces"
 import EditCommunityOperationUserForm from "./EditCommunityOperationUserForm"
-import TableSkeleton from "../../TableSkeleton"
-import { useSession } from "next-auth/react"
+//import TableSkeleton from "../../TableSkeleton"
+//import { useSession } from "next-auth/react"
 import Icon from "../../Icon"
 import { TCommunityOperativeUserParams } from "@/lib/types"
 //import { useRouter } from "next/navigation"
@@ -22,9 +22,10 @@ import { TCommunityOperativeUserParams } from "@/lib/types"
 interface IComponentProps {
     data: ICommunityOperationUsersDataTable[]
     params: TCommunityOperativeUserParams['params']
+    session: ISession['session']
 }
 
-export default function Users({ data, params }: IComponentProps) {
+export default function Users({ data, params, session }: IComponentProps) {
     const [communityOperationUsersData, setCommunityOperationUsersData] = useState<ICommunityOperationUsersDataTable[]>([])
     const { toast } = useToast()
     const dispatch = useDispatch()
@@ -36,7 +37,7 @@ export default function Users({ data, params }: IComponentProps) {
     const [selectedCommunityOperationUserId, setSelectedCommunityOperationUserId] = useState<number>()
     const closeModalAddCommunityOperationUser = useSelector((state: RootState) => state.communityOperationUsers.closeModalAddCommunityOperationUser)
     const closeModalEditCommunityOperationUser = useSelector((state: RootState) => state.communityOperationUsers.closeModalEditCommunityOperationUser)
-    const { data: session } = useSession()
+    //const { data: session } = useSession()
     //const router = useRouter()
     const screen = session?.user.screens.find(screen => screen.path === '/community_operations');
     const [canDelete, setCanDelete] = useState<boolean>(false);
@@ -145,29 +146,26 @@ export default function Users({ data, params }: IComponentProps) {
 
     return (
         <div className="w-full p-2">
-            {
-                !data ? <TableSkeleton /> :
-                    <DataTable
-                        data={data}
-                        columns={communityOperationUsersColumns(openModalEditCommunityOperationUser, openModalDeleteCommunityOperationUser, canDelete, canEdit)}
-                        addBtn={
-                            screen?.permissions.create === "0" ? <></> :
-                                <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddCommunityOperationUser(true))}>
-                                    <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
-                                    <span className='text-white'>
-                                        Agregar Usuario
-                                    </span>
-                                </Button>
-                        }
-                        columnBtnFilter
-                        columnHidden={{}}
-                        orderByObj={{
-                            id: 'created_at',
-                            desc: true
-                        }}
-                        exportData={false}
-                    />
-            }
+            <DataTable
+                data={data}
+                columns={communityOperationUsersColumns(openModalEditCommunityOperationUser, openModalDeleteCommunityOperationUser, canDelete, canEdit)}
+                addBtn={
+                    screen?.permissions.create === "0" ? <></> :
+                        <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddCommunityOperationUser(true))}>
+                            <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
+                            <span className='text-white'>
+                                Agregar Usuario
+                            </span>
+                        </Button>
+                }
+                columnBtnFilter
+                columnHidden={{}}
+                orderByObj={{
+                    id: 'created_at',
+                    desc: true
+                }}
+                exportData={false}
+            />
 
             <MyDialog
                 title="Operartivo Comunidad -> Agregar Usuario"

@@ -7,29 +7,30 @@ import { deleteCommunityOperation } from "@/lib/seed"
 import { useToast } from "@/hooks/use-toast"
 import { appName } from "@/lib/appInfo"
 import { Button } from "@/components/ui/button"
-import { ICommunityOperationDataTable } from "@/lib/interfaces"
+import { ICommunityOperationDataTable, ISession } from "@/lib/interfaces"
 import EditCommunityOperationForm from "./EditCommunityOperationForm"
-import TableSkeleton from "../TableSkeleton"
-import { useSession } from "next-auth/react"
+//import TableSkeleton from "../TableSkeleton"
+//import { useSession } from "next-auth/react"
 import Icon from "../Icon"
 import Link from "next/link"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "@/redux/store"
 import { setCloseModalEditCommunityOperation } from "@/redux/slices/communityOperationsSlice"
-import { revalidateFn } from "./revalidateActions"
+import { revalidateFn } from "../../lib/revalidateActions"
 
 interface IComponentProps {
     data: ICommunityOperationDataTable[]
+    session: ISession['session']
 }
 
-export default function CommunityOperationsElement({ data }: IComponentProps) {
+export default function CommunityOperationsElement({ data, session }: IComponentProps) {
     //const [communityOperationsData, setCommunityOperationsData] = useState<ICommunityOperationDataTable[]>([])
     const { toast } = useToast()
     const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false)
     const [sendingDelete, setSendingDelete] = useState<boolean>(false);
     const [selectedCommunityOperation, setSelectedCommunityOperation] = useState<ICommunityOperationDataTable>()
     //const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
-    const { data: session } = useSession()
+    //const { data: session } = useSession()
     const closeModalEditCommunityOperation = useSelector((state: RootState) => state.communityOperations.closeModalEditCommunityOperation)
     //const addedCommunityOperation = useSelector((state: RootState) => state.communityOperations.addedCommunityOperation as ICommunityOperationDataTable[])
     const [selectedCommunityOperationId, setSelectedCommunityOperationId] = useState<number>(0);
@@ -101,7 +102,7 @@ export default function CommunityOperationsElement({ data }: IComponentProps) {
     // }, [toast, session])
 
     // For deleting Community Operation
-    
+
     const openModalDeleteCommunityOperation = (communityOperationId: number) => {
         setOpenDeleteModal(true)
         setSelectedCommunityOperationId(communityOperationId)
@@ -147,30 +148,27 @@ export default function CommunityOperationsElement({ data }: IComponentProps) {
 
     return (
         <div className="w-full p-2">
-            {
-                !data ? <TableSkeleton /> :
-                    <DataTable
-                        data={data}
-                        columns={communityOperationsColumns(openModalEditCommunityOperation, openModalDeleteCommunityOperation, canDelete, canEdit)}
-                        addBtn={
-                            canCreate ? <Button variant="outline" className='bg-green-600 dark:bg-green-900' asChild>
-                                <Link href="/community_operations/add">
-                                    <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
-                                    <span className='text-white'>
-                                        Agregar Operativo
-                                    </span>
-                                </Link>
-                            </Button> : <></>
-                        }
-                        columnBtnFilter
-                        columnHidden={{}}
-                        orderByObj={{
-                            id: 'created_at',
-                            desc: true
-                        }}
-                        exportData={false}
-                    />
-            }
+            <DataTable
+                data={data}
+                columns={communityOperationsColumns(openModalEditCommunityOperation, openModalDeleteCommunityOperation, canDelete, canEdit)}
+                addBtn={
+                    canCreate ? <Button variant="outline" className='bg-green-600 dark:bg-green-900' asChild>
+                        <Link href="/community_operations/add">
+                            <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
+                            <span className='text-white'>
+                                Agregar Operativo
+                            </span>
+                        </Link>
+                    </Button> : <></>
+                }
+                columnBtnFilter
+                columnHidden={{}}
+                orderByObj={{
+                    id: 'created_at',
+                    desc: true
+                }}
+                exportData={false}
+            />
 
             <MyDialog
                 title="Eliminar Operativo Comunidad"

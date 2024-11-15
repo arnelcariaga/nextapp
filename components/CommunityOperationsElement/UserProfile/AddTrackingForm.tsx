@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/dialog"
 //import { setAddedCommunityOperationUserTracking } from '@/redux/slices/communityOperationUsersSlice';
 import { useDispatch } from 'react-redux';
-import { revalidateFn } from '../revalidateActions';
+import { revalidateFn } from '../../../lib/revalidateActions';
 
 interface IAddTrackingForm {
   name: string

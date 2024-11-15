@@ -1,7 +1,5 @@
-import { Suspense } from "react";
 import { auth } from "@/auth"
 import { api_url } from "@/lib/urls"
-import Loading from "../loading";
 
 import UserList from '@/components/CommunityOperationsElement/UserList'
 
@@ -26,9 +24,7 @@ const CommunityOperationsUserList = async () => {
         throw Error(message)
     }
 
-    return <Suspense fallback={<Loading />}>
-        <UserList data={data} session={session} />
-    </Suspense>
+    return <UserList data={data} session={session} />
 }
 
 export default CommunityOperationsUserList

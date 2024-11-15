@@ -7,7 +7,7 @@ const Sais = async () => {
   const data = await getSais(session?.user.token)
 
   return (
-    <SAIsElement data={data} />
+    <SAIsElement data={data} session={session} />
   )
 }
 

@@ -26,7 +26,12 @@ const Trackings = async ({ params }: TCommunityOperativeUserParams) => {
   );
   const { data: trackingsData } = await res.json();
 
-  return <UserTrackings params={params} data={data} communityOperationUserTrackingsData={trackingsData} />
+  return <UserTrackings
+    params={params}
+    data={data}
+    communityOperationUserTrackingsData={trackingsData}
+    session={session}
+  />
 }
 
 export default Trackings

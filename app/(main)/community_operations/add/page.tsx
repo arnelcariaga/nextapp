@@ -17,7 +17,7 @@ const AddCommunityOperation = async () => {
     throw Error(message)
   }
 
-  return <AddCommunityOperationForm provinces={provincesData} />
+  return <AddCommunityOperationForm provinces={provincesData} session={session} />
 }
 
 export default AddCommunityOperation

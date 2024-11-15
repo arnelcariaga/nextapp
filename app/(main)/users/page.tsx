@@ -18,7 +18,7 @@ const Users = async () => {
   }
 
   return (
-    <UsersElement data={data} />
+    <UsersElement data={data} session={session} />
   )
 }
 

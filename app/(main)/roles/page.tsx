@@ -5,7 +5,7 @@ import { getRoles } from "@/lib/seed"
 const Roles = async () => {
   const session = await auth()
   const data = await getRoles(session?.user.token)
-  return <RolesElement data={data} />
+  return <RolesElement data={data} session={session} />
 }
 
 export default Roles

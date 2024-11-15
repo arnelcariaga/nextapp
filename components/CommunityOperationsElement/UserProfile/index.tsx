@@ -8,14 +8,13 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 //import { getCommunityOperationUserDetails } from "@/lib/seed"
-import { ICommunityOperationUserDetails } from "@/lib/interfaces"
+import { ICommunityOperationUserDetails, ISession } from "@/lib/interfaces"
 //import { useToast } from "@/hooks/use-toast"
-import { useSession } from "next-auth/react"
+//import { useSession } from "next-auth/react"
 import { TCommunityOperativeUserParams } from "@/lib/types"
 // import { appName } from "@/lib/appInfo"
 // import { useRouter } from "next/navigation"
 import Icon from "@/components/Icon"
-import CommunityOperationUserProfileSkeleton from "@/components/CommunityOperationUserProfileSkeleton"
 import MyDialog from "@/components/MyDialog"
 import AddTrackingForm from "./AddTrackingForm"
 import AddEnrollingForm from "./AddEnrollingForm"
@@ -30,12 +29,13 @@ import UserDetailsHeader from "./UserDetailsHeader"
 interface IComponentProps {
     data: ICommunityOperationUserDetails
     params: TCommunityOperativeUserParams['params']
+    session: ISession['session']
 }
 
-export default function UserProfile({ params, data }: IComponentProps) {
+export default function UserProfile({ params, data, session }: IComponentProps) {
     //const [userDetails, setUserDetails] = useState<ICommunityOperationUserDetails>()
     //const { toast } = useToast()
-    const { data: session } = useSession()
+    //const { data: session } = useSession()
     //const router = useRouter()
     //const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
     const [openAddTrackingForm, setOpenAddTrackingForm] = useState<boolean>(false)
@@ -122,9 +122,6 @@ export default function UserProfile({ params, data }: IComponentProps) {
         return Number(data?.enrolling_count)
     }
 
-    if (!data) {
-        return <CommunityOperationUserProfileSkeleton />
-    }
     return (
         <div className="container mx-auto p-4 max-w-full">
             <div className="flex flex-col lg:flex-row gap-6">

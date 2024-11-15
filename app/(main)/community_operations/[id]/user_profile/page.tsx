@@ -10,7 +10,11 @@ const CommunityOperationUserProfile = async ({ params }: TCommunityOperativeUser
     const rol_id = Number(session?.user.id_role)
     const data = await getUserDetails(sai_id, rol_id, params.id, token)
 
-    return <UserProfile params={params} data={data} />
+    return <UserProfile
+        params={params}
+        data={data}
+        session={session}
+    />
 }
 
 export default CommunityOperationUserProfile

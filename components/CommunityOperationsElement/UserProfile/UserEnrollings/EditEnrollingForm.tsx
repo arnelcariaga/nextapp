@@ -29,7 +29,7 @@ import {
     DialogClose,
     DialogFooter
 } from "@/components/ui/dialog"
-import { revalidateFn } from '../../revalidateActions';
+import { revalidateFn } from '../../../../lib/revalidateActions';
 
 interface IAddForm {
     name: string

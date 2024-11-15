@@ -9,25 +9,26 @@ import { appName } from "@/lib/appInfo"
 // import { useSelector } from "react-redux"
 // import { RootState } from "@/redux/store"
 import { Button } from "@/components/ui/button"
-import { ICommunityOperationUserDetails, IUserCommunityUserTracking } from "@/lib/interfaces"
+import { ICommunityOperationUserDetails, ISession, IUserCommunityUserTracking } from "@/lib/interfaces"
 import EditTrackingForm from "./EditTrackingForm"
-import TableSkeleton from "@/components/TableSkeleton"
-import { useSession } from "next-auth/react"
+//import TableSkeleton from "@/components/TableSkeleton"
+//import { useSession } from "next-auth/react"
 import Icon from "@/components/Icon"
 import { TCommunityOperativeUserParams } from "@/lib/types"
 //import { useRouter } from "next/navigation"
 import UserDetailsHeader from "../UserDetailsHeader"
-import CommunityOperationUserTrackingsSkeleton from "@/components/CommunityOperationUserTrackingsSkeleton"
+//import CommunityOperationUserTrackingsSkeleton from "@/components/CommunityOperationUserTrackingsSkeleton"
 import AddTrackingForm from "../AddTrackingForm"
-import { revalidateFn } from "../../revalidateActions"
+import { revalidateFn } from "../../../../lib/revalidateActions"
 
 interface IComponentProps {
     data: ICommunityOperationUserDetails
     params: TCommunityOperativeUserParams['params']
     communityOperationUserTrackingsData: IUserCommunityUserTracking[]
+    session: ISession['session']
 }
 
-export default function UserTrackings({ params, data, communityOperationUserTrackingsData }: IComponentProps) {
+export default function UserTrackings({ params, data, communityOperationUserTrackingsData, session }: IComponentProps) {
     //const [communityOperationUserTrackingsData, setCommunityOperationUserTrackingsData] = useState<IUserCommunityUserTracking[]>([])
     const { toast } = useToast()
     //const addedCommunityOperationUserTracking = useSelector((state: RootState) => state.communityOperationUsers.addedCommunityOperationUserTracking as IUserCommunityUserTracking[])
@@ -36,7 +37,7 @@ export default function UserTrackings({ params, data, communityOperationUserTrac
     const [selectedCommunityOperationUserTrackingData, setSelectedCommunityOperationUserTrackingData] = useState<IUserCommunityUserTracking[]>([])
     //const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
     const [selectedCommunityOperationUserTrackingId, setSelectedCommunityOperationUserTrackingId] = useState<number>()
-    const { data: session } = useSession()
+    //const { data: session } = useSession()
     //const router = useRouter()
     const screen = session?.user.screens.find(screen => screen.path === '/community_operations');
     const [canDelete, setCanDelete] = useState<boolean>(false);
@@ -168,36 +169,30 @@ export default function UserTrackings({ params, data, communityOperationUserTrac
         setSelectedCommunityOperationUserTrackingData(data)
     }
 
-    if (!data) {
-        return <CommunityOperationUserTrackingsSkeleton />
-    }
     return (
         <div className="w-full p-2">
             <UserDetailsHeader showDescription={false} userDetails={data as ICommunityOperationUserDetails} canEdit={false} />
             <div className="mt-2">
-                {
-                    !communityOperationUserTrackingsData ? <TableSkeleton /> :
-                        <DataTable
-                            data={communityOperationUserTrackingsData}
-                            columns={communityOperationUserTrackingColumns(openModalEditCommunityOperationUser, openModalDeleteCommunityOperationUserTracking, canDelete, canEdit)}
-                            addBtn={
-                                screen?.permissions.create === "0" ? <></> :
-                                    <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => setOpenAddTrackingForm(true)}>
-                                        <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
-                                        <span className='text-white'>
-                                            Nuevo seguimiento
-                                        </span>
-                                    </Button>
-                            }
-                            columnBtnFilter
-                            columnHidden={{}}
-                            orderByObj={{
-                                id: 'date',
-                                desc: true
-                            }}
-                            exportData={false}
-                        />
-                }
+                <DataTable
+                    data={communityOperationUserTrackingsData}
+                    columns={communityOperationUserTrackingColumns(openModalEditCommunityOperationUser, openModalDeleteCommunityOperationUserTracking, canDelete, canEdit)}
+                    addBtn={
+                        screen?.permissions.create === "0" ? <></> :
+                            <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => setOpenAddTrackingForm(true)}>
+                                <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
+                                <span className='text-white'>
+                                    Nuevo seguimiento
+                                </span>
+                            </Button>
+                    }
+                    columnBtnFilter
+                    columnHidden={{}}
+                    orderByObj={{
+                        id: 'date',
+                        desc: true
+                    }}
+                    exportData={false}
+                />
             </div>
 
 

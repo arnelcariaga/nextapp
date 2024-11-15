@@ -51,7 +51,11 @@ const CommunityOperationUsers = async ({ params }: TCommunityOperativeUserParams
     data = resData
   }
 
-  return <Users data={data['community_operation_users']}  params={params}/>
+  return <Users
+    data={data['community_operation_users']}
+    params={params}
+    session={session}
+  />
 }
 
 export default CommunityOperationUsers

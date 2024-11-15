@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/dialog"
 import { Card, CardContent } from '@/components/ui/card';
 import calculateAge from '@/lib/calculateAge';
-import { revalidateFn } from '../revalidateActions';
+import { revalidateFn } from '../../../lib/revalidateActions';
 
 interface IFormInput {
     name: string

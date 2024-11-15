@@ -12,7 +12,7 @@ import {
     CardContent
 } from "@/components/ui/card"
 import { getMunicipalities, getMunicipalityPlaces, addCommunityOperation } from "@/lib/seed";
-import { IProvinces, IMunicipalities, IAddCommunityOperation, IMunicipalytyPlaces } from "@/lib/interfaces";
+import { IProvinces, IMunicipalities, IAddCommunityOperation, IMunicipalytyPlaces, ISession } from "@/lib/interfaces";
 import { useToast } from "@/hooks/use-toast"
 import { appName } from "@/lib/appInfo";
 //import FormSkeleton from "../FormSkeleton";
@@ -28,7 +28,7 @@ import {
     FormField
 } from "@/components/ui/form"
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+//import { useSession } from "next-auth/react";
 
 interface IFormInput {
     province: number
@@ -43,6 +43,7 @@ interface IFormInput {
 
 interface IComponentProps {
     provinces: IProvinces[]
+    session: ISession['session']
 }
 
 // Steps structure
@@ -80,7 +81,7 @@ const createSchema = (step: any) => {
     return z.object(shape);
 };
 
-function AddCommunityOperationForm({ provinces }: IComponentProps) {
+function AddCommunityOperationForm({ provinces, session }: IComponentProps) {
     //const [provinces, setProvinces] = useState<IProvinces[]>([])
     const [municipalities, setMunicipalities] = useState<IMunicipalities[]>([]);
     const [municipalityPlaces, setMunicipalityPlaces] = useState<IMunicipalytyPlaces[]>([]);
@@ -88,7 +89,7 @@ function AddCommunityOperationForm({ provinces }: IComponentProps) {
     const [sendingForm, setSendingForm] = useState<boolean>(false)
     //const [showingSkeleton, setShowingSkeleton] = useState<boolean>(true)
     const { toast } = useToast()
-    const { data: session } = useSession()
+    //const { data: session } = useSession()
     const router = useRouter()
 
     const methods = useForm<IFormInput>({

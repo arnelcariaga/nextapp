@@ -12,18 +12,19 @@ import { RootState } from "@/redux/store"
 import { Button } from "@/components/ui/button"
 import Icon from "../Icon"
 import { setCloseModalAddUser, setCloseModalEditUser } from "@/redux/slices/usersSlice"
-import { IUserData } from "@/lib/interfaces"
+import { ISession, IUserData } from "@/lib/interfaces"
 import EditUserForm from "./EditUserForm"
 import TableSkeleton from "../TableSkeleton"
-import { useSession } from "next-auth/react"
+//import { useSession } from "next-auth/react"
 import { signInServerFunc } from "./signInServerFunc"
-import { revalidateFn } from "../CommunityOperationsElement/revalidateActions"
+import { revalidateFn } from "../../lib/revalidateActions"
 
 interface IComponentProps {
     data: IUserData[]
+    session: ISession['session']
 }
 
-export default function UsersElement({ data }: IComponentProps) {
+export default function UsersElement({ data, session }: IComponentProps) {
     //const [usersData, setUsersData] = useState<IUserData[]>([])
     const { toast } = useToast()
     const dispatch = useDispatch()
@@ -37,7 +38,7 @@ export default function UsersElement({ data }: IComponentProps) {
     const [selectedUsername, setSelectedUsername] = useState<string>("")
     const [loadingSignAs, setLoadingSignAs] = useState<boolean>(false)
 
-    const { data: session } = useSession()
+    //const { data: session } = useSession()
 
     // useEffect(() => {
     //     async function getUsersFn() {

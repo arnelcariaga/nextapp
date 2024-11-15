@@ -18,7 +18,7 @@ import {
     DialogFooter
 } from "@/components/ui/dialog"
 import Icon from '../Icon'
-import { revalidateFn } from '../CommunityOperationsElement/revalidateActions'
+import { revalidateFn } from '../../lib/revalidateActions'
 
 type ScreenModules = {
     id: number;

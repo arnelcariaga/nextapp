@@ -1,9 +1,6 @@
-import { Suspense } from 'react'
 import CommunityOperationsElement from '@/components/CommunityOperationsElement'
 import { auth } from "@/auth"
 import { api_url } from "@/lib/urls"
-import Loading from './loading'
-
 const CommunityOperations = async () => {
   const session = await auth()
   const role = String(session?.user.id_role)
@@ -43,11 +40,7 @@ const CommunityOperations = async () => {
     data = resData[0]['community_operations']
   }
 
-  return (
-    <Suspense fallback={<Loading />}>
-      <CommunityOperationsElement data={data} />
-    </Suspense>
-  )
+  return <CommunityOperationsElement data={data} session={session} />
 }
 
 export default CommunityOperations

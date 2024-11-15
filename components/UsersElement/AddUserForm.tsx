@@ -17,7 +17,7 @@ import {
     DialogClose,
     DialogFooter
 } from "@/components/ui/dialog"
-import { revalidateFn } from '../CommunityOperationsElement/revalidateActions'
+import { revalidateFn } from '../../lib/revalidateActions'
 
 const AddUserForm = () => {
     const {

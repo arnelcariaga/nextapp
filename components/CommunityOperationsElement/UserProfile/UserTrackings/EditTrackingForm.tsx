@@ -30,7 +30,7 @@ import {
 //import { useDispatch } from 'react-redux';
 import { IUserCommunityUserTracking } from '@/lib/interfaces';
 import { TCommunityOperativeUserParams } from '@/lib/types';
-import { revalidateFn } from '../../revalidateActions';
+import { revalidateFn } from '../../../../lib/revalidateActions';
 
 interface IAddTrackingForm {
     name: string

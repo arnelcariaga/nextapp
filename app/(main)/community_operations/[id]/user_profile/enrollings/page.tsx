@@ -26,7 +26,12 @@ const Enrollings = async ({ params }: TCommunityOperativeUserParams) => {
   );
   const { data: enrollingssData } = await res.json();
 
-  return <UserEnrollings params={params} data={data} communityOperationUserEnrollingsData={enrollingssData} />
+  return <UserEnrollings
+    params={params}
+    data={data}
+    communityOperationUserEnrollingsData={enrollingssData}
+    session={session}
+  />
 }
 
 export default Enrollings

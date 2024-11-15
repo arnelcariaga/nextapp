@@ -13,7 +13,7 @@ import { ICommunityOperationUsers } from "@/lib/interfaces"
 import Icon from "../../Icon"
 import { useRouter } from "next/navigation"
 //import useSWR from 'swr'
-import { revalidateFn } from "../revalidateActions"
+import { revalidateFn } from "../../../lib/revalidateActions"
 import { ISession } from "@/lib/interfaces"
 
 interface IComponentProps {

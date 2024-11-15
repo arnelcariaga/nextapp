@@ -9,25 +9,26 @@ import { appName } from "@/lib/appInfo"
 // import { useSelector } from "react-redux"
 // import { RootState } from "@/redux/store"
 import { Button } from "@/components/ui/button"
-import { ICommunityOperationUserDetails, IUserCommunityUserEnrolling } from "@/lib/interfaces"
+import { ICommunityOperationUserDetails, ISession, IUserCommunityUserEnrolling } from "@/lib/interfaces"
 import EditEnrollingForm from "./EditEnrollingForm"
-import TableSkeleton from "@/components/TableSkeleton"
-import { useSession } from "next-auth/react"
+//import TableSkeleton from "@/components/TableSkeleton"
+//import { useSession } from "next-auth/react"
 import Icon from "@/components/Icon"
 import { TCommunityOperativeUserParams } from "@/lib/types"
 //import { useRouter } from "next/navigation"
 import UserDetailsHeader from "../UserDetailsHeader"
-import CommunityOperationUserTrackingsSkeleton from "@/components/CommunityOperationUserTrackingsSkeleton"
+//import CommunityOperationUserTrackingsSkeleton from "@/components/CommunityOperationUserTrackingsSkeleton"
 import AddEnrollingForm from "../AddEnrollingForm"
-import { revalidateFn } from "../../revalidateActions"
+import { revalidateFn } from "../../../../lib/revalidateActions"
 
 interface IComponentProps {
     params: TCommunityOperativeUserParams['params']
     data: ICommunityOperationUserDetails
     communityOperationUserEnrollingsData: IUserCommunityUserEnrolling[]
+    session: ISession['session']
 }
 
-export default function UserEnrollings({ params, data, communityOperationUserEnrollingsData }: IComponentProps) {
+export default function UserEnrollings({ params, data, communityOperationUserEnrollingsData, session }: IComponentProps) {
     //const [communityOperationUserEnrollingsData, setCommunityOperationUserEnrollingsData] = useState<IUserCommunityUserEnrolling[]>([])
     const { toast } = useToast()
     //const addedCommunityOperationUserEnrolling = useSelector((state: RootState) => state.communityOperationUsers.addedCommunityOperationUserEnrolling as IUserCommunityUserEnrolling[])
@@ -36,7 +37,7 @@ export default function UserEnrollings({ params, data, communityOperationUserEnr
     const [selectedCommunityOperationUserEnrollingData, setSelectedCommunityOperationUserEnrollingData] = useState<IUserCommunityUserEnrolling[]>([])
     //const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
     const [selectedCommunityOperationUserEnrollingId, setSelectedCommunityOperationUserEnrollingId] = useState<number>()
-    const { data: session } = useSession()
+    //const { data: session } = useSession()
     //const router = useRouter()
     const screen = session?.user.screens.find(screen => screen.path === '/community_operations');
     const [canDelete, setCanDelete] = useState<boolean>(false);
@@ -169,37 +170,31 @@ export default function UserEnrollings({ params, data, communityOperationUserEnr
         setSelectedCommunityOperationUserEnrollingData(data)
     }
 
-    if (!data) {
-        return <CommunityOperationUserTrackingsSkeleton />
-    }
     return (
         <div className="w-full p-2">
             <UserDetailsHeader showDescription={false} userDetails={data as ICommunityOperationUserDetails} canEdit={false} />
             <div className="mt-2">
-                {
-                    !communityOperationUserEnrollingsData ? <TableSkeleton /> :
-                        <DataTable
-                            data={communityOperationUserEnrollingsData}
-                            columns={communityOperationUserEnrollingColumns(openModalEditCommunityOperationUserEnrolling, openModalDeleteCommunityOperationUserEnrolling, canDelete, canEdit)}
-                            addBtn={
-                                sendingSave ? <></> : screen?.permissions.create === "0" ? <></> :
-                                    communityOperationUserEnrollingsData.length === 0 ?
-                                        <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => setOpenAddEnrollingForm(true)}>
-                                            <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
-                                            <span className='text-white'>
-                                                Nuevo situaci&oacute;n enrolamiento
-                                            </span>
-                                        </Button> : <></>
-                            }
-                            columnBtnFilter
-                            columnHidden={{}}
-                            orderByObj={{
-                                id: 'enrolling_date',
-                                desc: true
-                            }}
-                            exportData={false}
-                        />
-                }
+                <DataTable
+                    data={communityOperationUserEnrollingsData}
+                    columns={communityOperationUserEnrollingColumns(openModalEditCommunityOperationUserEnrolling, openModalDeleteCommunityOperationUserEnrolling, canDelete, canEdit)}
+                    addBtn={
+                        sendingSave ? <></> : screen?.permissions.create === "0" ? <></> :
+                            communityOperationUserEnrollingsData.length === 0 ?
+                                <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => setOpenAddEnrollingForm(true)}>
+                                    <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
+                                    <span className='text-white'>
+                                        Nuevo situaci&oacute;n enrolamiento
+                                    </span>
+                                </Button> : <></>
+                    }
+                    columnBtnFilter
+                    columnHidden={{}}
+                    orderByObj={{
+                        id: 'enrolling_date',
+                        desc: true
+                    }}
+                    exportData={false}
+                />
             </div>
 
             <MyDialog

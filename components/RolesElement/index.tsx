@@ -13,9 +13,10 @@ import { Button } from "@/components/ui/button"
 import { setCloseModalAddRol, setCloseModalEditRol } from "@/redux/slices/rolesSlice"
 import EditRolForm from "./EditRolForm"
 import TableSkeleton from "../TableSkeleton"
-import { useSession } from "next-auth/react"
+//import { useSession } from "next-auth/react"
 import Icon from "../Icon"
-import { revalidateFn } from "../CommunityOperationsElement/revalidateActions"
+import { revalidateFn } from "../../lib/revalidateActions"
+import { ISession } from "@/lib/interfaces"
 
 interface IScreenPermissions {
     id_role: number
@@ -45,9 +46,10 @@ interface IRolesWithScreens {
 
 interface IComponentProps {
     data: IRolesWithScreens[]
+    session: ISession['session']
 }
 
-export default function RolesElement({ data }: IComponentProps) {
+export default function RolesElement({ data, session }: IComponentProps) {
     //const [rolesData, setRolesData] = useState<IRolesWithScreens[]>([])
     const { toast } = useToast()
     const dispatch = useDispatch()
@@ -58,7 +60,7 @@ export default function RolesElement({ data }: IComponentProps) {
     const [sendingDelete, setSendingDelete] = useState(false);
     const [selectedRolData, setSelectedRolData] = useState<IRolesWithScreens[]>([])
     //const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
-    const { data: session } = useSession()
+    //const { data: session } = useSession()
 
     // useEffect(() => {
     //     async function getRolesFn() {

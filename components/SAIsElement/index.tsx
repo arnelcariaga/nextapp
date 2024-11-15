@@ -11,18 +11,19 @@ import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "@/redux/store"
 import { Button } from "@/components/ui/button"
 import { setCloseModalAddSai, setCloseModalEditSai } from "@/redux/slices/saisSlice"
-import { ISai } from "@/lib/interfaces"
+import { ISai, ISession } from "@/lib/interfaces"
 import EditSaiForm from "./EditSaiForm"
 import TableSkeleton from "../TableSkeleton"
-import { useSession } from "next-auth/react"
+//import { useSession } from "next-auth/react"
 import Icon from "../Icon"
-import { revalidateFn } from "../CommunityOperationsElement/revalidateActions"
+import { revalidateFn } from "../../lib/revalidateActions"
 
 interface IComponentProps {
     data: ISai[]
+    session: ISession['session']
 }
 
-export default function SaisElement({ data }: IComponentProps) {
+export default function SaisElement({ data, session }: IComponentProps) {
     //const [saisData, setSaisData] = useState<ISai[]>([])
     const { toast } = useToast()
     const dispatch = useDispatch()
@@ -33,7 +34,7 @@ export default function SaisElement({ data }: IComponentProps) {
     //const [dataTableLoading, setDataTableLoading] = useState<boolean>(true)
     const closeModalAddSai = useSelector((state: RootState) => state.sais.closeModalAddSai)
     const closeModalEditSai = useSelector((state: RootState) => state.sais.closeModalEditSai)
-    const { data: session } = useSession()
+    //const { data: session } = useSession()
 
     // useEffect(() => {
     //     async function getSaisFn() {
