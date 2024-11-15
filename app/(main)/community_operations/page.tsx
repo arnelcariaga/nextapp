@@ -1,8 +1,6 @@
-import { Suspense } from 'react'
 import CommunityOperationsElement from '@/components/CommunityOperationsElement'
 import { auth } from "@/auth"
 import { api_url } from "@/lib/urls"
-import TableSkeleton from '@/components/TableSkeleton'
 
 const CommunityOperations = async () => {
   const session = await auth()
@@ -43,9 +41,7 @@ const CommunityOperations = async () => {
     data = resData[0]['community_operations']
   }
 
-  return <Suspense fallback={<TableSkeleton />}>
-    <CommunityOperationsElement data={data} session={session} />
-  </Suspense>
+  return <CommunityOperationsElement data={data} session={session} />
 }
 
 export default CommunityOperations

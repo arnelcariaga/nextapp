@@ -14,7 +14,6 @@ import Icon from "../Icon"
 import { setCloseModalAddUser, setCloseModalEditUser } from "@/redux/slices/usersSlice"
 import { ISession, IUserData } from "@/lib/interfaces"
 import EditUserForm from "./EditUserForm"
-import TableSkeleton from "../TableSkeleton"
 //import { useSession } from "next-auth/react"
 import { signInServerFunc } from "./signInServerFunc"
 import { revalidateFn } from "../../lib/revalidateActions"
@@ -154,28 +153,25 @@ export default function UsersElement({ data, session }: IComponentProps) {
 
     return (
         <div className="m-2">
-            {
-                !data ? <TableSkeleton /> :
-                    <DataTable
-                        data={data}
-                        columns={usersColumns(openModalEditUser, openModalDeleteUser, signInAs, loadingSignAs)}
-                        addBtn={
-                            <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddUser(true))}>
-                                <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
-                                <span className='text-white'>
-                                    Agregar Usuario
-                                </span>
-                            </Button>
-                        }
-                        columnBtnFilter
-                        columnHidden={{}}
-                        orderByObj={{
-                            id: 'updated_at',
-                            desc: true
-                        }}
-                        exportData={false}
-                    />
-            }
+            <DataTable
+                data={data}
+                columns={usersColumns(openModalEditUser, openModalDeleteUser, signInAs, loadingSignAs)}
+                addBtn={
+                    <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddUser(true))}>
+                        <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
+                        <span className='text-white'>
+                            Agregar Usuario
+                        </span>
+                    </Button>
+                }
+                columnBtnFilter
+                columnHidden={{}}
+                orderByObj={{
+                    id: 'updated_at',
+                    desc: true
+                }}
+                exportData={false}
+            />
 
             <MyDialog
                 title="Agregar Usuario"

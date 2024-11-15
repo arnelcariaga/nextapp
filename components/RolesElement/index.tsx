@@ -12,7 +12,6 @@ import { RootState } from "@/redux/store"
 import { Button } from "@/components/ui/button"
 import { setCloseModalAddRol, setCloseModalEditRol } from "@/redux/slices/rolesSlice"
 import EditRolForm from "./EditRolForm"
-import TableSkeleton from "../TableSkeleton"
 //import { useSession } from "next-auth/react"
 import Icon from "../Icon"
 import { revalidateFn } from "../../lib/revalidateActions"
@@ -103,7 +102,7 @@ export default function RolesElement({ data, session }: IComponentProps) {
     // }, [addedRoles])
 
     // For deleting role
-    
+
     const openModalDeleteRol = (rolId: number) => {
         setOpenDeleteModal(true)
         setSelectedRolData([{ id: rolId } as IRolesWithScreens])
@@ -148,28 +147,25 @@ export default function RolesElement({ data, session }: IComponentProps) {
 
     return (
         <div className="w-full p-2">
-            {
-                !data ? <TableSkeleton /> :
-                    <DataTable
-                        data={data}
-                        columns={rolesColumns(openModalEditRol, openModalDeleteRol)}
-                        addBtn={
-                            <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddRol(true))}>
-                                <Icon name='Plus' className="mr-2 h-4 w-4 text-white" />
-                                <span className='text-white'>
-                                    Agregar Rol
-                                </span>
-                            </Button>
-                        }
-                        columnBtnFilter
-                        columnHidden={{}}
-                        orderByObj={{
-                            id: 'updated_at',
-                            desc: true
-                        }}
-                        exportData={false}
-                    />
-            }
+            <DataTable
+                data={data}
+                columns={rolesColumns(openModalEditRol, openModalDeleteRol)}
+                addBtn={
+                    <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddRol(true))}>
+                        <Icon name='Plus' className="mr-2 h-4 w-4 text-white" />
+                        <span className='text-white'>
+                            Agregar Rol
+                        </span>
+                    </Button>
+                }
+                columnBtnFilter
+                columnHidden={{}}
+                orderByObj={{
+                    id: 'updated_at',
+                    desc: true
+                }}
+                exportData={false}
+            />
 
             <MyDialog
                 title="Agregar Rol"

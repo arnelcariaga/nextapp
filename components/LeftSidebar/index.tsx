@@ -270,7 +270,7 @@
 // export default Sidebar;
 
 import { LeftSidebarMenuItem } from '@/lib/types'
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils"; // Utility function for conditional classes
@@ -452,7 +452,6 @@ const groupByCategory = (items: LeftSidebarMenuItem[]) => {
 };
 
 const LeftSidebar = ({ session }: ISession) => {
-    const router = useRouter();
     const pathname = usePathname();
     const [menuItemsState, setMenuItemsState] = useState(menuItems);
     const isSidebarOpen = useSelector((state: RootState) => state.appSettings.isSidebarOpen)
@@ -479,10 +478,6 @@ const LeftSidebar = ({ session }: ISession) => {
         setMenuItemsState(updatedMenuItems);
 
     }, [pathname]);
-
-    const handleNavigation = (path: string) => {
-        router.push(path);
-    };
 
     const toggleCollapse = (index: number) => {
         const updatedItems = menuItemsState.map((item, i) => {
@@ -523,6 +518,7 @@ const LeftSidebar = ({ session }: ISession) => {
                                                 item.isActive ? "bg-green-700 text-white font-bold" : "text-gray-100"
                                             )}
                                             href={item.path}
+                                            key={item.path}
                                         >
                                             <span className="mr-3">
                                                 <Icon name={item.icon} />

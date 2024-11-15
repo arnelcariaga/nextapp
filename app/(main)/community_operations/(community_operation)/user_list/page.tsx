@@ -1,6 +1,5 @@
 import { auth } from "@/auth"
 import { api_url } from "@/lib/urls"
-
 import UserList from '@/components/CommunityOperationsElement/UserList'
 
 const CommunityOperationsUserList = async () => {

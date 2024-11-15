@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button"
 import { setCloseModalAddSai, setCloseModalEditSai } from "@/redux/slices/saisSlice"
 import { ISai, ISession } from "@/lib/interfaces"
 import EditSaiForm from "./EditSaiForm"
-import TableSkeleton from "../TableSkeleton"
 //import { useSession } from "next-auth/react"
 import Icon from "../Icon"
 import { revalidateFn } from "../../lib/revalidateActions"
@@ -124,28 +123,25 @@ export default function SaisElement({ data, session }: IComponentProps) {
 
     return (
         <div className="w-full p-2">
-            {
-                !data ? <TableSkeleton /> :
-                    <DataTable
-                        data={data}
-                        columns={saisColumns(openModalEditSai, openModalDeleteSai)}
-                        addBtn={
-                            <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddSai(true))}>
-                                <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
-                                <span className='text-white'>
-                                    Agregar SAI/Socio
-                                </span>
-                            </Button>
-                        }
-                        columnBtnFilter
-                        columnHidden={{}}
-                        orderByObj={{
-                            id: 'created_at',
-                            desc: true
-                        }}
-                        exportData={false}
-                    />
-            }
+            <DataTable
+                data={data}
+                columns={saisColumns(openModalEditSai, openModalDeleteSai)}
+                addBtn={
+                    <Button variant="outline" className='bg-green-600 dark:bg-green-900' onClick={() => dispatch(setCloseModalAddSai(true))}>
+                        <Icon name="Plus" className="mr-2 h-4 w-4 text-white" />
+                        <span className='text-white'>
+                            Agregar SAI/Socio
+                        </span>
+                    </Button>
+                }
+                columnBtnFilter
+                columnHidden={{}}
+                orderByObj={{
+                    id: 'created_at',
+                    desc: true
+                }}
+                exportData={false}
+            />
 
             <MyDialog
                 title="Agregar SAI"

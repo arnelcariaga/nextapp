@@ -15,7 +15,6 @@ import { getMunicipalities, getMunicipalityPlaces, addCommunityOperation } from 
 import { IProvinces, IMunicipalities, IAddCommunityOperation, IMunicipalytyPlaces, ISession } from "@/lib/interfaces";
 import { useToast } from "@/hooks/use-toast"
 import { appName } from "@/lib/appInfo";
-//import FormSkeleton from "../FormSkeleton";
 import Calendar from "../Calendar";
 import {
     Popover,
