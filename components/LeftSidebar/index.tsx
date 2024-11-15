@@ -280,6 +280,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import Icon from '../Icon';
 import { Separator } from '../ui/separator';
 import { ISession } from '@/lib/interfaces';
+import Link from 'next/link';
 
 const menuItems: LeftSidebarMenuItem[] = [
     {
@@ -516,18 +517,18 @@ const LeftSidebar = ({ session }: ISession) => {
                                 <div key={item.path} className="mb-2">
                                     {!item.subItems ? (
                                         // Item without subItems
-                                        <div
+                                        <Link
                                             className={cn(
                                                 "flex items-center px-4 py-2 cursor-pointer hover:bg-green-700 transition-all",
                                                 item.isActive ? "bg-green-700 text-white font-bold" : "text-gray-100"
                                             )}
-                                            onClick={() => handleNavigation(item.path)}
+                                            href={item.path}
                                         >
                                             <span className="mr-3">
                                                 <Icon name={item.icon} />
                                             </span>
                                             <span>{item.title}</span>
-                                        </div>
+                                        </Link>
                                     ) : (
                                         // Items for collapse
                                         <Collapsible key={item.path} open={item.isOpen}>
@@ -554,19 +555,19 @@ const LeftSidebar = ({ session }: ISession) => {
                                                         return false
                                                     }
                                                     return (
-                                                        <div
+                                                        <Link
                                                             key={subItem.path}
                                                             className={cn(
                                                                 "cursor-pointer py-2 hover:bg-green-700 transition-all flex items-center my-2",
                                                                 subItem.isActive ? "bg-green-700 text-white font-bold" : "text-gray-100"
                                                             )}
-                                                            onClick={() => handleNavigation(subItem.path)}
+                                                            href={subItem.path}
                                                         >
                                                             <span className="mr-1">
                                                                 <Icon name="Dot" className="h-5 w-5" />
                                                             </span>
                                                             <span>{subItem.title}</span>
-                                                        </div>
+                                                        </Link>
                                                     )
                                                 })}
                                             </CollapsibleContent>
