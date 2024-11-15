@@ -26,10 +26,10 @@ export default auth((req) => {
   const { nextUrl, auth } = req;
   const pathname = nextUrl.pathname;
   const origin = nextUrl.origin;
-  const isMaintenanceMode = process.env.MAINTENANCE_MODE === "true";
+  const isMaintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE_MODE
 
   if (isMaintenanceMode) {
-    const newUrl = new URL("/not-found", origin); // Redirigir a la página de mantenimiento
+    const newUrl = new URL("/maintenance_mode", origin); // Redirigir a la página de mantenimiento
     return NextResponse.redirect(newUrl);
   }
 
